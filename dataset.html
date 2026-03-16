@@ -147,8 +147,8 @@
                         <span id="s3-files-summary">...</span>
                     </div>
                     <div id="s3-diff-container" style="display: none;">
-                        <details id="s3-diff-details">
-                            <summary>Show file differences</summary>
+                        <details id="s3-diff-details" open>
+                            <summary>Show file comparison</summary>
                             <div class="details-content">
                                 <div class="diff-summary">
                                     <div class="diff-stat">
@@ -160,40 +160,55 @@
                                         <span id="diff-total-s3">...</span>
                                     </div>
                                     <div class="diff-stat">
-                                        <strong>In Both:</strong>
+                                        <strong>Matching:</strong>
                                         <span id="diff-in-both">...</span>
                                     </div>
                                     <div class="diff-stat error-stat">
-                                        <strong>Only in Git:</strong>
+                                        <strong>Missing from S3:</strong>
                                         <span id="diff-git-only">...</span>
                                     </div>
                                     <div class="diff-stat error-stat">
-                                        <strong>Only in S3:</strong>
+                                        <strong>Extra in S3:</strong>
                                         <span id="diff-s3-only">...</span>
                                     </div>
                                 </div>
-
-                                <div id="files-git-only" class="file-diff-section" style="display: none;">
-                                    <h4>Files only in Git (missing from S3):</h4>
-                                    <div class="file-list scrollable"></div>
+            
+                                <!-- Diff Viewer -->
+                                <div id="diff-viewer-wrapper" style="margin-top: 1.5rem;">
+                                    <div class="diff-legend">
+                                        <div class="diff-legend-item">
+                                            <div class="diff-legend-marker added"></div>
+                                            <span>Only in S3 (extra)</span>
+                                        </div>
+                                        <div class="diff-legend-item">
+                                            <div class="diff-legend-marker removed"></div>
+                                            <span>Only in Git (missing from S3)</span>
+                                        </div>
+                                        <div class="diff-legend-item">
+                                            <div class="diff-legend-marker unchanged"></div>
+                                            <span>Present in both</span>
+                                        </div>
+                                    </div>
+                                    <div class="diff-viewer-container">
+                                        <div id="diff-viewer" class="diff-viewer">
+                                            <!-- Populated by JS -->
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <div id="files-s3-only" class="file-diff-section" style="display: none;">
-                                    <h4>Files only in S3 (not in Git):</h4>
-                                    <div class="file-list scrollable"></div>
-                                </div>
-
-                                <div class="detail-row">
-                                    <strong>Git SHA:</strong>
-                                    <code id="diff-git-sha">...</code>
-                                </div>
-                                <div class="detail-row">
-                                    <strong>S3 Version:</strong>
-                                    <code id="diff-s3-version">...</code>
-                                </div>
-                                <div class="detail-row">
-                                    <strong>Last Checked:</strong>
-                                    <span id="s3-files-last-checked">...</span>
+            
+                                <div style="margin-top: 1rem;">
+                                    <div class="detail-row">
+                                        <strong>Git SHA:</strong>
+                                        <code id="diff-git-sha">...</code>
+                                    </div>
+                                    <div class="detail-row">
+                                        <strong>S3 Version:</strong>
+                                        <code id="diff-s3-version">...</code>
+                                    </div>
+                                    <div class="detail-row">
+                                        <strong>Last Checked:</strong>
+                                        <span id="s3-files-last-checked">...</span>
+                                    </div>
                                 </div>
                             </div>
                         </details>

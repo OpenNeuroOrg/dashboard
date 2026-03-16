@@ -2,14 +2,14 @@
  * Main dashboard logic
  */
 
-import { 
-    loadJSON, 
-    getStatusBadge, 
-    getCheckIcon, 
-    formatDate, 
+import {
+    loadJSON,
+    getStatusBadge,
+    getCheckIcon,
+    formatDate,
     formatRelativeTime,
     getMostRecentTimestamp,
-    debounce 
+    debounce
 } from './utils.js';
 
 // State
@@ -148,7 +148,7 @@ function getFilteredDatasets() {
 
     // Apply search
     if (currentSearch) {
-        filtered = filtered.filter(ds => 
+        filtered = filtered.filter(ds =>
             ds.id.toLowerCase().includes(currentSearch)
         );
     }
@@ -215,7 +215,7 @@ function renderTable() {
     // Render rows
     tbody.innerHTML = filtered.map(ds => {
         const lastChecked = getMostRecentTimestamp(ds.lastChecked);
-        
+
         return `
             <tr>
                 <td>

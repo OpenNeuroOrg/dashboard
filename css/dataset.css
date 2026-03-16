@@ -278,3 +278,118 @@ details[open] summary {
 button[aria-busy="true"] {
     pointer-events: none;
 }
+
+/* Diff viewer */
+.diff-viewer {
+    font-family: monospace;
+    font-size: 0.875rem;
+    background: var(--code-background-color);
+    border: 1px solid var(--muted-border-color);
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.diff-line {
+    padding: 0.25rem 0.5rem;
+    line-height: 1.5;
+    border-left: 3px solid transparent;
+}
+
+.diff-line.added {
+    background: rgba(46, 204, 113, 0.1);
+    border-left-color: var(--status-ok);
+    color: var(--status-ok);
+}
+
+.diff-line.removed {
+    background: rgba(231, 76, 60, 0.1);
+    border-left-color: var(--status-error);
+    color: var(--status-error);
+    text-decoration: line-through;
+}
+
+.diff-line.unchanged {
+    color: var(--muted-color);
+}
+
+.diff-line.context {
+    background: var(--card-background-color);
+}
+
+/* Collapsed sections */
+.diff-collapse {
+    background: var(--secondary-hover);
+    padding: 0.5rem 1rem;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 0.875rem;
+    color: var(--muted-color);
+    transition: background 0.2s;
+}
+
+.diff-collapse:hover {
+    background: var(--secondary-focus);
+}
+
+.diff-collapse::before {
+    content: "▶ ";
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+.diff-collapse.expanded::before {
+    transform: rotate(90deg);
+}
+
+.diff-section {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.diff-section.expanded {
+    max-height: 10000px; /* Large enough for most sections */
+}
+
+/* Scrollable diff */
+.diff-viewer-container {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+/* Diff legend */
+.diff-legend {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.75rem;
+    background: var(--card-background-color);
+    border-bottom: 1px solid var(--muted-border-color);
+    font-size: 0.875rem;
+}
+
+.diff-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.diff-legend-marker {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.diff-legend-marker.added {
+    background: var(--status-ok);
+}
+
+.diff-legend-marker.removed {
+    background: var(--status-error);
+}
+
+.diff-legend-marker.unchanged {
+    background: var(--muted-border-color);
+}

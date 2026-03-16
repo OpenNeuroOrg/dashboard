@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenNeuro Dataset Monitor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <h1>OpenNeuro Dataset Monitor</h1>
+            <p>Tracking dataset synchronization across GraphQL, GitHub, and S3</p>
+        </header>
+
+        <!-- Staleness Warning -->
+        <div id="staleness-warning" class="alert warning" style="display: none;">
+            <strong>⚠ Data may be stale</strong>
+            <p>Summary was last updated <span id="summary-age"></span>, but registry was updated more recently. Checks may be running.</p>
+        </div>
+
+        <!-- Summary Stats -->
+        <section id="summary-stats" class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="total-datasets">-</div>
+                <div class="stat-label">Total Datasets</div>
+            </div>
+            <div class="stat-card status-ok">
+                <div class="stat-value" id="count-ok">-</div>
+                <div class="stat-label">Healthy</div>
+            </div>
+            <div class="stat-card status-warning">
+                <div class="stat-value" id="count-warning">-</div>
+                <div class="stat-label">Warnings</div>
+            </div>
+            <div class="stat-card status-error">
+                <div class="stat-value" id="count-error">-</div>
+                <div class="stat-label">Errors</div>
+            </div>
+            <div class="stat-card status-version-mismatch">
+                <div class="stat-value" id="count-version-mismatch">-</div>
+                <div class="stat-label">Version Mismatch</div>
+            </div>
+            <div class="stat-card status-pending">
+                <div class="stat-value" id="count-pending">-</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </section>
+
+        <!-- Filters and Search -->
+        <section class="controls">
+            <div class="filter-group">
+                <label for="status-filter">Filter by status:</label>
+                <select id="status-filter">
+                    <option value="all">All</option>
+                    <option value="ok">Healthy</option>
+                    <option value="warning">Warning</option>
+                    <option value="error">Error</option>
+                    <option value="version-mismatch">Version Mismatch</option>
+                    <option value="pending">Pending</option>
+                </select>
+            </div>
+            <div class="search-group">
+                <label for="search-box">Search:</label>
+                <input type="search" id="search-box" placeholder="Filter by dataset ID...">
+            </div>
+        </section>
+
+        <!-- Dataset Table -->
+        <section>
+            <div id="loading" style="text-align: center; padding: 2rem;">
+                <p aria-busy="true">Loading datasets...</p>
+            </div>
+
+            <div id="error" class="alert error" style="display: none;">
+                <strong>Error loading data</strong>
+                <p id="error-message"></p>
+            </div>
+
+            <div id="table-container" style="display: none;">
+                <table role="grid">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-column="id">
+                                Dataset ID
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th class="sortable" data-column="latestSnapshot">
+                                Latest Snapshot
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th class="sortable" data-column="status">
+                                Overall Status
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th>GitHub</th>
+                            <th>S3 Version</th>
+                            <th>S3 Files</th>
+                            <th class="sortable" data-column="lastChecked">
+                                Last Checked
+                                <span class="sort-indicator"></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataset-table-body">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+                <div id="no-results" style="display: none; text-align: center; padding: 2rem;">
+                    <p>No datasets match the current filters.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>
+                <small>
+                    Last updated: <span id="last-updated">-</span> |
+                    Schema version: <span id="schema-version">-</span>
+                </small>
+            </p>
+        </footer>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

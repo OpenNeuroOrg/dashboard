@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Details - OpenNeuro Monitor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dataset.css">
+</head>
+<body>
+    <main class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li id="breadcrumb-dataset">...</li>
+            </ul>
+        </nav>
+
+        <!-- Loading State -->
+        <div id="loading" style="text-align: center; padding: 2rem;">
+            <p aria-busy="true">Loading dataset details...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="alert error" style="display: none;">
+            <strong>Error loading dataset</strong>
+            <p id="error-message"></p>
+            <p><a href="index.html">← Return to dashboard</a></p>
+        </div>
+
+        <!-- Dataset Details -->
+        <div id="dataset-details" style="display: none;">
+            <!-- Header -->
+            <header class="dataset-header">
+                <h1 id="dataset-id">...</h1>
+                <div class="dataset-meta">
+                    <span class="meta-item">
+                        <strong>Latest Snapshot:</strong>
+                        <code id="latest-snapshot">...</code>
+                    </span>
+                    <span class="meta-item">
+                        <strong>Status:</strong>
+                        <span id="overall-status"></span>
+                    </span>
+                </div>
+            </header>
+
+            <!-- Snapshots Section -->
+            <section class="card">
+                <header>
+                    <h2>Snapshots</h2>
+                </header>
+                <details id="snapshots-details">
+                    <summary>
+                        <span id="snapshot-count">0 snapshots</span>
+                    </summary>
+                    <div id="snapshots-list" class="snapshots-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </details>
+            </section>
+
+            <!-- GitHub Check -->
+            <section class="card">
+                <header>
+                    <h2>
+                        <span class="check-icon-large" id="github-icon">...</span>
+                        GitHub Mirror Status
+                    </h2>
+                </header>
+                <div id="github-content">
+                    <div class="check-summary">
+                        <span id="github-summary">...</span>
+                    </div>
+                    <details id="github-details">
+                        <summary>Show details</summary>
+                        <div class="details-content">
+                            <div class="detail-row">
+                                <strong>HEAD:</strong>
+                                <code id="github-head">...</code>
+                            </div>
+                            <div class="detail-row">
+                                <strong>Branches:</strong>
+                                <div id="github-branches" class="code-list"></div>
+                            </div>
+                            <div class="detail-row">
+                                <strong>Tags:</strong>
+                                <div id="github-tags" class="code-list"></div>
+                            </div>
+                            <div class="detail-row">
+                                <strong>Last Checked:</strong>
+                                <span id="github-last-checked">...</span>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- S3 Version Check -->
+            <section class="card">
+                <header>
+                    <h2>
+                        <span class="check-icon-large" id="s3-version-icon">...</span>
+                        S3 Version Status
+                    </h2>
+                </header>
+                <div id="s3-version-content">
+                    <div class="check-summary">
+                        <span id="s3-version-summary">...</span>
+                    </div>
+                    <details id="s3-version-details">
+                        <summary>Show details</summary>
+                        <div class="details-content">
+                            <div class="detail-row">
+                                <strong>Dataset DOI:</strong>
+                                <code id="s3-doi">...</code>
+                            </div>
+                            <div class="detail-row">
+                                <strong>Extracted Version:</strong>
+                                <code id="s3-extracted-version">...</code>
+                            </div>
+                            <div class="detail-row">
+                                <strong>Expected Version:</strong>
+                                <code id="s3-expected-version">...</code>
+                            </div>
+                            <div class="detail-row">
+                                <strong>Last Checked:</strong>
+                                <span id="s3-version-last-checked">...</span>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- S3 Files Check -->
+            <section class="card">
+                <header>
+                    <h2>
+                        <span class="check-icon-large" id="s3-files-icon">...</span>
+                        S3 Files Status
+                    </h2>
+                </header>
+                <div id="s3-files-content">
+                    <div class="check-summary">
+                        <span id="s3-files-summary">...</span>
+                    </div>
+                    <div id="s3-diff-container" style="display: none;">
+                        <details id="s3-diff-details">
+                            <summary>Show file differences</summary>
+                            <div class="details-content">
+                                <div class="diff-summary">
+                                    <div class="diff-stat">
+                                        <strong>Total in Git:</strong>
+                                        <span id="diff-total-git">...</span>
+                                    </div>
+                                    <div class="diff-stat">
+                                        <strong>Total in S3:</strong>
+                                        <span id="diff-total-s3">...</span>
+                                    </div>
+                                    <div class="diff-stat">
+                                        <strong>In Both:</strong>
+                                        <span id="diff-in-both">...</span>
+                                    </div>
+                                    <div class="diff-stat error-stat">
+                                        <strong>Only in Git:</strong>
+                                        <span id="diff-git-only">...</span>
+                                    </div>
+                                    <div class="diff-stat error-stat">
+                                        <strong>Only in S3:</strong>
+                                        <span id="diff-s3-only">...</span>
+                                    </div>
+                                </div>
+
+                                <div id="files-git-only" class="file-diff-section" style="display: none;">
+                                    <h4>Files only in Git (missing from S3):</h4>
+                                    <div class="file-list scrollable"></div>
+                                </div>
+
+                                <div id="files-s3-only" class="file-diff-section" style="display: none;">
+                                    <h4>Files only in S3 (not in Git):</h4>
+                                    <div class="file-list scrollable"></div>
+                                </div>
+
+                                <div class="detail-row">
+                                    <strong>Git SHA:</strong>
+                                    <code id="diff-git-sha">...</code>
+                                </div>
+                                <div class="detail-row">
+                                    <strong>S3 Version:</strong>
+                                    <code id="diff-s3-version">...</code>
+                                </div>
+                                <div class="detail-row">
+                                    <strong>Last Checked:</strong>
+                                    <span id="s3-files-last-checked">...</span>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </section>
+
+            <!-- File List Viewer -->
+            <section class="card">
+                <header>
+                    <h2>Git File List</h2>
+                </header>
+                <div>
+                    <p>
+                        View the complete file listing for the latest snapshot 
+                        (<code id="files-snapshot-tag">...</code>)
+                    </p>
+                    <button id="load-files-btn" class="secondary">Load File List</button>
+                    <div id="files-container" style="display: none; margin-top: 1rem;">
+                        <div class="detail-row">
+                            <strong>Total Files:</strong>
+                            <span id="files-count">...</span>
+                        </div>
+                        <div class="file-list scrollable" id="files-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer style="margin-top: 3rem;">
+            <p><a href="index.html">← Back to dashboard</a></p>
+        </footer>
+    </main>
+
+    <script type="module" src="js/dataset.js"></script>
+</body>
+</html>

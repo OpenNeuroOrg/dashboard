@@ -231,62 +231,164 @@ function getS3VersionStatus() {
 function renderS3VersionCheck() {
     const status = getS3VersionStatus();
     const icon = document.getElementById('s3-version-icon');
-    icon.textContent = status === 'ok' ? '✓' : status === 'version-mismatch' ? '≠' : '⏳';
-    icon.className = `check-icon-large ${status}`;
-
+    
     if (!s3Version) {
+        icon.textContent = '⏳';
+        icon.className = 'check-icon-large pending';
         document.getElementById('s3-version-summary').textContent = 'Check not yet run';
         document.getElementById('s3-version-details').style.display = 'none';
         return;
     }
 
-    // Handle error cases
-    if (s3Version.error) {
-        const errorMessages = {
-            'no_doi_field': 'No DatasetDOI field found in dataset_description.json',
-            'custom_doi': 'Dataset uses a custom DOI (not versioned)',
-            'doi_id_mismatch': `DOI contains wrong dataset ID: ${s3Version.doi_dataset_id || 'unknown'}`,
-            'not_found': 'dataset_description.json not found on S3 (404)',
-            'access_denied': 'Access denied - dataset may be tagged as private on S3 (403)',
-            'http_error': `HTTP error ${s3Version.http_status || 'unknown'}`,
-            'request_error': 'Network request failed',
-            'invalid_json': 'Invalid JSON in dataset_description.json',
-            'unexpected_error': s3Version.error_message || 'Unexpected error occurred'
-        };
-
-        const message = errorMessages[s3Version.error] || `Error: ${s3Version.error}`;
-
-        document.getElementById('s3-version-summary').textContent = `✗ ${message}`;
-
-        // Show details with error information
-        document.getElementById('s3-doi').textContent = s3Version.datasetDescriptionDOI || 'N/A';
-        document.getElementById('s3-extracted-version').textContent = s3Version.extractedVersion || 'N/A';
+    // Case 3: Blocked (403)
+    if (!s3Version.accessible) {
+        icon.textContent = '🔒';
+        icon.className = 'check-icon-large error';
+        
+        const summary = `Access to S3 files is forbidden (HTTP 403). The dataset is marked as ` +
+                       `public in OpenNeuro but the S3 bucket ACL needs to be updated. ` +
+                       `No file validation can be performed until access is restored.`;
+        
+        document.getElementById('s3-version-summary').textContent = summary;
+        
+        // Show minimal details
+        document.getElementById('s3-doi').textContent = 'N/A (access denied)';
+        document.getElementById('s3-extracted-version').textContent = 'N/A';
         document.getElementById('s3-expected-version').textContent = latestSnapshot;
         document.getElementById('s3-version-last-checked').textContent = formatDate(s3Version.lastChecked);
-
-        // Update icon to show error
-        const icon = document.getElementById('s3-version-icon');
-        icon.textContent = '✗';
-        icon.className = 'check-icon-large error';
-
+        
         return;
     }
 
-    // Summary message
+    // Cases 1, 2, 4: Accessible
+    icon.textContent = status === 'ok' ? '✓' : status === 'version-mismatch' ? '≠' : '⚠';
+    icon.className = `check-icon-large ${status}`;
+
+    // Build summary message
     let summary = '';
-    if (status === 'ok') {
-        summary = `✓ S3 reports version ${s3Version.extractedVersion}, which matches the latest snapshot.`;
-    } else {
-        summary = `≠ S3 reports version ${s3Version.extractedVersion}, but latest snapshot is ${latestSnapshot}.`;
+    const versionSource = s3Version.versionSource || 'unknown';
+    const extractedVersion = s3Version.extractedVersion || 'unknown';
+    
+    if (versionSource === 'doi') {
+        // Case 1: DOI with version
+        if (status === 'ok') {
+            summary = `✓ S3 DOI indicates version ${extractedVersion}, which matches the latest snapshot.`;
+        } else {
+            summary = `≠ S3 DOI indicates version ${extractedVersion}, but latest snapshot is ${latestSnapshot}.`;
+        }
+        
+        if (s3Version.doiIdMismatch) {
+            summary += ` ⚠ DOI contains wrong dataset ID (${s3Version.doiDatasetId}).`;
+        }
+    } else if (versionSource === 'assumed_latest') {
+        // Case 2 or 4: Assumed latest
+        summary = `⚠ Could not extract version from DOI`;
+        
+        if (s3Version.datasetDescriptionMissing) {
+            // Case 4: 404
+            summary += ` (dataset_description.json not found - HTTP 404)`;
+        } else if (!s3Version.datasetDescriptionDOI) {
+            // Case 2: Missing DOI field
+            summary += ` (no DatasetDOI field)`;
+        } else {
+            // Case 2: Custom DOI
+            summary += ` (custom DOI: ${s3Version.datasetDescriptionDOI})`;
+        }
+        
+        summary += `. Assuming latest snapshot (${latestSnapshot}) for file comparison.`;
     }
+    
     document.getElementById('s3-version-summary').textContent = summary;
 
     // Details
-    document.getElementById('s3-doi').textContent = s3Version.datasetDescriptionDOI;
-    document.getElementById('s3-extracted-version').textContent = s3Version.extractedVersion;
+    document.getElementById('s3-doi').textContent = s3Version.datasetDescriptionDOI || 'N/A';
+    document.getElementById('s3-extracted-version').textContent = extractedVersion;
     document.getElementById('s3-expected-version').textContent = latestSnapshot;
     document.getElementById('s3-version-last-checked').textContent = formatDate(s3Version.lastChecked);
+}
 
+/**
+ * Render S3 files check section
+ */
+function renderS3FilesCheck() {
+    const status = getS3FilesStatus();
+    const icon = document.getElementById('s3-files-icon');
+    
+    // Check if blocked by 403
+    if (s3Version && !s3Version.accessible) {
+        icon.textContent = '🔒';
+        icon.className = 'check-icon-large error';
+        document.getElementById('s3-files-summary').textContent = 
+            'File check blocked - S3 access denied (see S3 Version Status above)';
+        document.getElementById('s3-diff-container').style.display = 'none';
+        return;
+    }
+
+    icon.textContent = status === 'ok' ? '✓' : status === 'error' ? '✗' : status === 'version-mismatch' ? '≠' : '⏳';
+    icon.className = `check-icon-large ${status}`;
+
+    if (!s3Version) {
+        document.getElementById('s3-files-summary').textContent = 'S3 version check not yet run';
+        return;
+    }
+
+    if (!s3Diff) {
+        document.getElementById('s3-files-summary').textContent = 'File comparison not yet run';
+        return;
+    }
+
+    // Check for case 4b: export missing
+    if (s3Diff.exportMissing) {
+        const summary = `No files found on S3 (0/${s3Diff.summary.totalInGit}). ` +
+                       `The dataset export appears to be completely missing and needs to be regenerated.`;
+        document.getElementById('s3-files-summary').textContent = summary;
+        document.getElementById('s3-diff-container').style.display = 'none';
+        return;
+    }
+
+    // Normal case: show file comparison
+    let summary = '';
+    if (status === 'ok') {
+        summary = `✓ All ${s3Diff.summary.inBoth} files match between Git and S3.`;
+    } else {
+        const missing = s3Diff.summary.inGitOnly;
+        const extra = s3Diff.summary.inS3Only;
+        summary = `✗ File mismatch: ${missing} file${missing !== 1 ? 's' : ''} missing from S3, ` +
+                 `${extra} extra file${extra !== 1 ? 's' : ''} in S3.`;
+    }
+    document.getElementById('s3-files-summary').textContent = summary;
+
+    // Show diff details
+    document.getElementById('s3-diff-container').style.display = 'block';
+    
+    // Populate diff summary
+    document.getElementById('diff-total-git').textContent = s3Diff.summary.totalInGit;
+    document.getElementById('diff-total-s3').textContent = s3Diff.summary.totalInS3;
+    document.getElementById('diff-in-both').textContent = s3Diff.summary.inBoth;
+    document.getElementById('diff-git-only').textContent = s3Diff.summary.inGitOnly;
+    document.getElementById('diff-s3-only').textContent = s3Diff.summary.inS3Only;
+
+    // Show file lists if there are differences
+    if (s3Diff.inGitOnly.length > 0) {
+        const section = document.getElementById('files-git-only');
+        section.style.display = 'block';
+        section.querySelector('.file-list').innerHTML = s3Diff.inGitOnly
+            .map(file => `<div>${file}</div>`)
+            .join('');
+    }
+
+    if (s3Diff.inS3Only.length > 0) {
+        const section = document.getElementById('files-s3-only');
+        section.style.display = 'block';
+        section.querySelector('.file-list').innerHTML = s3Diff.inS3Only
+            .map(file => `<div>${file}</div>`)
+            .join('');
+    }
+
+    // Other details
+    document.getElementById('diff-git-sha').textContent = s3Diff.gitHexsha;
+    document.getElementById('diff-s3-version').textContent = s3Diff.s3Version;
+    document.getElementById('s3-files-last-checked').textContent = formatDate(s3Diff.lastChecked);
 }
 
 /**
@@ -302,70 +404,6 @@ function getS3FilesStatus() {
     }
 
     return 'ok';
-}
-
-/**
- * Render S3 files check section
- */
-async function renderS3FilesCheck() {
-    const status = getS3FilesStatus();
-    const icon = document.getElementById('s3-files-icon');
-    icon.textContent = status === 'ok' ? '✓' : status === 'error' ? '✗' : status === 'version-mismatch' ? '≠' : '⏳';
-    icon.className = `check-icon-large ${status}`;
-
-    if (!s3Version) {
-        document.getElementById('s3-files-summary').textContent = 'S3 version check not yet run';
-        return;
-    }
-
-    if (s3Version.extractedVersion !== latestSnapshot) {
-        document.getElementById('s3-files-summary').textContent =
-            `Version mismatch - S3 diff not computed (S3 is at ${s3Version.extractedVersion}, not ${latestSnapshot})`;
-        return;
-    }
-
-    if (!s3Diff) {
-        document.getElementById('s3-files-summary').textContent = 'File comparison not yet run';
-        return;
-    }
-
-    // Summary message
-    let summary = '';
-    if (status === 'ok') {
-        summary = `✓ All ${s3Diff.summary.inBoth} files match between Git and S3.`;
-    } else {
-        const missing = s3Diff.summary.inGitOnly;
-        const extra = s3Diff.summary.inS3Only;
-        summary = `✗ File mismatch: ${missing} file${missing !== 1 ? 's' : ''} missing from S3, ${extra} extra file${extra !== 1 ? 's' : ''} in S3.`;
-    }
-    document.getElementById('s3-files-summary').textContent = summary;
-
-    // Show diff details
-    document.getElementById('s3-diff-container').style.display = 'block';
-
-    // Populate diff summary
-    document.getElementById('diff-total-git').textContent = s3Diff.summary.totalInGit;
-    document.getElementById('diff-total-s3').textContent = s3Diff.summary.totalInS3;
-    document.getElementById('diff-in-both').textContent = s3Diff.summary.inBoth;
-    document.getElementById('diff-git-only').textContent = s3Diff.summary.inGitOnly;
-    document.getElementById('diff-s3-only').textContent = s3Diff.summary.inS3Only;
-
-    // Other details
-    document.getElementById('diff-git-sha').textContent = s3Diff.gitHexsha;
-    document.getElementById('diff-s3-version').textContent = s3Diff.s3Version;
-    document.getElementById('s3-files-last-checked').textContent = formatDate(s3Diff.lastChecked);
-
-    // Load git files and render diff
-    try {
-        const gitFiles = await loadJSON(
-            `../data/datasets/${datasetId}/snapshots/${latestSnapshot}/files.json`
-        );
-        renderDiffViewer(gitFiles.files, s3Diff);
-    } catch (error) {
-        console.error('Failed to load git files for diff:', error);
-        document.getElementById('diff-viewer').innerHTML =
-            '<div style="padding: 1rem; color: var(--status-error);">Failed to load git files for diff view</div>';
-    }
 }
 
 /**

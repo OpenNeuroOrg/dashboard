@@ -2,14 +2,14 @@
  * Main dashboard logic
  */
 
-import {
-    loadJSON,
-    getStatusBadge,
-    getCheckIcon,
-    formatDate,
+import { 
+    loadJSON, 
+    getStatusBadge, 
+    getCheckIcon, 
+    formatDate, 
     formatRelativeTime,
     getMostRecentTimestamp,
-    debounce
+    debounce 
 } from './utils.js';
 
 // State
@@ -140,7 +140,6 @@ function setupEventListeners() {
  */
 function getFilteredDatasets() {
     let filtered = [...allDatasets];
-
     // Apply status filter
     if (currentFilter !== 'all') {
         filtered = filtered.filter(ds => ds.status === currentFilter);
@@ -148,7 +147,7 @@ function getFilteredDatasets() {
 
     // Apply search
     if (currentSearch) {
-        filtered = filtered.filter(ds =>
+        filtered = filtered.filter(ds => 
             ds.id.toLowerCase().includes(currentSearch)
         );
     }
@@ -215,7 +214,8 @@ function renderTable() {
     // Render rows
     tbody.innerHTML = filtered.map(ds => {
         const lastChecked = getMostRecentTimestamp(ds.lastChecked);
-
+        const s3Blocked = ds.s3Blocked || false;
+        
         return `
             <tr>
                 <td>
@@ -224,8 +224,8 @@ function renderTable() {
                 <td><code>${ds.latestSnapshot}</code></td>
                 <td>${getStatusBadge(ds.status)}</td>
                 <td>${getCheckIcon(ds.checks.github)}</td>
-                <td>${getCheckIcon(ds.checks.s3Version)}</td>
-                <td>${getCheckIcon(ds.checks.s3Files)}</td>
+                <td>${getCheckIcon(ds.checks.s3Version, s3Blocked)}</td>
+                <td>${getCheckIcon(ds.checks.s3Files, s3Blocked)}</td>
                 <td>${formatRelativeTime(lastChecked)}</td>
             </tr>
         `;

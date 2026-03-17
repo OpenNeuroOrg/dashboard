@@ -27,8 +27,8 @@ async function init() {
     try {
         // Load data
         [registry, summary] = await Promise.all([
-            loadJSON('../data/datasets-registry.json'),
-            loadJSON('../data/all-datasets.json')
+            loadJSON('data/datasets-registry.json'),
+            loadJSON('data/all-datasets.json')
         ]);
 
         // Combine data

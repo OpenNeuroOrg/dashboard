@@ -37,7 +37,7 @@ async function init() {
 
     try {
         // Load registry to get latest snapshot
-        const registry = await loadJSON('../data/datasets-registry.json');
+        const registry = await loadJSON('data/datasets-registry.json');
         latestSnapshot = registry.latestSnapshots[datasetId];
 
         if (!latestSnapshot) {
@@ -46,7 +46,7 @@ async function init() {
         }
 
         // Load dataset-specific files
-        const basePath = `../data/datasets/${datasetId}`;
+        const basePath = `data/datasets/${datasetId}`;
 
         [snapshots, github, s3Version, s3Diff] = await Promise.all([
             loadJSON(`${basePath}/snapshots.json`),
@@ -133,7 +133,7 @@ function renderSnapshots() {
         snapshots.tags.map(async tag => {
             try {
                 const metadata = await loadJSON(
-                    `../data/datasets/${datasetId}/snapshots/${tag}/metadata.json`
+                    `data/datasets/${datasetId}/snapshots/${tag}/metadata.json`
                 );
                 return { tag, ...metadata };
             } catch {
@@ -561,7 +561,7 @@ function setupFileListLoader() {
 
         try {
             const files = await loadJSON(
-                `../data/datasets/${datasetId}/snapshots/${latestSnapshot}/files.json`
+                `data/datasets/${datasetId}/snapshots/${latestSnapshot}/files.json`
             );
 
             document.getElementById('files-count').textContent = files.count;

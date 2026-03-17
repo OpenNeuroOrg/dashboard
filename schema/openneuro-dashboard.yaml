@@ -80,6 +80,13 @@ classes:
         range: CheckResults
         required: true
         inlined: true
+      s3Blocked:
+        range: boolean
+        required: false
+        description: >-
+          True if S3 checks are blocked by 403 (access denied).
+          When true, both s3Version and s3Files will show error status
+          with lock icons in the dashboard.
       lastChecked:
         range: CheckTimestamps
         required: false
@@ -155,38 +162,102 @@ classes:
         pattern: "^[0-9a-f]{40}$"
 
   S3Version:
-    description: Version extracted from dataset_description.json on S3
+    description: >-
+      Version information from S3's dataset_description.json.
+      Determines which git tree to compare against for file validation.
     attributes:
+      schemaVersion:
+        range: string
+        required: true
+        description: Version of the schema used for this file
+        pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
       lastChecked:
         range: datetime
         required: true
+      accessible:
+        range: boolean
+        required: true
+        description: >-
+          Whether S3 files are accessible. False only for 403 (access denied).
+          If false, no file validation can be performed.
+      httpStatus:
+        range: integer
+        required: false
+        description: HTTP status code (only present for blocking errors like 403)
       datasetDescriptionDOI:
         range: string
-        required: true
-        description: Full DOI from DatasetDOI field
-        pattern: "^10\\.18112/openneuro\\.ds[0-9]{6}\\.v.*$"
+        required: false
+        description: >-
+          Full DOI from DatasetDOI field. Null if missing, inaccessible,
+          or error occurred.
       extractedVersion:
         range: string
-        required: true
-        description: Version string extracted from DOI
+        required: false
+        description: >-
+          Version to use for file comparison. Either extracted from DOI
+          or assumed to be latest snapshot. Null only if inaccessible (403).
+      versionSource:
+        range: VersionSource
+        required: false
+        description: How the version was determined
+      datasetDescriptionMissing:
+        range: boolean
+        required: false
+        description: True if dataset_description.json returned 404
+      doiIdMismatch:
+        range: boolean
+        required: false
+        description: True if DOI contains wrong dataset ID
+      doiDatasetId:
+        range: string
+        required: false
+        description: Dataset ID from DOI (if different from actual)
+        pattern: "^ds[0-9]{6}$"
+      invalidJson:
+        range: boolean
+        required: false
+        description: True if dataset_description.json contained invalid JSON
+      httpError:
+        range: integer
+        required: false
+        description: HTTP status code for non-blocking errors
+      requestError:
+        range: string
+        required: false
+        description: Network request error message
+      unexpectedError:
+        range: string
+        required: false
+        description: Other unexpected error message
 
   S3FileDiff:
     description: >-
       Comparison between S3 file listing and git tree.
-      Only created when S3 version matches latest snapshot.
+      Only created when S3 is accessible (not 403).
     attributes:
+      schemaVersion:
+        range: string
+        required: true
+        description: Version of the schema used for this file
+        pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
       lastChecked:
         range: datetime
         required: true
       s3Version:
         range: string
         required: true
-        description: Version tag that S3 claims to contain
+        description: Version tag that S3 was compared against
       gitHexsha:
         range: string
         required: true
         description: Git commit SHA used for comparison
         pattern: "^[0-9a-f]{40}$"
+      exportMissing:
+        range: boolean
+        required: false
+        description: >-
+          True if S3 has zero files (entire export is missing).
+          When true, inGitOnly and inS3Only will be empty arrays.
       summary:
         range: DiffSummary
         required: true
@@ -196,13 +267,17 @@ classes:
         required: true
         multivalued: true
         inlined_as_list: true
-        description: Files present in git but missing from S3
+        description: >-
+          Files present in git but missing from S3.
+          Empty array if exportMissing is true.
       inS3Only:
         range: string
         required: true
         multivalued: true
         inlined_as_list: true
-        description: Files present in S3 but not in git
+        description: >-
+          Files present in S3 but not in git.
+          Empty array if exportMissing is true.
 
   DiffSummary:
     description: Summary counts for file comparison
@@ -268,3 +343,12 @@ enums:
         description: S3 version does not match expected version
       pending:
         description: Check has not yet been run or completed
+  VersionSource:
+    description: How the S3 version was determined
+    permissible_values:
+      doi:
+        description: Extracted from standard OpenNeuro DOI pattern
+      assumed_latest:
+        description: >-
+          Could not extract from DOI (missing, custom format, or error).
+          Using latest snapshot for comparison.

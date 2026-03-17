@@ -240,6 +240,38 @@ function renderS3VersionCheck() {
         return;
     }
 
+    // Handle error cases
+    if (s3Version.error) {
+        const errorMessages = {
+            'no_doi_field': 'No DatasetDOI field found in dataset_description.json',
+            'custom_doi': 'Dataset uses a custom DOI (not versioned)',
+            'doi_id_mismatch': `DOI contains wrong dataset ID: ${s3Version.doi_dataset_id || 'unknown'}`,
+            'not_found': 'dataset_description.json not found on S3 (404)',
+            'access_denied': 'Access denied - dataset may be tagged as private on S3 (403)',
+            'http_error': `HTTP error ${s3Version.http_status || 'unknown'}`,
+            'request_error': 'Network request failed',
+            'invalid_json': 'Invalid JSON in dataset_description.json',
+            'unexpected_error': s3Version.error_message || 'Unexpected error occurred'
+        };
+
+        const message = errorMessages[s3Version.error] || `Error: ${s3Version.error}`;
+
+        document.getElementById('s3-version-summary').textContent = `✗ ${message}`;
+
+        // Show details with error information
+        document.getElementById('s3-doi').textContent = s3Version.datasetDescriptionDOI || 'N/A';
+        document.getElementById('s3-extracted-version').textContent = s3Version.extractedVersion || 'N/A';
+        document.getElementById('s3-expected-version').textContent = latestSnapshot;
+        document.getElementById('s3-version-last-checked').textContent = formatDate(s3Version.lastChecked);
+
+        // Update icon to show error
+        const icon = document.getElementById('s3-version-icon');
+        icon.textContent = '✗';
+        icon.className = 'check-icon-large error';
+
+        return;
+    }
+
     // Summary message
     let summary = '';
     if (status === 'ok') {
@@ -254,6 +286,7 @@ function renderS3VersionCheck() {
     document.getElementById('s3-extracted-version').textContent = s3Version.extractedVersion;
     document.getElementById('s3-expected-version').textContent = latestSnapshot;
     document.getElementById('s3-version-last-checked').textContent = formatDate(s3Version.lastChecked);
+
 }
 
 /**

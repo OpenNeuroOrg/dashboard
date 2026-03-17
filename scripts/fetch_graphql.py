@@ -21,7 +21,7 @@ import argparse
 import asyncio
 import json
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, UTC
 from dataclasses import dataclass
 
 import cattrs
@@ -214,7 +214,7 @@ async def fetch_and_write(
         # Track progress
         latest_snapshots = {}
         processed = 0
-        timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        timestamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
         try:
             # Process datasets as they arrive

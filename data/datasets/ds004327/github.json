@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0.0",
+  "lastChecked": "2026-03-17T21:14:39.068640+00:00",
+  "head": "main",
+  "branches": {
+    "git-annex": "d6865c1a60cf6efad5b811ed27ce34f52adf6d36",
+    "main": "c4e066f12a9612e1b8a7bc0ff4c0d38a62688ad7",
+    "master": "c4e066f12a9612e1b8a7bc0ff4c0d38a62688ad7"
+  },
+  "tags": {
+    "1.0.0": "61b67890d1a2ec2ef7f29875f827eaa97fb07973",
+    "1.0.1": "d449836e72a509c56053ed0e9da17285597d7aa7",
+    "1.0.2": "a5e30379d05cdbc11927123bfcfe26b73ad0dacb",
+    "1.0.3": "c4e066f12a9612e1b8a7bc0ff4c0d38a62688ad7"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0.0",
+  "lastChecked": "2026-03-17T21:14:42.818895+00:00",
+  "head": "main",
+  "branches": {
+    "git-annex": "ba047aff89f2bf89ba4816ed99416fd420ba8b44",
+    "main": "9e1cf97e83f2573b7aed3ffca276d862e4d52e4a",
+    "master": "9e1cf97e83f2573b7aed3ffca276d862e4d52e4a"
+  },
+  "tags": {
+    "1.0.0": "9e1cf97e83f2573b7aed3ffca276d862e4d52e4a"
+  }
+}

@@ -402,6 +402,48 @@ def main():
         )
     )
 
+    if args.validate:
+        validate_results(args.output_dir)
+
+
+def validate_results(output_dir: Path) -> None:
+    """Validate s3-diff.json files for consistency."""
+    print("\nValidating S3 file check results...")
+
+    registry = load_json(output_dir / "datasets-registry.json")
+    issues = []
+
+    for dataset_id in registry["latestSnapshots"]:
+        dataset_dir = output_dir / "datasets" / dataset_id
+        diff_path = dataset_dir / "s3-diff.json"
+        if not diff_path.exists():
+            continue
+
+        diff = load_json(diff_path)
+
+        # Check required fields
+        for field in ("added", "removed", "context", "totalS3Files", "totalGitFiles", "status"):
+            if field not in diff:
+                issues.append(f"{dataset_id}: missing field '{field}'")
+
+        # Check status consistency
+        added = diff.get("added", [])
+        removed = diff.get("removed", [])
+        status = diff.get("status")
+        if status == "ok" and (len(added) > 0 or len(removed) > 0):
+            issues.append(f"{dataset_id}: status is 'ok' but has {len(added)} added, {len(removed)} removed")
+        if status == "error" and len(added) == 0 and len(removed) == 0:
+            issues.append(f"{dataset_id}: status is 'error' but diff is empty")
+
+    if issues:
+        print(f"\n  Issues found ({len(issues)}):")
+        for issue in issues[:20]:
+            print(f"    {issue}")
+        if len(issues) > 20:
+            print(f"    ... and {len(issues) - 20} more")
+    else:
+        print("  ✓ No issues found")
+
 
 if __name__ == "__main__":
     main()

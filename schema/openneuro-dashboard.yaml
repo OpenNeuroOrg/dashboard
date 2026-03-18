@@ -4,7 +4,7 @@ title: OpenNeuro Dashboard Data Model
 description: >-
   Data model for tracking OpenNeuro datasets and their synchronization status
   across GraphQL API, GitHub mirrors, and S3 exports.
-version: 1.0.0
+version: 1.1.0
 license: https://creativecommons.org/publicdomain/zero/1.0/
 
 prefixes:

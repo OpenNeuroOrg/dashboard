@@ -80,16 +80,11 @@ def summarize_dataset(
         if not s3_diff:
             checks["s3Files"] = "pending"
         elif s3_diff.get("exportMissing"):
-            # Case 4b: Export completely missing
             checks["s3Files"] = "error"
-            last_checked["s3Files"] = s3_diff["lastChecked"]
-        elif s3_diff["summary"]["inGitOnly"] > 0 or s3_diff["summary"]["inS3Only"] > 0:
-            # Cases 1, 2, 4a: File mismatches
-            checks["s3Files"] = "error"
-            last_checked["s3Files"] = s3_diff["lastChecked"]
+            last_checked["s3Files"] = s3_diff["checkedAt"]
         else:
-            checks["s3Files"] = "ok"
-            last_checked["s3Files"] = s3_diff["lastChecked"]
+            checks["s3Files"] = s3_diff.get("status", "pending")
+            last_checked["s3Files"] = s3_diff["checkedAt"]
     
     # Overall status (worst of all checks)
     status_priority = {"ok": 0, "warning": 1, "version-mismatch": 2, "error": 3, "pending": 4}

@@ -6,7 +6,6 @@ Reads:
 - data/datasets-registry.json
 - data/datasets/{id}/s3-version.json
 - data/datasets/{id}/snapshots/{tag}/files.json
-- data/datasets/{id}/snapshots/{tag}/metadata.json
 
 Writes:
 - data/datasets/{id}/s3-diff.json (only if S3 version matches latest)
@@ -19,45 +18,54 @@ from pathlib import Path
 from utils import SCHEMA_VERSION, random_datetime, write_json, load_json
 
 
+def compute_context(sorted_files: list[str], changed: set[str], radius: int = 3) -> list[str]:
+    """Compute context files within `radius` positions of any changed file."""
+    context = set()
+    for i, f in enumerate(sorted_files):
+        if f in changed:
+            for j in range(max(0, i - radius), min(len(sorted_files), i + radius + 1)):
+                neighbor = sorted_files[j]
+                if neighbor not in changed:
+                    context.add(neighbor)
+    return sorted(context)
+
+
 def generate_s3_diff(
-    version: str, git_sha: str, git_files: list[str], scenario: str
+    dataset_id: str, version: str, git_files: list[str], scenario: str
 ) -> dict:
-    """Generate s3-diff.json based on git files and scenario."""
-
+    """Generate s3-diff.json in v1.1.0 format."""
     if scenario == "healthy":
-        in_git_only = []
-        in_s3_only = []
-        total_in_s3 = len(git_files)
+        added = []
+        removed = []
+        total_s3 = len(git_files)
     elif scenario == "error":
-        # S3 is missing some files and has extra files
-        num_missing = random.randint(1, min(5, len(git_files) // 10))
-        in_git_only = random.sample(git_files, num_missing)
-        in_s3_only = [".DS_Store", "._sub-01_T1w.nii.gz", "Thumbs.db"][
+        num_missing = random.randint(1, min(5, max(1, len(git_files) // 10)))
+        added = sorted(random.sample(git_files, num_missing))
+        removed = sorted([".DS_Store", "._sub-01_T1w.nii.gz", "Thumbs.db"][
             : random.randint(1, 3)
-        ]
-        total_in_s3 = len(git_files) - len(in_git_only) + len(in_s3_only)
-    else:  # warning
-        # S3 is missing one file
-        in_git_only = [random.choice(git_files)]
-        in_s3_only = []
-        total_in_s3 = len(git_files) - 1
+        ])
+        total_s3 = len(git_files) - len(added) + len(removed)
+    else:  # warning — treat as error in new schema (any diff = error)
+        added = sorted([random.choice(git_files)])
+        removed = []
+        total_s3 = len(git_files) - 1
 
-    in_both = len(git_files) - len(in_git_only)
+    changed = set(added) | set(removed)
+    context = compute_context(git_files, changed) if changed else []
 
     return {
         "schemaVersion": SCHEMA_VERSION,
-        "lastChecked": random_datetime(days_ago=1),
+        "datasetId": dataset_id,
+        "snapshotTag": version,
         "s3Version": version,
-        "gitHexsha": git_sha,
-        "summary": {
-            "totalInGit": len(git_files),
-            "totalInS3": total_in_s3,
-            "inBoth": in_both,
-            "inGitOnly": len(in_git_only),
-            "inS3Only": len(in_s3_only),
-        },
-        "inGitOnly": in_git_only,
-        "inS3Only": in_s3_only,
+        "checkedAt": random_datetime(days_ago=1),
+        "status": "ok" if not changed else "error",
+        "exportMissing": False,
+        "totalS3Files": total_s3,
+        "totalGitFiles": len(git_files),
+        "added": added,
+        "removed": removed,
+        "context": context,
     }
 
 
@@ -101,19 +109,13 @@ def generate_s3_diffs(output_dir: Path, seed: int = None):
 
         files_data = load_json(files_path)
 
-        # Load metadata for git SHA
-        metadata_path = dataset_dir / "snapshots" / latest_snapshot / "metadata.json"
-        metadata = load_json(metadata_path)
-
         # Determine scenario
         scenario = random.choices(["healthy", "warning", "error"], weights=[85, 10, 5])[
             0
         ]
 
         # Generate and write s3-diff.json
-        s3_diff = generate_s3_diff(
-            latest_snapshot, metadata["hexsha"], files_data["files"], scenario
-        )
+        s3_diff = generate_s3_diff(dataset_id, latest_snapshot, files_data["files"], scenario)
         write_json(dataset_dir / "s3-diff.json", s3_diff)
         generated += 1
 

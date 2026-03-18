@@ -21,11 +21,10 @@ import asyncio
 import json
 import re
 from pathlib import Path
-from datetime import datetime, UTC
 
 import httpx
 
-from utils import SCHEMA_VERSION, write_json, load_json
+from utils import SCHEMA_VERSION, write_json, load_json, format_timestamp
 
 
 S3_BASE_URL = "https://s3.amazonaws.com/openneuro.org"
@@ -67,7 +66,7 @@ async def fetch_dataset_description(
                 print(f"⚠ {dataset_id}: No DatasetDOI field, assuming latest ({latest_snapshot})")
             return {
                 "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                "lastChecked": format_timestamp(),
                 "accessible": True,
                 "datasetDescriptionDOI": None,
                 "extractedVersion": latest_snapshot,
@@ -75,14 +74,14 @@ async def fetch_dataset_description(
             }
         
         # Try to extract version from DOI
-        match = DOI_PATTERN.match(doi)
+        match = DOI_PATTERN.search(doi)
         if not match:
             # Case 2: Custom DOI - assume latest snapshot
             if verbose:
                 print(f"⚠ {dataset_id}: Custom DOI ({doi}), assuming latest ({latest_snapshot})")
             return {
                 "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                "lastChecked": format_timestamp(),
                 "accessible": True,
                 "datasetDescriptionDOI": doi,
                 "extractedVersion": latest_snapshot,
@@ -98,7 +97,7 @@ async def fetch_dataset_description(
                 print(f"⚠ {dataset_id}: DOI has wrong ID ({doi_dataset_id}), using version {version}")
             return {
                 "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                "lastChecked": format_timestamp(),
                 "accessible": True,
                 "datasetDescriptionDOI": doi,
                 "extractedVersion": version,
@@ -113,7 +112,7 @@ async def fetch_dataset_description(
         
         return {
             "schemaVersion": SCHEMA_VERSION,
-            "lastChecked": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+            "lastChecked": format_timestamp(),
             "accessible": True,
             "datasetDescriptionDOI": doi,
             "extractedVersion": version,
@@ -126,7 +125,7 @@ async def fetch_dataset_description(
             print(f"🔒 {dataset_id}: Access denied (403)")
             return {
                 "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                "lastChecked": format_timestamp(),
                 "accessible": False,
                 "httpStatus": 403,
                 "datasetDescriptionDOI": None,
@@ -137,7 +136,7 @@ async def fetch_dataset_description(
             print(f"⚠ {dataset_id}: dataset_description.json not found (404), assuming latest ({latest_snapshot})")
             return {
                 "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                "lastChecked": format_timestamp(),
                 "accessible": True,
                 "datasetDescriptionDOI": None,
                 "extractedVersion": latest_snapshot,
@@ -149,7 +148,7 @@ async def fetch_dataset_description(
             print(f"⚠ {dataset_id}: HTTP {e.response.status_code}, assuming latest ({latest_snapshot})")
             return {
                 "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                "lastChecked": format_timestamp(),
                 "accessible": True,
                 "datasetDescriptionDOI": None,
                 "extractedVersion": latest_snapshot,
@@ -162,7 +161,7 @@ async def fetch_dataset_description(
         print(f"⚠ {dataset_id}: Request error, assuming latest ({latest_snapshot})")
         return {
             "schemaVersion": SCHEMA_VERSION,
-            "lastChecked": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+            "lastChecked": format_timestamp(),
             "accessible": True,
             "datasetDescriptionDOI": None,
             "extractedVersion": latest_snapshot,
@@ -175,7 +174,7 @@ async def fetch_dataset_description(
         print(f"⚠ {dataset_id}: Invalid JSON, assuming latest ({latest_snapshot})")
         return {
             "schemaVersion": SCHEMA_VERSION,
-            "lastChecked": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+            "lastChecked": format_timestamp(),
             "accessible": True,
             "datasetDescriptionDOI": None,
             "extractedVersion": latest_snapshot,
@@ -188,7 +187,7 @@ async def fetch_dataset_description(
         print(f"⚠ {dataset_id}: Unexpected error ({e}), assuming latest ({latest_snapshot})")
         return {
             "schemaVersion": SCHEMA_VERSION,
-            "lastChecked": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+            "lastChecked": format_timestamp(),
             "accessible": True,
             "datasetDescriptionDOI": None,
             "extractedVersion": latest_snapshot,

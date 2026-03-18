@@ -31,7 +31,8 @@ import gql
 from gql.transport.httpx import HTTPXAsyncTransport
 from gql.transport.exceptions import TransportQueryError
 
-SCHEMA_VERSION = "1.0.0"
+from utils import SCHEMA_VERSION, format_timestamp
+
 ENDPOINT = "https://openneuro.org/crn/graphql"
 
 converter = cattrs.Converter()
@@ -214,7 +215,7 @@ async def fetch_and_write(
         # Track progress
         latest_snapshots = {}
         processed = 0
-        timestamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        timestamp = format_timestamp()
 
         try:
             # Process datasets as they arrive
@@ -287,6 +288,49 @@ async def fetch_and_write(
             print(f"  Registry written to: {registry_path}")
 
 
+def validate_output(output_dir: Path) -> None:
+    """Validate the output data for consistency."""
+    print("\nValidating output...")
+
+    registry_path = output_dir / "datasets-registry.json"
+    if not registry_path.exists():
+        print("  ✗ datasets-registry.json not found")
+        return
+
+    import json
+    with open(registry_path) as f:
+        registry = json.load(f)
+
+    issues = []
+    for dataset_id, latest_snapshot in registry["latestSnapshots"].items():
+        dataset_dir = output_dir / "datasets" / dataset_id
+
+        snapshots_path = dataset_dir / "snapshots.json"
+        if not snapshots_path.exists():
+            issues.append(f"{dataset_id}: snapshots.json missing")
+            continue
+
+        with open(snapshots_path) as f:
+            snapshots = json.load(f)
+
+        if latest_snapshot not in snapshots["tags"]:
+            issues.append(f"{dataset_id}: latest {latest_snapshot} not in tags")
+
+        for tag in snapshots["tags"]:
+            metadata_path = dataset_dir / "snapshots" / tag / "metadata.json"
+            if not metadata_path.exists():
+                issues.append(f"{dataset_id}: metadata.json missing for {tag}")
+
+    if issues:
+        print(f"\n  Issues found ({len(issues)}):")
+        for issue in issues[:20]:
+            print(f"    {issue}")
+        if len(issues) > 20:
+            print(f"    ... and {len(issues) - 20} more")
+    else:
+        print("  ✓ No issues found")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Fetch dataset info from OpenNeuro GraphQL API"
@@ -315,6 +359,10 @@ def main():
         help="Don't write files, just log what would be done",
     )
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
+    parser.add_argument(
+        "--validate", action="store_true",
+        help="Validate output data after fetching",
+    )
 
     args = parser.parse_args()
 
@@ -323,6 +371,9 @@ def main():
             args.output_dir, args.page_size, args.prefetch, args.dry_run, args.verbose
         )
     )
+
+    if args.validate:
+        validate_output(args.output_dir)
 
 
 if __name__ == "__main__":

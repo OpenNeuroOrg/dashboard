@@ -4,7 +4,7 @@ title: OpenNeuro Dashboard Data Model
 description: >-
   Data model for tracking OpenNeuro datasets and their synchronization status
   across GraphQL API, GitHub mirrors, and S3 exports.
-version: 1.0.0
+version: 1.1.0
 license: https://creativecommons.org/publicdomain/zero/1.0/
 
 prefixes:
@@ -234,69 +234,72 @@ classes:
     description: >-
       Comparison between S3 file listing and git tree.
       Only created when S3 is accessible (not 403).
+      Diff semantics: "what needs to happen to bring S3 into sync with git."
     attributes:
       schemaVersion:
         range: string
         required: true
         description: Version of the schema used for this file
         pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-      lastChecked:
-        range: datetime
+      datasetId:
+        range: string
         required: true
+        pattern: "^ds[0-9]{6}$"
+      snapshotTag:
+        range: string
+        required: true
+        description: Git tag compared against
       s3Version:
         range: string
         required: true
         description: Version tag that S3 was compared against
-      gitHexsha:
-        range: string
+      checkedAt:
+        range: datetime
         required: true
-        description: Git commit SHA used for comparison
-        pattern: "^[0-9a-f]{40}$"
+        description: When this comparison was performed
+      status:
+        range: CheckStatus
+        required: true
+        description: "ok if no differences, error if any"
       exportMissing:
         range: boolean
         required: false
         description: >-
           True if S3 has zero files (entire export is missing).
-          When true, inGitOnly and inS3Only will be empty arrays.
-      summary:
-        range: DiffSummary
+          When true, added, removed, and context will be empty arrays.
+      totalS3Files:
+        range: integer
         required: true
-        inlined: true
-      inGitOnly:
+        description: Total number of files found in S3
+      totalGitFiles:
+        range: integer
+        required: true
+        description: Total number of files in the git tree
+      added:
         range: string
         required: true
         multivalued: true
         inlined_as_list: true
         description: >-
-          Files present in git but missing from S3.
-          Empty array if exportMissing is true.
-      inS3Only:
+          Files in git but not S3 (S3 needs these).
+          Sorted for deterministic output.
+      removed:
         range: string
         required: true
         multivalued: true
         inlined_as_list: true
         description: >-
-          Files present in S3 but not in git.
-          Empty array if exportMissing is true.
-
-  DiffSummary:
-    description: Summary counts for file comparison
-    attributes:
-      totalInGit:
-        range: integer
+          Files in S3 but not git (orphaned in S3).
+          Sorted for deterministic output.
+      context:
+        range: string
         required: true
-      totalInS3:
-        range: integer
-        required: true
-      inBoth:
-        range: integer
-        required: true
-      inGitOnly:
-        range: integer
-        required: true
-      inS3Only:
-        range: integer
-        required: true
+        multivalued: true
+        inlined_as_list: true
+        description: >-
+          Neighboring files from the git tree within 3 sorted positions
+          of any added/removed file. Used to reconstruct a unified diff
+          view with context. Sorted for deterministic output.
 
   SnapshotMetadata:
     description: >-

@@ -313,12 +313,11 @@ function renderS3VersionCheck() {
 function renderS3FilesCheck() {
     const status = getS3FilesStatus();
     const icon = document.getElementById('s3-files-icon');
-    
-    // Check if blocked by 403
+
     if (s3Version && !s3Version.accessible) {
         icon.textContent = '🔒';
         icon.className = 'check-icon-large error';
-        document.getElementById('s3-files-summary').textContent = 
+        document.getElementById('s3-files-summary').textContent =
             'File check blocked - S3 access denied (see S3 Version Status above)';
         document.getElementById('s3-diff-container').style.display = 'none';
         return;
@@ -337,58 +336,40 @@ function renderS3FilesCheck() {
         return;
     }
 
-    // Check for case 4b: export missing
     if (s3Diff.exportMissing) {
-        const summary = `No files found on S3 (0/${s3Diff.summary.totalInGit}). ` +
+        const summary = `No files found on S3 (0/${s3Diff.totalGitFiles}). ` +
                        `The dataset export appears to be completely missing and needs to be regenerated.`;
         document.getElementById('s3-files-summary').textContent = summary;
         document.getElementById('s3-diff-container').style.display = 'none';
         return;
     }
 
-    // Normal case: show file comparison
+    const addedCount = s3Diff.added.length;
+    const removedCount = s3Diff.removed.length;
+
     let summary = '';
     if (status === 'ok') {
-        summary = `✓ All ${s3Diff.summary.inBoth} files match between Git and S3.`;
+        summary = `✓ All ${s3Diff.totalGitFiles} files match between Git and S3.`;
     } else {
-        const missing = s3Diff.summary.inGitOnly;
-        const extra = s3Diff.summary.inS3Only;
-        summary = `✗ File mismatch: ${missing} file${missing !== 1 ? 's' : ''} missing from S3, ` +
-                 `${extra} extra file${extra !== 1 ? 's' : ''} in S3.`;
+        summary = `✗ File mismatch: ${addedCount} file${addedCount !== 1 ? 's' : ''} missing from S3, ` +
+                 `${removedCount} extra file${removedCount !== 1 ? 's' : ''} in S3.`;
     }
     document.getElementById('s3-files-summary').textContent = summary;
 
-    // Show diff details
     document.getElementById('s3-diff-container').style.display = 'block';
-    
-    // Populate diff summary
-    document.getElementById('diff-total-git').textContent = s3Diff.summary.totalInGit;
-    document.getElementById('diff-total-s3').textContent = s3Diff.summary.totalInS3;
-    document.getElementById('diff-in-both').textContent = s3Diff.summary.inBoth;
-    document.getElementById('diff-git-only').textContent = s3Diff.summary.inGitOnly;
-    document.getElementById('diff-s3-only').textContent = s3Diff.summary.inS3Only;
 
-    // Show file lists if there are differences
-    if (s3Diff.inGitOnly.length > 0) {
-        const section = document.getElementById('files-git-only');
-        section.style.display = 'block';
-        section.querySelector('.file-list').innerHTML = s3Diff.inGitOnly
-            .map(file => `<div>${file}</div>`)
-            .join('');
+    document.getElementById('diff-total-git').textContent = s3Diff.totalGitFiles;
+    document.getElementById('diff-total-s3').textContent = s3Diff.totalS3Files;
+    document.getElementById('diff-added').textContent = addedCount;
+    document.getElementById('diff-removed').textContent = removedCount;
+
+    if (addedCount > 0 || removedCount > 0) {
+        renderDiffViewer(s3Diff);
     }
 
-    if (s3Diff.inS3Only.length > 0) {
-        const section = document.getElementById('files-s3-only');
-        section.style.display = 'block';
-        section.querySelector('.file-list').innerHTML = s3Diff.inS3Only
-            .map(file => `<div>${file}</div>`)
-            .join('');
-    }
-
-    // Other details
-    document.getElementById('diff-git-sha').textContent = s3Diff.gitHexsha;
+    document.getElementById('diff-snapshot-tag').textContent = s3Diff.snapshotTag;
     document.getElementById('diff-s3-version').textContent = s3Diff.s3Version;
-    document.getElementById('s3-files-last-checked').textContent = formatDate(s3Diff.lastChecked);
+    document.getElementById('s3-files-last-checked').textContent = formatDate(s3Diff.checkedAt);
 }
 
 /**
@@ -398,107 +379,55 @@ function getS3FilesStatus() {
     if (!s3Version) return 'pending';
     if (s3Version.extractedVersion !== latestSnapshot) return 'version-mismatch';
     if (!s3Diff) return 'pending';
-
-    if (s3Diff.summary.inGitOnly > 0 || s3Diff.summary.inS3Only > 0) {
-        return 'error';
-    }
-
-    return 'ok';
+    return s3Diff.status || 'pending';
 }
 
 /**
- * Render unified diff viewer
+ * Render unified diff viewer from added/removed/context lists
  */
-function renderDiffViewer(gitFiles, diff) {
+function renderDiffViewer(diff) {
     const viewer = document.getElementById('diff-viewer');
 
-    // Create sets for fast lookup
-    const inGitOnly = new Set(diff.inGitOnly);
-    const inS3Only = new Set(diff.inS3Only);
+    const unified = [
+        ...diff.added.map(f => ({ file: f, type: 'added' })),
+        ...diff.removed.map(f => ({ file: f, type: 'removed' })),
+        ...diff.context.map(f => ({ file: f, type: 'context' })),
+    ].sort((a, b) => a.file.localeCompare(b.file));
 
-    // Combine all files (git files + S3-only files) and sort
-    const allFiles = [...gitFiles, ...diff.inS3Only].sort();
-
-    // Build diff with context grouping
+    const CONTEXT_SIZE = 3;
     const lines = [];
-    const CONTEXT_SIZE = 3; // Show 3 lines of context around changes
+    let contextBuffer = [];
 
-    let lastChangeIndex = -1000; // Track last line with changes
-    let unchangedBuffer = [];
+    function flushContext() {
+        if (contextBuffer.length === 0) return;
 
-    allFiles.forEach((file, index) => {
-        const isRemoved = inGitOnly.has(file);
-        const isAdded = inS3Only.has(file);
-        const isChanged = isRemoved || isAdded;
-
-        if (isChanged) {
-            // Flush unchanged buffer if we have a new change
-            if (unchangedBuffer.length > 0) {
-                const distanceFromLastChange = index - lastChangeIndex;
-
-                if (distanceFromLastChange > CONTEXT_SIZE * 2 + 1) {
-                    // Large gap - create collapsible section
-                    const contextBefore = unchangedBuffer.slice(0, CONTEXT_SIZE);
-                    const contextAfter = unchangedBuffer.slice(-CONTEXT_SIZE);
-                    const hidden = unchangedBuffer.slice(CONTEXT_SIZE, -CONTEXT_SIZE);
-
-                    lines.push(...contextBefore.map(f => ({ file: f, type: 'context' })));
-
-                    if (hidden.length > 0) {
-                        lines.push({
-                            type: 'collapse',
-                            count: hidden.length,
-                            files: hidden
-                        });
-                    }
-
-                    lines.push(...contextAfter.map(f => ({ file: f, type: 'context' })));
-                } else {
-                    // Small gap - show all as context
-                    lines.push(...unchangedBuffer.map(f => ({ file: f, type: 'context' })));
-                }
-
-                unchangedBuffer = [];
-            }
-
-            // Add the changed line
-            lines.push({
-                file,
-                type: isRemoved ? 'removed' : 'added'
-            });
-
-            lastChangeIndex = index;
-        } else {
-            // Unchanged file - add to buffer
-            unchangedBuffer.push(file);
-        }
-    });
-
-    // Handle any remaining unchanged files at the end
-    if (unchangedBuffer.length > 0) {
-        if (unchangedBuffer.length > CONTEXT_SIZE) {
-            const context = unchangedBuffer.slice(0, CONTEXT_SIZE);
-            const hidden = unchangedBuffer.slice(CONTEXT_SIZE);
-
-            lines.push(...context.map(f => ({ file: f, type: 'context' })));
-
+        if (contextBuffer.length > CONTEXT_SIZE * 2) {
+            lines.push(...contextBuffer.slice(0, CONTEXT_SIZE));
+            const hidden = contextBuffer.slice(CONTEXT_SIZE, -CONTEXT_SIZE);
             if (hidden.length > 0) {
-                lines.push({
-                    type: 'collapse',
-                    count: hidden.length,
-                    files: hidden
-                });
+                lines.push({ type: 'collapse', count: hidden.length, files: hidden });
             }
+            lines.push(...contextBuffer.slice(-CONTEXT_SIZE));
         } else {
-            lines.push(...unchangedBuffer.map(f => ({ file: f, type: 'context' })));
+            lines.push(...contextBuffer);
         }
+        contextBuffer = [];
     }
 
-    // Render the diff
+    for (const entry of unified) {
+        if (entry.type === 'context') {
+            contextBuffer.push(entry);
+        } else {
+            flushContext();
+            lines.push(entry);
+        }
+    }
+    flushContext();
+
     let html = '';
     let collapseId = 0;
 
-    lines.forEach(line => {
+    for (const line of lines) {
         if (line.type === 'collapse') {
             const id = `collapse-${collapseId++}`;
             html += `
@@ -507,32 +436,24 @@ function renderDiffViewer(gitFiles, diff) {
                 </button>
                 <div class="diff-section" id="${id}">
                     ${line.files.map(f =>
-                        `<div class="diff-line unchanged">${escapeHtml(f)}</div>`
+                        `<div class="diff-line context">  ${escapeHtml(f.file)}</div>`
                     ).join('')}
                 </div>
             `;
         } else {
-            const prefix = line.type === 'removed' ? '- ' : line.type === 'added' ? '+ ' : '  ';
+            const prefix = line.type === 'added' ? '+ ' : line.type === 'removed' ? '- ' : '  ';
             html += `<div class="diff-line ${line.type}">${prefix}${escapeHtml(line.file)}</div>`;
         }
-    });
+    }
 
     viewer.innerHTML = html;
 
-    // Setup collapse/expand handlers
     viewer.querySelectorAll('.diff-collapse').forEach(button => {
         button.addEventListener('click', () => {
             const targetId = button.dataset.target;
             const section = document.getElementById(targetId);
-            const isExpanded = section.classList.contains('expanded');
-
-            if (isExpanded) {
-                section.classList.remove('expanded');
-                button.classList.remove('expanded');
-            } else {
-                section.classList.add('expanded');
-                button.classList.add('expanded');
-            }
+            section.classList.toggle('expanded');
+            button.classList.toggle('expanded');
         });
     });
 }

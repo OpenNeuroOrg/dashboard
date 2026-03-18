@@ -152,40 +152,44 @@
                             <div class="details-content">
                                 <div class="diff-summary">
                                     <div class="diff-stat">
-                                        <strong>Total in Git:</strong>
+                                        <strong>Git Files:</strong>
                                         <span id="diff-total-git">...</span>
                                     </div>
                                     <div class="diff-stat">
-                                        <strong>Total in S3:</strong>
+                                        <strong>S3 Files:</strong>
                                         <span id="diff-total-s3">...</span>
                                     </div>
-                                    <div class="diff-stat">
-                                        <strong>In Both:</strong>
-                                        <span id="diff-in-both">...</span>
+                                    <div class="diff-stat error-stat">
+                                        <strong>Missing from S3:</strong>
+                                        <span id="diff-added">...</span>
                                     </div>
                                     <div class="diff-stat error-stat">
-                                        <strong>Only in Git:</strong>
-                                        <span id="diff-git-only">...</span>
-                                    </div>
-                                    <div class="diff-stat error-stat">
-                                        <strong>Only in S3:</strong>
-                                        <span id="diff-s3-only">...</span>
+                                        <strong>Orphaned in S3:</strong>
+                                        <span id="diff-removed">...</span>
                                     </div>
                                 </div>
 
-                                <div id="files-git-only" class="file-diff-section" style="display: none;">
-                                    <h4>Files only in Git (missing from S3):</h4>
-                                    <div class="file-list scrollable"></div>
-                                </div>
-
-                                <div id="files-s3-only" class="file-diff-section" style="display: none;">
-                                    <h4>Files only in S3 (not in Git):</h4>
-                                    <div class="file-list scrollable"></div>
+                                <div class="diff-viewer-container">
+                                    <div class="diff-legend">
+                                        <div class="diff-legend-item">
+                                            <span class="diff-legend-marker added"></span>
+                                            Need to add to S3
+                                        </div>
+                                        <div class="diff-legend-item">
+                                            <span class="diff-legend-marker removed"></span>
+                                            Remove from S3
+                                        </div>
+                                        <div class="diff-legend-item">
+                                            <span class="diff-legend-marker unchanged"></span>
+                                            Context
+                                        </div>
+                                    </div>
+                                    <div class="diff-viewer" id="diff-viewer"></div>
                                 </div>
 
                                 <div class="detail-row">
-                                    <strong>Git SHA:</strong>
-                                    <code id="diff-git-sha">...</code>
+                                    <strong>Snapshot Tag:</strong>
+                                    <code id="diff-snapshot-tag">...</code>
                                 </div>
                                 <div class="detail-row">
                                     <strong>S3 Version:</strong>

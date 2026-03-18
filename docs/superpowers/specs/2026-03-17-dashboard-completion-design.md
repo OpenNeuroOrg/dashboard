@@ -52,8 +52,9 @@ Skip the dataset if any of these are true:
 - The resolved tag (from `extractedVersion` in `s3-version.json`) is not present in `github.json` tags — the tag can't be cloned if GitHub doesn't have it.
 - An existing `s3-diff.json` can be skipped if:
   - It has the same `s3Version` as the current `s3-version.json`, AND
-  - Either the diff is empty (`added` and `removed` are both empty), OR the `checkedAt` timestamp is less than 7 days old.
-  - Non-empty diffs older than 7 days are re-run to detect administrative corrections (e.g., manual removal of excess files or re-export) that don't change the S3 version.
+  - The diff is empty (`added` and `removed` are both empty), OR
+  - The `checkedAt` timestamp is less than 7 days old.
+  - Empty diffs older than 7 days are re-run to ensure new errors do not go undetected.
 
 ### Logic
 

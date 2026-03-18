@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003554",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:14:20.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 334,
+  "totalGitFiles": 336,
+  "added": [
+    "sub-sc023/func/sub-sc023_task-RepYo1_bold.nii.gz",
+    "sub-sc023/func/sub-sc023_task-RepYo2_bold.nii.gz",
+    "sub-sc024/anat/sub-sc024_T1w.nii.gz",
+    "sub-sc024/func/sub-sc024_task-RepYo1_bold.nii.gz",
+    "sub-sc024/func/sub-sc024_task-RepYo2_bold.nii.gz",
+    "sub-sc025/func/sub-sc025_task-RepYo1_bold.nii.gz"
+  ],
+  "removed": [
+    "CHANGES",
+    "participants.json",
+    "task-RepYo1_events.json",
+    "task-RepYo2_events.json"
+  ],
+  "context": [
+    "sub-sc023/anat/sub-sc023_T1w.json",
+    "sub-sc023/anat/sub-sc023_T1w.nii.gz",
+    "sub-sc023/func/sub-sc023_task-RepYo1_bold.json",
+    "sub-sc023/func/sub-sc023_task-RepYo1_events.tsv",
+    "sub-sc023/func/sub-sc023_task-RepYo2_bold.json",
+    "sub-sc023/func/sub-sc023_task-RepYo2_events.tsv",
+    "sub-sc024/anat/sub-sc024_T1w.json",
+    "sub-sc024/func/sub-sc024_task-RepYo1_bold.json",
+    "sub-sc024/func/sub-sc024_task-RepYo1_events.tsv",
+    "sub-sc024/func/sub-sc024_task-RepYo2_bold.json",
+    "sub-sc024/func/sub-sc024_task-RepYo2_events.tsv",
+    "sub-sc025/anat/sub-sc025_T1w.json",
+    "sub-sc025/anat/sub-sc025_T1w.nii.gz",
+    "sub-sc025/func/sub-sc025_task-RepYo1_bold.json",
+    "sub-sc025/func/sub-sc025_task-RepYo1_events.tsv",
+    "sub-sc025/func/sub-sc025_task-RepYo2_bold.json",
+    "sub-sc025/func/sub-sc025_task-RepYo2_bold.nii.gz"
+  ]
+}

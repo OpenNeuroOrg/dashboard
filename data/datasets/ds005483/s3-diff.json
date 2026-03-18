@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds005483",
+  "snapshotTag": "2.0.1",
+  "s3Version": "2.0.1",
+  "checkedAt": "2026-03-18T03:19:33.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 255,
+  "totalGitFiles": 257,
+  "added": [
+    "README",
+    "participants.json"
+  ],
+  "removed": [],
+  "context": [
+    ".datalad/config",
+    ".gitattributes",
+    "CHANGES",
+    "dataset_description.json",
+    "participants.tsv",
+    "sub-nbdamhv01/anat/sub-nbdamhv01_T1w.json",
+    "sub-nbdamhv01/anat/sub-nbdamhv01_T1w.nii.gz"
+  ]
+}

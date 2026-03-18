@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003831",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:14:58.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 1681,
+  "totalGitFiles": 1684,
+  "added": [
+    "sub-012/anat/sub-012_T1w.nii.gz",
+    "sub-024/anat/sub-024_T1w.nii.gz",
+    "sub-066/anat/sub-066_T1w.nii.gz"
+  ],
+  "removed": [],
+  "context": [
+    "sub-010/func/sub-010_task-modulate2_physio.tsv.gz",
+    "sub-010/func/sub-010_task-rest_bold.nii.gz",
+    "sub-010/func/sub-010_task-rest_physio.tsv.gz",
+    "sub-012/func/sub-012_task-identify1_bold.nii.gz",
+    "sub-012/func/sub-012_task-identify1_events.json",
+    "sub-012/func/sub-012_task-identify1_events.tsv",
+    "sub-023/func/sub-023_task-modulate2_physio.tsv.gz",
+    "sub-023/func/sub-023_task-rest_bold.nii.gz",
+    "sub-023/func/sub-023_task-rest_physio.tsv.gz",
+    "sub-024/func/sub-024_task-identify1_bold.nii.gz",
+    "sub-024/func/sub-024_task-identify1_events.json",
+    "sub-024/func/sub-024_task-identify1_events.tsv",
+    "sub-064/func/sub-064_task-modulate2_physio.tsv.gz",
+    "sub-064/func/sub-064_task-rest_bold.nii.gz",
+    "sub-064/func/sub-064_task-rest_physio.tsv.gz",
+    "sub-066/func/sub-066_task-identify1_bold.nii.gz",
+    "sub-066/func/sub-066_task-identify1_events.json",
+    "sub-066/func/sub-066_task-identify1_events.tsv"
+  ]
+}

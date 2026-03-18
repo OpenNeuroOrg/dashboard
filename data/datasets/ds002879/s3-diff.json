@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds002879",
+  "snapshotTag": "1.1.0",
+  "s3Version": "1.1.0",
+  "checkedAt": "2026-03-18T03:13:22.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 1138,
+  "totalGitFiles": 1138,
+  "added": [
+    "sub-2514/func/sub-2514_task-VVNonWord_run-02_bold.nii.gz"
+  ],
+  "removed": [
+    "annex-uuid"
+  ],
+  "context": [
+    "sub-2514/func/sub-2514_task-AAWord_run-02_events.tsv",
+    "sub-2514/func/sub-2514_task-VVNonWord_run-01_bold.nii.gz",
+    "sub-2514/func/sub-2514_task-VVNonWord_run-01_events.tsv",
+    "sub-2514/func/sub-2514_task-VVNonWord_run-02_events.tsv",
+    "sub-2514/func/sub-2514_task-VVWord_run-01_bold.nii.gz",
+    "sub-2514/func/sub-2514_task-VVWord_run-01_events.tsv"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds006266",
+  "snapshotTag": "1.0.2",
+  "s3Version": "1.0.2",
+  "checkedAt": "2026-03-18T03:20:59.000Z",
+  "status": "ok",
+  "exportMissing": false,
+  "totalS3Files": 357,
+  "totalGitFiles": 357,
+  "added": [],
+  "removed": [],
+  "context": []
+}

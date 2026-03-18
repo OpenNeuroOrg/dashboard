@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds004327",
+  "snapshotTag": "1.0.3",
+  "s3Version": "1.0.3",
+  "checkedAt": "2026-03-18T03:16:02.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 1284,
+  "totalGitFiles": 1286,
+  "added": [
+    "sub-2498/anat/sub-2498_T1w.nii.gz",
+    "sub-2509/anat/sub-2509_T1w.nii.gz"
+  ],
+  "removed": [],
+  "context": [
+    "sub-2497/func/sub-2497_task-odor_run-05_events.tsv",
+    "sub-2497/func/sub-2497_task-odor_run-05_recording-sniff_physio.tsv.gz",
+    "sub-2498/anat/sub-2498_T1w.json",
+    "sub-2498/fmap/sub-2498_dir-AP_epi.json",
+    "sub-2498/fmap/sub-2498_dir-AP_epi.nii.gz",
+    "sub-2498/fmap/sub-2498_dir-PA_epi.json",
+    "sub-2508/func/sub-2508_task-odor_run-05_events.tsv",
+    "sub-2508/func/sub-2508_task-odor_run-05_recording-sniff_physio.tsv.gz",
+    "sub-2509/anat/sub-2509_T1w.json",
+    "sub-2509/fmap/sub-2509_dir-AP_epi.json",
+    "sub-2509/fmap/sub-2509_dir-AP_epi.nii.gz",
+    "sub-2509/fmap/sub-2509_dir-PA_epi.json"
+  ]
+}

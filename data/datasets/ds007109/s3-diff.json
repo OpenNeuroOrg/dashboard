@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds007109",
+  "snapshotTag": "1.0.1",
+  "s3Version": "1.0.1",
+  "checkedAt": "2026-03-18T03:22:17.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 1497,
+  "totalGitFiles": 1499,
+  "added": [
+    "CHANGES",
+    "dataset_description.json"
+  ],
+  "removed": [],
+  "context": [
+    ".bidsignore",
+    ".datalad/config",
+    ".gitattributes",
+    "README",
+    "participants.json",
+    "participants.tsv",
+    "scans.json"
+  ]
+}

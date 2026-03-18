@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003425",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:13:54.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 1337,
+  "totalGitFiles": 1335,
+  "added": [],
+  "removed": [
+    "annex-uuid",
+    "sub-06/ses-01/func/sub-06_ses-01_task-learning_run-03_recording-scr_physio.json"
+  ],
+  "context": []
+}

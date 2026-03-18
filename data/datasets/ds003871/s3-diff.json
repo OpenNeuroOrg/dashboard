@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003871",
+  "snapshotTag": "1.0.2",
+  "s3Version": "1.0.2",
+  "checkedAt": "2026-03-18T03:15:03.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 251,
+  "totalGitFiles": 252,
+  "added": [
+    "README"
+  ],
+  "removed": [],
+  "context": [
+    ".gitattributes",
+    "CHANGES",
+    "dataset_description.json",
+    "sub-1004/anat/sub-1004_T1w.json",
+    "sub-1004/anat/sub-1004_T1w.nii.gz"
+  ]
+}

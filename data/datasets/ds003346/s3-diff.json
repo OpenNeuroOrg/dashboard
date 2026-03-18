@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003346",
+  "snapshotTag": "1.1.1",
+  "s3Version": "1.1.1",
+  "checkedAt": "2026-03-18T03:13:48.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 1689,
+  "totalGitFiles": 1701,
+  "added": [
+    "sub-161/anat/sub-161_T1w.json",
+    "sub-161/anat/sub-161_T1w.nii.gz",
+    "sub-161/dwi/sub-161_dwi.bval",
+    "sub-161/dwi/sub-161_dwi.bvec",
+    "sub-161/dwi/sub-161_dwi.json",
+    "sub-161/dwi/sub-161_dwi.nii.gz",
+    "sub-161/fmap/sub-161_dir-PA_run-01_epi.json",
+    "sub-161/fmap/sub-161_dir-PA_run-01_epi.nii.gz",
+    "sub-161/fmap/sub-161_dir-PA_run-02_epi.json",
+    "sub-161/fmap/sub-161_dir-PA_run-02_epi.nii.gz",
+    "sub-161/func/sub-161_task-rest_bold.json",
+    "sub-161/func/sub-161_task-rest_bold.nii.gz"
+  ],
+  "removed": [],
+  "context": [
+    "sub-160/fmap/sub-160_dir-PA_run-02_epi.nii.gz",
+    "sub-160/func/sub-160_task-rest_bold.json",
+    "sub-160/func/sub-160_task-rest_bold.nii.gz"
+  ]
+}

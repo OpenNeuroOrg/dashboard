@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003999",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:15:12.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 209,
+  "totalGitFiles": 209,
+  "added": [
+    "sub-05/ses-pre/anat/sub-05_ses-pre_T1w_label-lesion_roi.nii.gz"
+  ],
+  "removed": [
+    "annex-uuid"
+  ],
+  "context": [
+    "sub-05/ses-post/func/sub-05_ses-post_task-rest_bold.nii.gz",
+    "sub-05/ses-pre/anat/sub-05_ses-pre_T1w.json",
+    "sub-05/ses-pre/anat/sub-05_ses-pre_T1w.nii.gz",
+    "sub-05/ses-pre/func/sub-05_ses-pre_task-rest_bold.json",
+    "sub-05/ses-pre/func/sub-05_ses-pre_task-rest_bold.nii.gz",
+    "sub-07/ses-post/anat/sub-07_ses-post_T1w.json"
+  ]
+}

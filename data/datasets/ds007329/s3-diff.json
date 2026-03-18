@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds007329",
+  "snapshotTag": "1.0.1",
+  "s3Version": "1.0.1",
+  "checkedAt": "2026-03-18T03:22:41.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 7013,
+  "totalGitFiles": 7015,
+  "added": [
+    "derivatives/fmriprep",
+    "derivatives/freesurfer"
+  ],
+  "removed": [],
+  "context": [
+    "code/swap-echo-times-fmap.py",
+    "dataset_description.json",
+    "derivatives/README.md",
+    "derivatives/jiahui-2023/README.md",
+    "derivatives/jiahui-2023/fmriprep-1.4.1/sub-sid000005_ses-1_task-visualmemory_run-02_space-fsaverage-icoorder5_hemi-L.func.npy",
+    "derivatives/jiahui-2023/fmriprep-1.4.1/sub-sid000005_ses-1_task-visualmemory_run-02_space-fsaverage-icoorder5_hemi-R.func.npy"
+  ]
+}

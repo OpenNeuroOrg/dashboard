@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds004868",
+  "snapshotTag": "1.0.1",
+  "s3Version": "1.0.1",
+  "checkedAt": "2026-03-18T03:17:51.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 111,
+  "totalGitFiles": 114,
+  "added": [
+    "sub-PS53/ses-baseline/anat/sub-PS53_ses-baseline_T1w.nii.gz",
+    "sub-PS53/ses-baseline/pet/sub-PS53_ses-baseline_pet.nii.gz",
+    "sub-PS53/ses-blocked/pet/sub-PS53_ses-blocked_pet.nii.gz"
+  ],
+  "removed": [],
+  "context": [
+    "sub-PS52/ses-blocked/pet/sub-PS52_ses-blocked_recording-manual_blood.json",
+    "sub-PS52/ses-blocked/pet/sub-PS52_ses-blocked_recording-manual_blood.tsv",
+    "sub-PS53/ses-baseline/anat/sub-PS53_ses-baseline_T1w.json",
+    "sub-PS53/ses-baseline/pet/sub-PS53_ses-baseline_pet.json",
+    "sub-PS53/ses-baseline/pet/sub-PS53_ses-baseline_recording-manual_blood.json",
+    "sub-PS53/ses-baseline/pet/sub-PS53_ses-baseline_recording-manual_blood.tsv",
+    "sub-PS53/ses-blocked/pet/sub-PS53_ses-blocked_pet.json",
+    "sub-PS53/ses-blocked/pet/sub-PS53_ses-blocked_recording-manual_blood.json",
+    "sub-PS53/ses-blocked/pet/sub-PS53_ses-blocked_recording-manual_blood.tsv",
+    "sub-PS54/ses-baseline/anat/sub-PS54_ses-baseline_T1w.json"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003604",
+  "snapshotTag": "1.0.1",
+  "s3Version": "1.0.1",
+  "checkedAt": "2026-03-18T03:14:45.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 26047,
+  "totalGitFiles": 26033,
+  "added": [],
+  "removed": [
+    "annex-uuid",
+    "derivatives/Eprime/Gram1.ebs2",
+    "derivatives/Eprime/Gram2.ebs2",
+    "derivatives/Eprime/Phon1.ebs2",
+    "derivatives/Eprime/Phon2.ebs2",
+    "derivatives/Eprime/Plaus1.ebs2",
+    "derivatives/Eprime/Plaus2.ebs2",
+    "derivatives/Eprime/Sem1.ebs2",
+    "derivatives/Eprime/Sem2.ebs2",
+    "phenotype/celf-5.tsv",
+    "phenotype/ctopp-2.tsv",
+    "phenotype/delv.tsv",
+    "phenotype/gfta.tsv",
+    "phenotype/kbit.tsv"
+  ],
+  "context": []
+}

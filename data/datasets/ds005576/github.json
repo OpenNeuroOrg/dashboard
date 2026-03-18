@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "1.0.0",
-  "lastChecked": "2026-03-17T21:14:42.326528+00:00",
+  "schemaVersion": "1.1.0",
+  "lastChecked": "2026-03-18T03:11:34.000Z",
   "head": "main",
   "branches": {
     "git-annex": "e01a36fb7923487a0068c480def3db5550267fe4",

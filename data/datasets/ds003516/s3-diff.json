@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003516",
+  "snapshotTag": "1.1.1",
+  "s3Version": "1.1.1",
+  "checkedAt": "2026-03-18T03:14:09.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 285,
+  "totalGitFiles": 290,
+  "added": [
+    "stimuli/Block_1_32k.wav",
+    "stimuli/Block_2_32k.wav",
+    "stimuli/Block_3_32k.wav",
+    "stimuli/Block_4_32k.wav",
+    "stimuli/Block_5_32k.wav"
+  ],
+  "removed": [],
+  "context": [
+    "sourcedata/sub-025_ica_tmp_prob_2_kurt_2.fdt",
+    "sourcedata/sub-025_ica_tmp_prob_2_kurt_2.set",
+    "sourcedata/sub-025_ica_weights_and_badcomps.mat",
+    "stimuli/control_envelope_order.mat",
+    "stimuli/control_time.mat",
+    "stimuli/name_quest.mat"
+  ]
+}

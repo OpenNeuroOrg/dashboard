@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds004152",
+  "snapshotTag": "1.1.2",
+  "s3Version": "1.1.2",
+  "checkedAt": "2026-03-18T03:15:37.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 203,
+  "totalGitFiles": 203,
+  "added": [
+    "sub-01/beh/sub-01_task-drumtrainer_beh.json"
+  ],
+  "removed": [
+    "annex-uuid"
+  ],
+  "context": [
+    "dataset_description.json",
+    "participants.json",
+    "participants.tsv",
+    "sub-01/beh/sub-01_task-drumtrainer_beh.tsv",
+    "sub-01/eeg/sub-01_task-drumtrainer_channels.tsv",
+    "sub-01/eeg/sub-01_task-drumtrainer_eeg.eeg"
+  ]
+}

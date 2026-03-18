@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds002896",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:13:23.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 85,
+  "totalGitFiles": 85,
+  "added": [
+    "sub-20/anat/sub-20_T1w.nii"
+  ],
+  "removed": [
+    "annex-uuid"
+  ],
+  "context": [
+    "sub-18/func/sub-18_task-rest_bold.nii.gz",
+    "sub-19/anat/sub-19_T1w.nii",
+    "sub-19/func/sub-19_task-rest_bold.nii.gz",
+    "sub-20/func/sub-20_task-rest_bold.nii.gz",
+    "sub-21/anat/sub-21_T1w.nii",
+    "sub-21/func/sub-21_task-rest_bold.nii.gz"
+  ]
+}

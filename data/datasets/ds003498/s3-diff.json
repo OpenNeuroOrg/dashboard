@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003498",
+  "snapshotTag": "1.0.1",
+  "s3Version": "1.0.1",
+  "checkedAt": "2026-03-18T03:14:11.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 2370,
+  "totalGitFiles": 2368,
+  "added": [],
+  "removed": [
+    "annex-uuid",
+    "sourcedata/clinical_ch_sheet_zurich.xlsx"
+  ],
+  "context": []
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds005713",
+  "snapshotTag": "2.0.2",
+  "s3Version": "2.0.2",
+  "checkedAt": "2026-03-18T03:20:15.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 5377,
+  "totalGitFiles": 5381,
+  "added": [
+    "sub-015fu/anat/sub-015fu_T2w.nii.gz",
+    "sub-055/anat/sub-055_T2w.nii.gz",
+    "sub-064fu/anat/sub-064fu_T1w.nii.gz",
+    "sub-064fu/anat/sub-064fu_T2w.nii.gz"
+  ],
+  "removed": [],
+  "context": [
+    "sub-015/func/sub-015_task-rest_bold.json",
+    "sub-015/func/sub-015_task-rest_bold.nii.gz",
+    "sub-015fu/anat/sub-015fu_T2w.json",
+    "sub-015fu/anat/sub-015fu_run-01_T1w.json",
+    "sub-015fu/anat/sub-015fu_run-01_T1w.nii.gz",
+    "sub-015fu/anat/sub-015fu_run-02_T1w.json",
+    "sub-053fu/func/sub-053fu_task-rest_bold.json",
+    "sub-053fu/func/sub-053fu_task-rest_bold.nii.gz",
+    "sub-055/anat/sub-055_T2w.json",
+    "sub-055/anat/sub-055_run-01_T1w.json",
+    "sub-055/anat/sub-055_run-01_T1w.nii.gz",
+    "sub-055/anat/sub-055_run-02_T1w.json",
+    "sub-064/func/sub-064_task-rest_bold.json",
+    "sub-064/func/sub-064_task-rest_bold.nii.gz",
+    "sub-064fu/anat/sub-064fu_T1w.json",
+    "sub-064fu/anat/sub-064fu_T2w.json",
+    "sub-064fu/dwi/sub-064fu_run-01_dwi.bval",
+    "sub-064fu/dwi/sub-064fu_run-01_dwi.bvec",
+    "sub-064fu/dwi/sub-064fu_run-01_dwi.json"
+  ]
+}

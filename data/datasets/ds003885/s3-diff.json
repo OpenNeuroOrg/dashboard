@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003885",
+  "snapshotTag": "1.0.6",
+  "s3Version": "1.0.6",
+  "checkedAt": "2026-03-18T03:15:06.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 748,
+  "totalGitFiles": 751,
+  "added": [
+    "code/analyse_glms.m",
+    "code/plot_glms.m",
+    "derivatives/glm/GLM.mat",
+    "derivatives/glm/GLM2.mat",
+    "derivatives/glm/GLM_response.mat"
+  ],
+  "removed": [
+    ".datalad/config",
+    "derivatives/glm/GLM_results.mat"
+  ],
+  "context": [
+    "code/analyse_RSA.m",
+    "code/analyse_behavioural_EEG.m",
+    "code/analyse_decoding.m",
+    "code/analyse_statistics.m",
+    "code/bayesfactor_R_wrapper.m",
+    "code/bayesfactor_R_wrapper_anova.m",
+    "code/plot_CORnet.m",
+    "code/plot_behavioural.m",
+    "code/plot_decoding.m",
+    "code/plot_rdms.m",
+    "code/run_experiment.py",
+    "dataset_description.json",
+    "derivatives/eeglab/sub-23_task-movement_continuous.set",
+    "derivatives/eeglab/sub-24_task-movement_continuous.fdt",
+    "derivatives/eeglab/sub-24_task-movement_continuous.set",
+    "derivatives/rdm/rsa_behavioural_models.mat",
+    "derivatives/rdm/rsa_veridical_models.mat",
+    "derivatives/rdm/rsa_visual_models.mat"
+  ]
+}

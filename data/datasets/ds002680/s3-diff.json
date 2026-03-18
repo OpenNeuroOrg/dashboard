@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds002680",
+  "snapshotTag": "1.2.0",
+  "s3Version": "1.2.0",
+  "checkedAt": "2026-03-18T03:13:10.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 4980,
+  "totalGitFiles": 4981,
+  "added": [
+    "events.json"
+  ],
+  "removed": [],
+  "context": [
+    "README",
+    "code/bids_export_animal.m",
+    "dataset_description.json",
+    "participants.json",
+    "participants.tsv",
+    "stimuli/100000.jpg"
+  ]
+}

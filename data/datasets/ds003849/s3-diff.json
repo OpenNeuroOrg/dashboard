@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003849",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:15:02.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 1017,
+  "totalGitFiles": 1015,
+  "added": [],
+  "removed": [
+    ".datalad/config",
+    "README.md"
+  ],
+  "context": []
+}

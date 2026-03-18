@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds001740",
+  "snapshotTag": "2.2.0",
+  "s3Version": "2.2.0",
+  "checkedAt": "2026-03-18T03:12:29.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 3582,
+  "totalGitFiles": 3571,
+  "added": [],
+  "removed": [
+    "annex-uuid",
+    "sub-pilote1/func/sub-pilote1_task-convers_run-01_recording-cardiac_physio.json",
+    "sub-pilote1/func/sub-pilote1_task-convers_run-01_recording-respiratory_physio.json",
+    "sub-pilote1/func/sub-pilote1_task-convers_run-02_recording-cardiac_physio.json",
+    "sub-pilote1/func/sub-pilote1_task-convers_run-02_recording-respiratory_physio.json",
+    "sub-pilote1/func/sub-pilote1_task-convers_run-03_recording-cardiac_physio.json",
+    "sub-pilote1/func/sub-pilote1_task-convers_run-03_recording-respiratory_physio.json",
+    "sub-pilote2/func/sub-pilote2_task-convers_run-03_echo-1_events.tsv",
+    "sub-pilote2/func/sub-pilote2_task-convers_run-03_echo-2_events.tsv",
+    "sub-pilote2/func/sub-pilote2_task-convers_run-04_echo-1_events.tsv",
+    "sub-pilote2/func/sub-pilote2_task-convers_run-04_echo-2_events.tsv"
+  ],
+  "context": []
+}

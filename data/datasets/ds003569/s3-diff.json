@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003569",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:14:20.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 185,
+  "totalGitFiles": 185,
+  "added": [
+    "sub-08/anat/sub-08_T1w.nii.gz"
+  ],
+  "removed": [
+    "annex-uuid"
+  ],
+  "context": [
+    "sub-07/anat/sub-07_T1w.nii.gz",
+    "sub-07/func/sub-07_task-LDT_bold.nii.gz",
+    "sub-07/func/sub-07_task-LDT_events.tsv",
+    "sub-08/func/sub-08_task-LDT_bold.nii.gz",
+    "sub-08/func/sub-08_task-LDT_events.tsv",
+    "sub-09/anat/sub-09_T1w.nii.gz"
+  ]
+}

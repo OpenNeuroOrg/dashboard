@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds007378",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:22:49.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 7987,
+  "totalGitFiles": 7988,
+  "added": [
+    "sub-sid000142/surf/rh.fsaverage.sphere.reg"
+  ],
+  "removed": [],
+  "context": [
+    "sub-sid000142/surf/rh.defect_chull",
+    "sub-sid000142/surf/rh.defect_labels",
+    "sub-sid000142/surf/rh.defects.pointset",
+    "sub-sid000142/surf/rh.inflated",
+    "sub-sid000142/surf/rh.inflated.H",
+    "sub-sid000142/surf/rh.inflated.K"
+  ]
+}

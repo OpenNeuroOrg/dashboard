@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds005588",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:19:58.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 286,
+  "totalGitFiles": 287,
+  "added": [
+    "sub-305/anat/sub-305_T1w.nii.gz"
+  ],
+  "removed": [],
+  "context": [
+    "sub-304/func/sub-304_task-respo_run-2_bold.json",
+    "sub-304/func/sub-304_task-respo_run-2_bold.nii.gz",
+    "sub-304/func/sub-304_task-respo_run-2_events.tsv",
+    "sub-305/func/sub-305_task-respo_run-1_bold.json",
+    "sub-305/func/sub-305_task-respo_run-1_bold.nii.gz",
+    "sub-305/func/sub-305_task-respo_run-1_events.tsv"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003645",
+  "snapshotTag": "2.0.2",
+  "s3Version": "2.0.2",
+  "checkedAt": "2026-03-18T03:14:29.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 1140,
+  "totalGitFiles": 1144,
+  "added": [
+    ".datalad/.gitattributes",
+    ".datalad/config",
+    ".gitattributes",
+    "participants.json"
+  ],
+  "removed": [],
+  "context": [
+    "CHANGES",
+    "README",
+    "code/check_face_offset_distr.m",
+    "code/wh_bids_export_eeglab.m",
+    "code/wh_extracteeg_BIDS_HED.m",
+    "dataset_description.json",
+    "participants.tsv",
+    "stimuli/circle.bmp",
+    "stimuli/cross.bmp"
+  ]
+}

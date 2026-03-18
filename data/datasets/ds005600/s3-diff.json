@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds005600",
+  "snapshotTag": "1.1.0",
+  "s3Version": "1.1.0",
+  "checkedAt": "2026-03-18T03:20:03.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 2129,
+  "totalGitFiles": 2131,
+  "added": [
+    "sub-10038/anat/sub-10038_T1w.nii.gz",
+    "sub-10039/anat/sub-10039_T1w.nii.gz"
+  ],
+  "removed": [],
+  "context": [
+    "sub-10037/sub-10037_scans.json",
+    "sub-10037/sub-10037_scans.tsv",
+    "sub-10038/anat/sub-10038_T1w.json",
+    "sub-10038/fmap/sub-10038_dir-pe0_run-001_epi.json",
+    "sub-10038/fmap/sub-10038_dir-pe0_run-001_epi.nii.gz",
+    "sub-10038/fmap/sub-10038_dir-pe0_run-002_epi.json",
+    "sub-10038/sub-10038_scans.json",
+    "sub-10038/sub-10038_scans.tsv",
+    "sub-10039/anat/sub-10039_T1w.json",
+    "sub-10039/fmap/sub-10039_dir-pe0_run-001_epi.json",
+    "sub-10039/fmap/sub-10039_dir-pe0_run-001_epi.nii.gz",
+    "sub-10039/fmap/sub-10039_dir-pe0_run-002_epi.json"
+  ]
+}

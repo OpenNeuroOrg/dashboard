@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds001785",
+  "snapshotTag": "1.1.1",
+  "s3Version": "1.1.1",
+  "checkedAt": "2026-03-18T03:12:31.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 295,
+  "totalGitFiles": 293,
+  "added": [],
+  "removed": [
+    "annex-uuid",
+    "sub-08/ses-01/eeg/sub-08_ses-01_channels.tsv"
+  ],
+  "context": []
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003465",
+  "snapshotTag": "1.0.4",
+  "s3Version": "1.0.4",
+  "checkedAt": "2026-03-18T03:14:11.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 9883,
+  "totalGitFiles": 9877,
+  "added": [],
+  "removed": [
+    "annex-uuid",
+    "participants.json",
+    "task-Axcpt_events.json",
+    "task-Cuedts_events.json",
+    "task-Stern_events.json",
+    "task-Stroop_events.json"
+  ],
+  "context": []
+}

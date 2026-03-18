@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003592",
+  "snapshotTag": "1.0.9",
+  "s3Version": "1.0.9",
+  "checkedAt": "2026-03-18T03:14:27.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 5653,
+  "totalGitFiles": 5646,
+  "added": [],
+  "removed": [
+    "annex-uuid",
+    "sub-17/ses-1/anat/sub-17_ses-1_FLAIR.json",
+    "sub-18/ses-1/anat/sub-18_ses-1_FLAIR.json",
+    "sub-206/ses-1/anat/sub-206_ses-1_FLAIR.json",
+    "sub-25/ses-1/anat/sub-25_ses-1_FLAIR.json",
+    "sub-33/ses-1/anat/sub-33_ses-1_FLAIR.json",
+    "sub-35/ses-1/anat/sub-35_ses-1_FLAIR.json"
+  ],
+  "context": []
+}

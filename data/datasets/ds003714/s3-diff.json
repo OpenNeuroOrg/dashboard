@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003714",
+  "snapshotTag": "1.0.1",
+  "s3Version": "1.0.1",
+  "checkedAt": "2026-03-18T03:14:40.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 15,
+  "totalGitFiles": 15,
+  "added": [
+    "sub-ID01/anat/sub-ID01_T1w.nii.gz"
+  ],
+  "removed": [
+    "annex-uuid"
+  ],
+  "context": [
+    "CHANGES",
+    "dataset_description.json",
+    "sub-ID01/anat/sub-ID01_T1w.json",
+    "sub-ID01/fmap/sub-ID01_magnitude1.json",
+    "sub-ID01/fmap/sub-ID01_magnitude1.nii.gz",
+    "sub-ID01/fmap/sub-ID01_magnitude2.json"
+  ]
+}

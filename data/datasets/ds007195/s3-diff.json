@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds007195",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:22:27.000Z",
+  "status": "error",
+  "exportMissing": true,
+  "totalS3Files": 0,
+  "totalGitFiles": 17,
+  "added": [
+    ".bidsignore",
+    ".datalad/config",
+    ".gitattributes",
+    "CHANGES",
+    "dataset_description.json",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-1_part-mag_4D.json",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-1_part-mag_4D.nii.gz",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-1_part-phase_4D.json",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-1_part-phase_4D.nii.gz",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-2_part-mag_4D.json",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-2_part-mag_4D.nii.gz",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-2_part-phase_4D.json",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-2_part-phase_4D.nii.gz",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-3_part-mag_4D.json",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-3_part-mag_4D.nii.gz",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-3_part-phase_4D.json",
+    "sub-test1/ses-01/anat/sub-test1_ses-01_acq-DCE_ce-SPIO_echo-3_part-phase_4D.nii.gz"
+  ],
+  "removed": [],
+  "context": []
+}

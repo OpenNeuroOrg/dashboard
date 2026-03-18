@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds003553",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-03-18T03:14:16.000Z",
+  "status": "error",
+  "exportMissing": false,
+  "totalS3Files": 103,
+  "totalGitFiles": 102,
+  "added": [
+    "sub-sc001/anat/sub-sc001_T1w.nii.gz",
+    "sub-sc001/func/sub-sc001_task-FacesHousesTE27_bold.nii.gz",
+    "sub-sc013/anat/sub-sc013_T1w.nii.gz"
+  ],
+  "removed": [
+    "CHANGES",
+    "annex-uuid",
+    "participants.json",
+    "task-FacesHousesTE27_events.json"
+  ],
+  "context": [
+    "dataset_description.json",
+    "participants.tsv",
+    "sub-sc001/anat/sub-sc001_T1w.json",
+    "sub-sc001/func/sub-sc001_task-FacesHousesTE27_bold.json",
+    "sub-sc001/func/sub-sc001_task-FacesHousesTE27_events.tsv",
+    "sub-sc002/anat/sub-sc002_T1w.json",
+    "sub-sc002/anat/sub-sc002_T1w.nii.gz",
+    "sub-sc012/func/sub-sc012_task-FacesHousesTE27_bold.nii.gz",
+    "sub-sc012/func/sub-sc012_task-FacesHousesTE27_events.tsv",
+    "sub-sc013/anat/sub-sc013_T1w.json",
+    "sub-sc013/func/sub-sc013_task-FacesHousesTE27_bold.json",
+    "sub-sc013/func/sub-sc013_task-FacesHousesTE27_bold.nii.gz",
+    "sub-sc013/func/sub-sc013_task-FacesHousesTE27_events.tsv"
+  ]
+}

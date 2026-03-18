@@ -50,7 +50,10 @@ Compare S3 file listing against git tree at the resolved tag. Manages its own ba
 Skip the dataset if any of these are true:
 - S3 is blocked (case 3, HTTP 403) or not found (case 4) — no file diff is meaningful without S3 access.
 - The resolved tag (from `extractedVersion` in `s3-version.json`) is not present in `github.json` tags — the tag can't be cloned if GitHub doesn't have it.
-- An existing `s3-diff.json` has the same `s3Version` as the current `s3-version.json` — incremental skip, nothing changed.
+- An existing `s3-diff.json` can be skipped if:
+  - It has the same `s3Version` as the current `s3-version.json`, AND
+  - Either the diff is empty (`added` and `removed` are both empty), OR the `checkedAt` timestamp is less than 7 days old.
+  - Non-empty diffs older than 7 days are re-run to detect administrative corrections (e.g., manual removal of excess files or re-export) that don't change the S3 version.
 
 ### Logic
 
@@ -59,7 +62,7 @@ For each eligible dataset:
 1. **Ensure bare repo cache has the needed tag:**
    - Resolve `{tag}` from the `extractedVersion` field in `s3-version.json`.
    - **No cached repo:** `git clone --bare --filter=blob:none --depth=1 --branch {tag} https://github.com/OpenNeuroDatasets/{id}.git {cache_dir}/{id}.git`
-   - **Repo exists, tag missing:** `git fetch --depth=1 origin tag {tag}`
+   - **Repo exists, tag missing:** `git fetch --refetch --filter=blob:none --depth=1 origin tag {tag}`
    - **Tag already present:** proceed to diff.
 
 2. **Build git file set:** Open bare repo with `pygit2`, resolve tag, walk tree to build a set of file paths.

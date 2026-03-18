@@ -14,6 +14,32 @@
     --status-pending-bg: #ecf0f1;
 }
 
+@media (min-width:576px) {
+  :root {
+    --grid-item-min-width: 319px;
+  }
+}
+@media (min-width:768px) {
+  :root {
+    --grid-item-min-width: 338px;
+  }
+}
+@media (min-width:1024px) {
+  :root {
+    --grid-item-min-width: 357px;
+  }
+}
+@media (min-width:1280px) {
+  :root {
+    --grid-item-min-width: 376px;
+  }
+}
+@media (min-width:1536px) {
+  :root {
+    --grid-item-min-width: 394px;
+  }
+}
+
 /* Header */
 header {
     text-align: center;
@@ -58,7 +84,7 @@ header p {
 /* Summary Stats */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-item-min-width), 1fr));
     gap: 1rem;
     margin-bottom: 2rem;
 }

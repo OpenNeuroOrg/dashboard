@@ -74,7 +74,7 @@ async def fetch_dataset_description(
             }
         
         # Try to extract version from DOI
-        match = DOI_PATTERN.match(doi)
+        match = DOI_PATTERN.search(doi)
         if not match:
             # Case 2: Custom DOI - assume latest snapshot
             if verbose:

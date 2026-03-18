@@ -15,10 +15,9 @@ import argparse
 import asyncio
 from asyncio.subprocess import PIPE
 from pathlib import Path
-from datetime import datetime, UTC
 from dataclasses import dataclass, field
 
-from utils import SCHEMA_VERSION, write_json, load_json
+from utils import SCHEMA_VERSION, write_json, load_json, format_timestamp
 
 
 @dataclass
@@ -115,7 +114,7 @@ async def check_github_mirror(
 
     github_data = {
         "schemaVersion": SCHEMA_VERSION,
-        "lastChecked": datetime.now(UTC).isoformat(),
+        "lastChecked": format_timestamp(),
         "head": head_ref,
         "branches": branches,
         "tags": tags,

@@ -3,9 +3,14 @@
 import json
 import random
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"
+
+
+def format_timestamp() -> str:
+    """Format current UTC time in the standard dashboard timestamp format."""
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
 
 def random_sha() -> str:
@@ -15,7 +20,7 @@ def random_sha() -> str:
 
 def random_datetime(days_ago: int = 30) -> str:
     """Generate a random datetime within the last N days."""
-    dt = datetime.now() - timedelta(days=random.randint(0, days_ago))
+    dt = datetime.now(UTC) - timedelta(days=random.randint(0, days_ago))
     return dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
 

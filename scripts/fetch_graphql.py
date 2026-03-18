@@ -31,7 +31,8 @@ import gql
 from gql.transport.httpx import HTTPXAsyncTransport
 from gql.transport.exceptions import TransportQueryError
 
-SCHEMA_VERSION = "1.0.0"
+from utils import SCHEMA_VERSION, format_timestamp
+
 ENDPOINT = "https://openneuro.org/crn/graphql"
 
 converter = cattrs.Converter()
@@ -214,7 +215,7 @@ async def fetch_and_write(
         # Track progress
         latest_snapshots = {}
         processed = 0
-        timestamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        timestamp = format_timestamp()
 
         try:
             # Process datasets as they arrive

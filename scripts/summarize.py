@@ -14,9 +14,8 @@ Writes:
 
 import argparse
 from pathlib import Path
-from datetime import datetime, UTC
 
-from utils import SCHEMA_VERSION, write_json, load_json
+from utils import SCHEMA_VERSION, write_json, load_json, format_timestamp
 
 
 def load_json_safe(path: Path) -> dict | None:
@@ -130,7 +129,7 @@ def generate_summary(output_dir: Path):
     # Create summary document
     summary_doc = {
         "schemaVersion": SCHEMA_VERSION,
-        "lastUpdated": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+        "lastUpdated": format_timestamp(),
         "datasets": datasets
     }
     

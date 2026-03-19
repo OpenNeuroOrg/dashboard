@@ -558,7 +558,7 @@ wheels = [
 [[package]]
 name = "ondiagnostics"
 version = "0.1.0"
-source = { editable = "../../ondiagnostics" }
+source = { git = "https://github.com/openneuroorg/ondiagnostics#68cf92e077dc9d31112d0e75e445f81f47b0cf9d" }
 dependencies = [
     { name = "aioboto3" },
     { name = "cattrs" },
@@ -569,33 +569,6 @@ dependencies = [
     { name = "stamina" },
     { name = "structlog" },
     { name = "typer" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aioboto3", specifier = ">=15.5.0" },
-    { name = "cattrs", specifier = ">=25.3.0" },
-    { name = "gql", extras = ["httpx"], specifier = ">=4.0.0" },
-    { name = "pygit2", specifier = ">=1.19.1" },
-    { name = "pyyaml", specifier = ">=6.0.3" },
-    { name = "rich", specifier = ">=14.3.2" },
-    { name = "stamina", specifier = ">=25.2.0" },
-    { name = "structlog", specifier = ">=25.5.0" },
-    { name = "typer", specifier = ">=0.23.1" },
-]
-
-[package.metadata.requires-dev]
-dev = [{ name = "ipython", specifier = ">=9.10.0" }]
-test = [
-    { name = "aiomoto", specifier = ">=0.3.0" },
-    { name = "pytest", specifier = ">=9.0.2" },
-    { name = "pytest-asyncio", specifier = ">=1.3.0" },
-    { name = "pytest-cov", specifier = ">=7.0.0" },
-]
-types = [
-    { name = "mypy", specifier = ">=1.19.1" },
-    { name = "types-aioboto3", specifier = ">=15.5.0" },
-    { name = "types-pyyaml", specifier = ">=6.0.12.20250915" },
 ]
 
 [[package]]
@@ -629,7 +602,7 @@ requires-dist = [
     { name = "cattrs", specifier = ">=25.3.0" },
     { name = "gql", extras = ["httpx"], specifier = ">=4.0.0" },
     { name = "httpx", specifier = ">=0.28.1" },
-    { name = "ondiagnostics", editable = "../../ondiagnostics" },
+    { name = "ondiagnostics", git = "https://github.com/openneuroorg/ondiagnostics" },
     { name = "pygit2", specifier = ">=1.19.1" },
     { name = "rich", specifier = ">=14.3.2" },
     { name = "stamina", specifier = ">=25.2.0" },

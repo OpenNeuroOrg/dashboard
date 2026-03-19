@@ -1,0 +1,42 @@
+[project]
+name = "openneuro-dashboard"
+version = "0.1.0"
+description = "Data-population pipeline for the OpenNeuro dashboard."
+authors = [
+    { name = "Christopher J. Markiewicz", email = "markiewicz@stanford.edu" }
+]
+license = "Apache-2.0"
+requires-python = ">=3.14"
+dependencies = [
+    "aioboto3>=15.5.0",
+    "cattrs>=25.3.0",
+    "gql[httpx]>=4.0.0",
+    "httpx>=0.28.1",
+    "ondiagnostics",
+    "pygit2>=1.19.1",
+    "rich>=14.3.2",
+    "stamina>=25.2.0",
+    "typer>=0.23.1",
+]
+
+[project.scripts]
+openneuro-dashboard = "openneuro_dashboard.__main__:app"
+
+[build-system]
+requires = ["uv_build>=0.10.2,<0.11.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+ondiagnostics = { path = "../../ondiagnostics", editable = true }
+
+[dependency-groups]
+dev = [
+    "ipython>=9.10.0",
+]
+test = [
+    "pytest>=9.0.2",
+    "pytest-asyncio>=1.3.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

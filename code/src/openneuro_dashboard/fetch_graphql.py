@@ -130,96 +130,96 @@ async def fetch_and_write(
         Maximum number of datasets to fetch.
     """
     client = create_client()
-    async with client as session:
-        # Get total count
-        first_page = await get_page(session, 0, None)
-        total_count = first_page.datasets.pageInfo.count
-        print(f"Starting fetch: {total_count} total datasets")
 
-        # Setup queue and background fetcher
-        queue: asyncio.Queue = asyncio.Queue(maxsize=prefetch)
-        fetch_task = asyncio.create_task(
-            _fetch_pages(session, queue, page_size, verbose, max_datasets)
-        )
+    # Get total count
+    first_page = await get_page(client, 0, None)
+    total_count = first_page.datasets.pageInfo.count
+    print(f"Starting fetch: {total_count} total datasets")
 
-        # Track progress
-        latest_snapshots: dict[str, str] = {}
-        processed = 0
-        timestamp = format_timestamp()
+    # Setup queue and background fetcher
+    queue: asyncio.Queue = asyncio.Queue(maxsize=prefetch)
+    fetch_task = asyncio.create_task(
+        _fetch_pages(client, queue, page_size, verbose, max_datasets)
+    )
 
-        try:
-            # Process datasets as they arrive
-            while True:
-                edges = await queue.get()
+    # Track progress
+    latest_snapshots: dict[str, str] = {}
+    processed = 0
+    timestamp = format_timestamp()
 
-                # None signals end of pages
-                if edges is None:
+    try:
+        # Process datasets as they arrive
+        while True:
+            edges = await queue.get()
+
+            # None signals end of pages
+            if edges is None:
+                break
+
+            for edge in edges:
+                if edge is None:
+                    continue
+                if edge.node is None:
+                    print("Warning: Null node in edge")
+                    continue
+
+                dataset = edge.node
+
+                # Validate snapshots exist
+                if not dataset.snapshots:
+                    print(
+                        f"Warning: Dataset {dataset.id} has no snapshots, "
+                        f"skipping"
+                    )
+                    continue
+
+                processed += 1
+
+                if max_datasets is not None and processed > max_datasets:
                     break
 
-                for edge in edges:
-                    if edge is None:
-                        continue
-                    if edge.node is None:
-                        print("Warning: Null node in edge")
-                        continue
+                # Track latest snapshot for registry
+                latest_snapshots[dataset.id] = dataset.latestSnapshot.tag
 
-                    dataset = edge.node
+                # Write per-dataset files
+                dataset_dir = output_dir / "datasets" / dataset.id
+                _write_dataset_json(
+                    dataset_dir,
+                    dataset.snapshots,
+                    dataset.latestSnapshot.tag,
+                    dry_run,
+                )
 
-                    # Validate snapshots exist
-                    if not dataset.snapshots:
-                        print(
-                            f"Warning: Dataset {dataset.id} has no snapshots, "
-                            f"skipping"
-                        )
-                        continue
-
-                    processed += 1
-
-                    if max_datasets is not None and processed > max_datasets:
-                        break
-
-                    # Track latest snapshot for registry
-                    latest_snapshots[dataset.id] = dataset.latestSnapshot.tag
-
-                    # Write per-dataset files
-                    dataset_dir = output_dir / "datasets" / dataset.id
-                    _write_dataset_json(
-                        dataset_dir,
-                        dataset.snapshots,
-                        dataset.latestSnapshot.tag,
-                        dry_run,
+                # Progress logging every 100 datasets
+                if processed % 100 == 0:
+                    percent = 100 * processed / total_count
+                    print(
+                        f"Progress: {processed}/{total_count} ({percent:.1f}%)"
                     )
 
-                    # Progress logging every 100 datasets
-                    if processed % 100 == 0:
-                        percent = 100 * processed / total_count
-                        print(
-                            f"Progress: {processed}/{total_count} ({percent:.1f}%)"
-                        )
+            if max_datasets is not None and processed >= max_datasets:
+                break
+    finally:
+        # Ensure fetch task completes
+        await fetch_task
 
-                if max_datasets is not None and processed >= max_datasets:
-                    break
-        finally:
-            # Ensure fetch task completes
-            await fetch_task
+    # Write registry
+    registry = {
+        "schemaVersion": SCHEMA_VERSION,
+        "lastChecked": timestamp,
+        "totalCount": len(latest_snapshots),
+        "latestSnapshots": latest_snapshots,
+    }
 
-        # Write registry
-        registry = {
-            "schemaVersion": SCHEMA_VERSION,
-            "lastChecked": timestamp,
-            "totalCount": len(latest_snapshots),
-            "latestSnapshots": latest_snapshots,
-        }
+    registry_path = output_dir / "datasets-registry.json"
+    if dry_run:
+        print(f"  [dry-run] Would write {registry_path}")
+    else:
+        write_json(registry_path, registry)
 
-        registry_path = output_dir / "datasets-registry.json"
-        if dry_run:
-            print(f"  [dry-run] Would write {registry_path}")
-        else:
-            write_json(registry_path, registry)
-
-        print(f"\nFetch complete: {processed} datasets processed")
-        if not dry_run:
-            print(f"  Registry written to: {registry_path}")
+    print(f"\nFetch complete: {processed} datasets processed")
+    if not dry_run:
+        print(f"  Registry written to: {registry_path}")
 
 
 def validate_output(output_dir: Path) -> None:

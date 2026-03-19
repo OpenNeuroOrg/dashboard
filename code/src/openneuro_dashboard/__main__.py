@@ -183,8 +183,20 @@ def gen_data(
     ] = None,
 ) -> None:
     """Generate synthetic test data."""
-    typer.echo("gen-data: not yet implemented")
-    raise typer.Exit(1)
+    from .gen_data import git_tree, github, graphql, s3_diff, s3_version
+    from .summarize import generate_summary
+
+    if seed is not None:
+        import random
+
+        random.seed(seed)
+
+    graphql.generate(output_dir, num_datasets)
+    github.generate(output_dir)
+    s3_version.generate(output_dir)
+    git_tree.generate(output_dir)
+    s3_diff.generate(output_dir)
+    generate_summary(output_dir)
 
 
 if __name__ == "__main__":

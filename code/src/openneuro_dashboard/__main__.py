@@ -42,8 +42,24 @@ def fetch_graphql(
     ] = None,
 ) -> None:
     """Fetch dataset metadata from the OpenNeuro GraphQL API."""
-    typer.echo("fetch-graphql: not yet implemented")
-    raise typer.Exit(1)
+    import asyncio
+
+    from .fetch_graphql import fetch_and_write as _fetch_and_write
+    from .fetch_graphql import validate_output as _validate_output
+
+    asyncio.run(
+        _fetch_and_write(
+            output_dir,
+            page_size,
+            prefetch,
+            dry_run,
+            verbose,
+            max_datasets,
+        )
+    )
+
+    if validate:
+        _validate_output(output_dir)
 
 
 @app.command()
@@ -55,8 +71,11 @@ def check_github(
     ] = 10,
 ) -> None:
     """Check GitHub repository status for each dataset."""
-    typer.echo("check-github: not yet implemented")
-    raise typer.Exit(1)
+    import asyncio
+
+    from .check_github import check_all_datasets as _check_all_datasets
+
+    asyncio.run(_check_all_datasets(output_dir, concurrency, verbose))
 
 
 @app.command()
@@ -68,8 +87,11 @@ def check_s3_version(
     ] = 20,
 ) -> None:
     """Check S3 version consistency for each dataset."""
-    typer.echo("check-s3-version: not yet implemented")
-    raise typer.Exit(1)
+    import asyncio
+
+    from .check_s3_version import check_all_datasets as _check_all_datasets
+
+    asyncio.run(_check_all_datasets(output_dir, concurrency, verbose))
 
 
 @app.command()
@@ -88,8 +110,19 @@ def check_s3_files(
     ] = 20,
 ) -> None:
     """Check S3 files against git tree for each dataset."""
-    typer.echo("check-s3-files: not yet implemented")
-    raise typer.Exit(1)
+    import asyncio
+
+    from .check_s3_files import check_all_datasets as _check_all_datasets
+
+    asyncio.run(
+        _check_all_datasets(
+            output_dir,
+            cache_dir.expanduser(),
+            git_concurrency,
+            s3_concurrency,
+            verbose,
+        )
+    )
 
 
 @app.command()
@@ -98,8 +131,9 @@ def summarize(
     verbose: Verbose = False,
 ) -> None:
     """Summarize collected data into dashboard JSON."""
-    typer.echo("summarize: not yet implemented")
-    raise typer.Exit(1)
+    from .summarize import generate_summary
+
+    generate_summary(output_dir)
 
 
 @app.command()
@@ -116,8 +150,24 @@ def run_all(
     ] = None,
 ) -> None:
     """Run the full data-population pipeline."""
-    typer.echo("run-all: not yet implemented")
-    raise typer.Exit(1)
+    import asyncio
+
+    from .check_github import check_all_datasets as _check_github
+    from .check_s3_files import check_all_datasets as _check_s3_files
+    from .check_s3_version import check_all_datasets as _check_s3_version
+    from .fetch_graphql import fetch_and_write as _fetch_graphql
+    from .summarize import generate_summary as _summarize
+
+    resolved_cache = cache_dir.expanduser()
+
+    async def _run() -> None:
+        await _fetch_graphql(output_dir, verbose=verbose, max_datasets=max_datasets)
+        await _check_github(output_dir, verbose=verbose)
+        await _check_s3_version(output_dir, verbose=verbose)
+        await _check_s3_files(output_dir, resolved_cache, verbose=verbose)
+
+    asyncio.run(_run())
+    _summarize(output_dir)
 
 
 @app.command()

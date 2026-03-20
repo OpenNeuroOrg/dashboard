@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from openneuro_dashboard.models import DatasetSummary
 from openneuro_dashboard.summarize import summarize_dataset
 from openneuro_dashboard.utils import write_json
 
@@ -49,10 +50,11 @@ def test_all_ok(tmp_path):
 
     result = summarize_dataset("ds000001", "1.0.2", dd)
 
-    assert result["status"] == "ok"
-    assert result["checks"]["github"] == "ok"
-    assert result["checks"]["s3Version"] == "ok"
-    assert result["checks"]["s3Files"] == "ok"
+    assert isinstance(result, DatasetSummary)
+    assert result.status.value == "ok"
+    assert result.checks.github.value == "ok"
+    assert result.checks.s3Version.value == "ok"
+    assert result.checks.s3Files.value == "ok"
 
 
 def test_github_error(tmp_path):
@@ -68,8 +70,8 @@ def test_github_error(tmp_path):
 
     result = summarize_dataset("ds000001", "1.0.2", dd)
 
-    assert result["checks"]["github"] == "error"
-    assert result["status"] == "error"
+    assert result.checks.github.value == "error"
+    assert result.status.value == "error"
 
 
 def test_s3_blocked_403(tmp_path):
@@ -84,10 +86,10 @@ def test_s3_blocked_403(tmp_path):
 
     result = summarize_dataset("ds000001", "1.0.2", dd)
 
-    assert result["s3Blocked"] is True
-    assert result["checks"]["s3Version"] == "error"
-    assert result["checks"]["s3Files"] == "error"
-    assert result["status"] == "error"
+    assert result.s3Blocked is True
+    assert result.checks.s3Version.value == "error"
+    assert result.checks.s3Files.value == "error"
+    assert result.status.value == "error"
 
 
 def test_version_mismatch(tmp_path):
@@ -103,8 +105,8 @@ def test_version_mismatch(tmp_path):
 
     result = summarize_dataset("ds000001", "1.0.2", dd)
 
-    assert result["checks"]["s3Version"] == "version-mismatch"
-    assert result["status"] == "version-mismatch"
+    assert result.checks.s3Version.value == "version-mismatch"
+    assert result.status.value == "version-mismatch"
 
 
 def test_pending_missing_files(tmp_path):
@@ -114,10 +116,10 @@ def test_pending_missing_files(tmp_path):
 
     result = summarize_dataset("ds000001", "1.0.2", dd)
 
-    assert result["checks"]["github"] == "pending"
-    assert result["checks"]["s3Version"] == "pending"
-    assert result["checks"]["s3Files"] == "pending"
-    assert result["status"] == "pending"
+    assert result.checks.github.value == "pending"
+    assert result.checks.s3Version.value == "pending"
+    assert result.checks.s3Files.value == "pending"
+    assert result.status.value == "pending"
 
 
 def test_precedence(tmp_path):
@@ -135,8 +137,8 @@ def test_precedence(tmp_path):
 
     result = summarize_dataset("ds000001", "1.0.2", dd)
 
-    assert result["checks"]["github"] == "ok"
-    assert result["checks"]["s3Version"] == "version-mismatch"
-    assert result["checks"]["s3Files"] == "pending"
+    assert result.checks.github.value == "ok"
+    assert result.checks.s3Version.value == "version-mismatch"
+    assert result.checks.s3Files.value == "pending"
     # pending > version-mismatch > ok
-    assert result["status"] == "pending"
+    assert result.status.value == "pending"

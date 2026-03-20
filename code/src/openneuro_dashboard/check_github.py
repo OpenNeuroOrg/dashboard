@@ -16,12 +16,14 @@ from pathlib import Path
 
 from ondiagnostics.tasks.git import list_refs
 
-from .utils import SCHEMA_VERSION, format_timestamp, load_json, write_json
+from .converter import dump_typed
+from .models import GitHubStatus
+from .utils import format_timestamp, load_json
 
 
 async def check_github_mirror(
     dataset_id: str, output_dir: Path, verbose: bool = False
-) -> dict | None:
+) -> GitHubStatus | None:
     """Check GitHub mirror status for a single dataset.
 
     Parameters
@@ -35,8 +37,8 @@ async def check_github_mirror(
 
     Returns
     -------
-    dict or None
-        GitHub status dict, or None if the check failed.
+    GitHubStatus or None
+        GitHub status, or None if the check failed.
     """
     repo_url = f"https://github.com/OpenNeuroDatasets/{dataset_id}.git"
 
@@ -55,13 +57,12 @@ async def check_github_mirror(
         else:
             head = "unknown"
 
-    github_data = {
-        "schemaVersion": SCHEMA_VERSION,
-        "lastChecked": format_timestamp(),
-        "head": head,
-        "branches": refs.branches,
-        "tags": refs.tags,
-    }
+    github_data = GitHubStatus(
+        lastChecked=format_timestamp(),
+        head=head,
+        branches=refs.branches,
+        tags=refs.tags,
+    )
 
     if verbose:
         print(
@@ -100,7 +101,7 @@ async def check_all_datasets(
 
     async def check_with_semaphore(
         dataset_id: str, index: int
-    ) -> tuple[str, dict | None]:
+    ) -> tuple[str, GitHubStatus | None]:
         async with semaphore:
             result = await check_github_mirror(dataset_id, output_dir, verbose)
 
@@ -124,7 +125,7 @@ async def check_all_datasets(
             continue
 
         dataset_dir = output_dir / "datasets" / dataset_id
-        write_json(dataset_dir / "github.json", github_data)
+        dump_typed(dataset_dir / "github.json", github_data)
         success_count += 1
 
     print("\nGitHub check complete")

@@ -24,12 +24,13 @@ from botocore import UNSIGNED
 from botocore.config import Config as BotoConfig
 from ondiagnostics.subprocs import git
 
+from .converter import dump_typed
+from .models import CheckStatus, S3FileDiff
 from .utils import (
     SCHEMA_VERSION,
     format_timestamp,
     load_json,
     load_json_safe,
-    write_json,
 )
 
 S3_BUCKET = "openneuro.org"
@@ -219,7 +220,7 @@ def compute_diff(
     s3_version: str,
     git_files: set[str],
     s3_files: set[str],
-) -> dict:
+) -> S3FileDiff:
     """Compute the S3 file diff and return the s3-diff.json data."""
     added = sorted(git_files - s3_files)
     removed = sorted(s3_files - git_files)
@@ -229,22 +230,22 @@ def compute_diff(
     context = compute_context(sorted_git, changed) if changed else []
 
     export_missing = len(s3_files) == 0
-    status = "ok" if not added and not removed else "error"
+    status = CheckStatus.ok if not added and not removed else CheckStatus.error
 
-    return {
-        "schemaVersion": SCHEMA_VERSION,
-        "datasetId": dataset_id,
-        "snapshotTag": tag,
-        "s3Version": s3_version,
-        "checkedAt": format_timestamp(),
-        "status": status,
-        "exportMissing": export_missing,
-        "totalS3Files": len(s3_files),
-        "totalGitFiles": len(git_files),
-        "added": added,
-        "removed": removed,
-        "context": context,
-    }
+    return S3FileDiff(
+        schemaVersion=SCHEMA_VERSION,
+        datasetId=dataset_id,
+        snapshotTag=tag,
+        s3Version=s3_version,
+        checkedAt=format_timestamp(),
+        status=status,
+        exportMissing=export_missing,
+        totalS3Files=len(s3_files),
+        totalGitFiles=len(git_files),
+        added=added,
+        removed=removed,
+        context=context,
+    )
 
 
 async def process_dataset(
@@ -281,14 +282,14 @@ async def process_dataset(
 
     # Step 5: Write result
     dataset_dir = output_dir / "datasets" / dataset_id
-    write_json(dataset_dir / "s3-diff.json", diff)
+    dump_typed(dataset_dir / "s3-diff.json", diff)
 
     if verbose:
-        added_count = len(diff["added"])
-        removed_count = len(diff["removed"])
+        added_count = len(diff.added)
+        removed_count = len(diff.removed)
         if added_count or removed_count:
             print(
-                f"  {dataset_id}: +{added_count} -{removed_count} ({diff['status']})"
+                f"  {dataset_id}: +{added_count} -{removed_count} ({diff.status.value})"
             )
         else:
             print(f"  {dataset_id}: ok")

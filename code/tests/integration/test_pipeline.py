@@ -43,7 +43,7 @@ def test_full_pipeline_summary(tmp_path):
 
     result = json.loads((data_dir / "all-datasets.json").read_text())
 
-    assert result["schemaVersion"] == "1.1.0"
+    assert "lastUpdated" in result
     assert len(result["datasets"]) == 5
 
     for ds in result["datasets"]:
@@ -76,11 +76,11 @@ def test_blocked_dataset_has_flag(tmp_path):
     ds002 = next(d for d in result["datasets"] if d["id"] == "ds000002")
     assert ds002.get("s3Blocked") is True
 
-    # Non-blocked datasets should not have s3Blocked
+    # Non-blocked datasets should not have s3Blocked=True
     for ds in result["datasets"]:
         if ds["id"] != "ds000002":
-            assert "s3Blocked" not in ds, (
-                f"{ds['id']} should not have s3Blocked flag"
+            assert ds.get("s3Blocked") is not True, (
+                f"{ds['id']} should not have s3Blocked=True"
             )
 
 
@@ -92,10 +92,10 @@ def test_last_checked_timestamps_present(tmp_path):
     result = json.loads((data_dir / "all-datasets.json").read_text())
 
     for ds in result["datasets"]:
-        assert "lastChecked" in ds, f"{ds['id']} missing lastChecked"
-        lc = ds["lastChecked"]
+        lc = ds.get("lastChecked")
+        assert lc is not None, f"{ds['id']} missing lastChecked"
         # All fixtures that have check files should have github timestamp
-        assert "github" in lc, f"{ds['id']} missing lastChecked.github"
+        assert lc.get("github") is not None, f"{ds['id']} missing lastChecked.github"
 
 
 def test_expected_fixture_matches(tmp_path):
@@ -107,7 +107,6 @@ def test_expected_fixture_matches(tmp_path):
     expected = json.loads((FIXTURES_DIR / "all-datasets.json").read_text())
 
     # Compare structural fields (ignore lastUpdated since it uses wallclock)
-    assert result["schemaVersion"] == expected["schemaVersion"]
     assert len(result["datasets"]) == len(expected["datasets"])
 
     result_by_id = {ds["id"]: ds for ds in result["datasets"]}
@@ -116,5 +115,5 @@ def test_expected_fixture_matches(tmp_path):
     for ds_id in expected_by_id:
         assert result_by_id[ds_id]["status"] == expected_by_id[ds_id]["status"]
         assert result_by_id[ds_id]["checks"] == expected_by_id[ds_id]["checks"]
-        if "s3Blocked" in expected_by_id[ds_id]:
-            assert result_by_id[ds_id].get("s3Blocked") == expected_by_id[ds_id]["s3Blocked"]
+        if expected_by_id[ds_id].get("s3Blocked") is True:
+            assert result_by_id[ds_id].get("s3Blocked") is True

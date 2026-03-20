@@ -9,6 +9,7 @@ import httpx
 import pytest
 
 from openneuro_dashboard.check_s3_version import fetch_dataset_description
+from openneuro_dashboard.models import S3Version, VersionSource
 
 
 def _mock_response(status_code: int, json_data: dict | None = None, text: str = ""):
@@ -56,10 +57,11 @@ async def test_normal_doi(_ts):
 
     result = await fetch_dataset_description(client, "ds000001", "1.0.2")
 
-    assert result["extractedVersion"] == "1.0.2"
-    assert result["versionSource"] == "doi"
-    assert result["accessible"] is True
-    assert result["datasetDescriptionDOI"] == body["DatasetDOI"]
+    assert isinstance(result, S3Version)
+    assert result.extractedVersion == "1.0.2"
+    assert result.versionSource == VersionSource.doi
+    assert result.accessible is True
+    assert result.datasetDescriptionDOI == body["DatasetDOI"]
 
 
 @patch("openneuro_dashboard.check_s3_version.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
@@ -70,9 +72,9 @@ async def test_missing_doi(_ts):
 
     result = await fetch_dataset_description(client, "ds000001", "1.0.2")
 
-    assert result["extractedVersion"] == "1.0.2"
-    assert result["versionSource"] == "assumed_latest"
-    assert result["datasetDescriptionDOI"] is None
+    assert result.extractedVersion == "1.0.2"
+    assert result.versionSource == VersionSource.assumed_latest
+    assert result.datasetDescriptionDOI is None
 
 
 @patch("openneuro_dashboard.check_s3_version.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
@@ -83,9 +85,9 @@ async def test_custom_doi(_ts):
 
     result = await fetch_dataset_description(client, "ds000001", "1.0.2")
 
-    assert result["extractedVersion"] == "1.0.2"
-    assert result["versionSource"] == "assumed_latest"
-    assert result["datasetDescriptionDOI"] == body["DatasetDOI"]
+    assert result.extractedVersion == "1.0.2"
+    assert result.versionSource == VersionSource.assumed_latest
+    assert result.datasetDescriptionDOI == body["DatasetDOI"]
 
 
 @patch("openneuro_dashboard.check_s3_version.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
@@ -96,10 +98,10 @@ async def test_doi_id_mismatch(_ts):
 
     result = await fetch_dataset_description(client, "ds000001", "1.0.2")
 
-    assert result["doiIdMismatch"] is True
-    assert result["extractedVersion"] == "2.0.0"
-    assert result["versionSource"] == "doi"
-    assert result["doiDatasetId"] == "ds999999"
+    assert result.doiIdMismatch is True
+    assert result.extractedVersion == "2.0.0"
+    assert result.versionSource == VersionSource.doi
+    assert result.doiDatasetId == "ds999999"
 
 
 @patch("openneuro_dashboard.check_s3_version.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
@@ -109,8 +111,8 @@ async def test_403_blocked(_ts):
 
     result = await fetch_dataset_description(client, "ds000001", "1.0.2")
 
-    assert result["accessible"] is False
-    assert result["httpStatus"] == 403
+    assert result.accessible is False
+    assert result.httpStatus == 403
 
 
 @patch("openneuro_dashboard.check_s3_version.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
@@ -120,10 +122,10 @@ async def test_404_not_found(_ts):
 
     result = await fetch_dataset_description(client, "ds000001", "1.0.2")
 
-    assert result["datasetDescriptionMissing"] is True
-    assert result["extractedVersion"] == "1.0.2"
-    assert result["versionSource"] == "assumed_latest"
-    assert result["accessible"] is True
+    assert result.datasetDescriptionMissing is True
+    assert result.extractedVersion == "1.0.2"
+    assert result.versionSource == VersionSource.assumed_latest
+    assert result.accessible is True
 
 
 @patch("openneuro_dashboard.check_s3_version.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
@@ -137,6 +139,6 @@ async def test_malformed_json(_ts):
 
     result = await fetch_dataset_description(client, "ds000001", "1.0.2")
 
-    assert result["invalidJson"] is True
-    assert result["extractedVersion"] == "1.0.2"
-    assert result["versionSource"] == "assumed_latest"
+    assert result.invalidJson is True
+    assert result.extractedVersion == "1.0.2"
+    assert result.versionSource == VersionSource.assumed_latest

@@ -5,6 +5,7 @@ from __future__ import annotations
 from unittest.mock import patch
 
 from openneuro_dashboard.check_s3_files import compute_context, compute_diff
+from openneuro_dashboard.models import CheckStatus, S3FileDiff
 
 
 # ------------------------------------------------------------------
@@ -18,10 +19,11 @@ def test_identical_sets(_ts):
     files = {"a.txt", "b.txt", "c.txt"}
     result = compute_diff("ds000001", "1.0.2", "1.0.2", files, files)
 
-    assert result["status"] == "ok"
-    assert result["added"] == []
-    assert result["removed"] == []
-    assert result["exportMissing"] is False
+    assert isinstance(result, S3FileDiff)
+    assert result.status == CheckStatus.ok
+    assert result.added == []
+    assert result.removed == []
+    assert result.exportMissing is False
 
 
 @patch("openneuro_dashboard.check_s3_files.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
@@ -31,9 +33,9 @@ def test_added_files(_ts):
     s3_files = {"a.txt", "b.txt"}
     result = compute_diff("ds000001", "1.0.2", "1.0.2", git_files, s3_files)
 
-    assert result["status"] == "error"
-    assert "new.txt" in result["added"]
-    assert result["removed"] == []
+    assert result.status == CheckStatus.error
+    assert "new.txt" in result.added
+    assert result.removed == []
 
 
 @patch("openneuro_dashboard.check_s3_files.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
@@ -43,9 +45,9 @@ def test_removed_files(_ts):
     s3_files = {"a.txt", "old.txt"}
     result = compute_diff("ds000001", "1.0.2", "1.0.2", git_files, s3_files)
 
-    assert result["status"] == "error"
-    assert "old.txt" in result["removed"]
-    assert result["added"] == []
+    assert result.status == CheckStatus.error
+    assert "old.txt" in result.removed
+    assert result.added == []
 
 
 @patch("openneuro_dashboard.check_s3_files.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
@@ -55,9 +57,9 @@ def test_export_missing(_ts):
     s3_files: set[str] = set()
     result = compute_diff("ds000001", "1.0.2", "1.0.2", git_files, s3_files)
 
-    assert result["exportMissing"] is True
-    assert result["status"] == "error"
-    assert sorted(result["added"]) == ["a.txt", "b.txt"]
+    assert result.exportMissing is True
+    assert result.status == CheckStatus.error
+    assert sorted(result.added) == ["a.txt", "b.txt"]
 
 
 @patch("openneuro_dashboard.check_s3_files.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
@@ -65,11 +67,11 @@ def test_both_empty(_ts):
     """Both sets empty -> status 'ok'."""
     result = compute_diff("ds000001", "1.0.2", "1.0.2", set(), set())
 
-    assert result["status"] == "ok"
-    assert result["added"] == []
-    assert result["removed"] == []
+    assert result.status == CheckStatus.ok
+    assert result.added == []
+    assert result.removed == []
     # exportMissing is True because len(s3_files)==0
-    assert result["exportMissing"] is True
+    assert result.exportMissing is True
 
 
 # ------------------------------------------------------------------

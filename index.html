@@ -67,6 +67,28 @@
             <option value="pending">Pending</option>
           </select>
         </div>
+        <div class="filter-group">
+          <label for="issue-filter">Filter by issue type:</label>
+          <select id="issue-filter">
+            <option value="all">All Issues</option>
+            <optgroup label="GitHub">
+              <option value="github:tag-missing">Tag Missing</option>
+              <option value="github:head-mismatch">HEAD Mismatch</option>
+            </optgroup>
+            <optgroup label="S3 Version">
+              <option value="s3Version:doi-mismatch">DOI Mismatch</option>
+              <option value="s3Version:no-doi">No DOI</option>
+              <option value="s3Version:blocked">Blocked (403)</option>
+            </optgroup>
+            <optgroup label="S3 Files">
+              <option value="s3Files:files-missing">
+                Files Missing from S3
+              </option>
+              <option value="s3Files:files-orphaned">Orphaned in S3</option>
+              <option value="s3Files:export-missing">Export Missing</option>
+            </optgroup>
+          </select>
+        </div>
         <div class="search-group">
           <label for="search-box">Search:</label>
           <input

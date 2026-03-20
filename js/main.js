@@ -21,6 +21,7 @@ let registry = null;
 let summary = null;
 let currentSort = { column: "id", direction: "asc" };
 let currentFilter = "all";
+let currentIssueFilter = "all";
 let currentSearch = "";
 
 /**
@@ -134,6 +135,12 @@ function setupEventListeners() {
     renderTable();
   });
 
+  // Issue type filter
+  document.getElementById("issue-filter").addEventListener("change", (e) => {
+    currentIssueFilter = e.target.value;
+    renderTable();
+  });
+
   // Search box
   const searchBox = document.getElementById("search-box");
   searchBox.addEventListener(
@@ -153,6 +160,15 @@ function getFilteredDatasets() {
   // Apply status filter
   if (currentFilter !== "all") {
     filtered = filtered.filter((ds) => ds.status === currentFilter);
+  }
+
+  // Apply issue type filter
+  if (currentIssueFilter !== "all") {
+    const [check, subtype] = currentIssueFilter.split(":");
+    filtered = filtered.filter((ds) => {
+      if (!ds.issueSubtypes) return false;
+      return ds.issueSubtypes[check] === subtype;
+    });
   }
 
   // Apply search

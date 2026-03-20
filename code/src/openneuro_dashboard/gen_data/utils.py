@@ -1,16 +1,9 @@
 """Shared utilities for test data generation."""
 
-import json
 import random
-from pathlib import Path
-from datetime import datetime, timedelta, UTC
+from datetime import UTC, datetime, timedelta
 
-SCHEMA_VERSION = "1.1.0"
-
-
-def format_timestamp() -> str:
-    """Format current UTC time in the standard dashboard timestamp format."""
-    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+from ..utils import SCHEMA_VERSION, write_json  # noqa: F401
 
 
 def random_sha() -> str:
@@ -110,17 +103,3 @@ def generate_file_paths(size: str = "medium") -> list[str]:
         )
 
     return sorted(set(files))[:num_files]
-
-
-def write_json(path: Path, data: dict) -> None:
-    """Write JSON to file with pretty formatting."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w") as f:
-        json.dump(data, f, indent=2)
-        f.write("\n")
-
-
-def load_json(path: Path) -> dict:
-    """Load JSON from file."""
-    with open(path) as f:
-        return json.load(f)

@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-"""
-Stage 3: Simulate S3 version checks.
+"""Stage 3: Generate simulated S3 version check data.
 
 Reads:
 - data/datasets-registry.json
@@ -9,16 +7,17 @@ Writes:
 - data/datasets/{id}/s3-version.json
 """
 
-import argparse
 import random
 from pathlib import Path
 
-from utils import SCHEMA_VERSION, random_datetime, write_json, load_json
+from ..utils import SCHEMA_VERSION, load_json, write_json
+from .utils import random_datetime
 
 
-def generate_s3_version_check(dataset_id: str, latest_snapshot: str, scenario: str) -> dict:
+def _generate_s3_version_check(
+    dataset_id: str, latest_snapshot: str, scenario: str
+) -> dict:
     """Generate s3-version.json for a dataset."""
-    
     # Case 3: Blocked (403)
     if scenario == "blocked":
         return {
@@ -27,9 +26,9 @@ def generate_s3_version_check(dataset_id: str, latest_snapshot: str, scenario: s
             "accessible": False,
             "httpStatus": 403,
             "datasetDescriptionDOI": None,
-            "extractedVersion": None
+            "extractedVersion": None,
         }
-    
+
     # Case 4: Not found (404)
     if scenario == "not_found":
         return {
@@ -39,9 +38,9 @@ def generate_s3_version_check(dataset_id: str, latest_snapshot: str, scenario: s
             "datasetDescriptionDOI": None,
             "extractedVersion": latest_snapshot,
             "versionSource": "assumed_latest",
-            "datasetDescriptionMissing": True
+            "datasetDescriptionMissing": True,
         }
-    
+
     # Case 2: Missing or custom DOI
     if scenario == "custom_doi":
         doi_type = random.choice(["custom", "missing"])
@@ -53,7 +52,7 @@ def generate_s3_version_check(dataset_id: str, latest_snapshot: str, scenario: s
                 "accessible": True,
                 "datasetDescriptionDOI": custom_doi,
                 "extractedVersion": latest_snapshot,
-                "versionSource": "assumed_latest"
+                "versionSource": "assumed_latest",
             }
         else:
             return {
@@ -62,21 +61,21 @@ def generate_s3_version_check(dataset_id: str, latest_snapshot: str, scenario: s
                 "accessible": True,
                 "datasetDescriptionDOI": None,
                 "extractedVersion": latest_snapshot,
-                "versionSource": "assumed_latest"
+                "versionSource": "assumed_latest",
             }
-    
+
     # Case 1: Normal DOI or version mismatch
     actual_version = latest_snapshot
-    
+
     # For version-mismatch scenario, use an older version
     if scenario == "version-mismatch":
-        parts = latest_snapshot.split('.')
+        parts = latest_snapshot.split(".")
         if len(parts) == 3 and parts[2].isdigit() and int(parts[2]) > 0:
             parts[2] = str(int(parts[2]) - 1)
-            actual_version = '.'.join(parts)
-    
+            actual_version = ".".join(parts)
+
     doi = f"10.18112/openneuro.{dataset_id}.v{actual_version}"
-    
+
     # Occasionally add DOI ID mismatch
     if random.random() < 0.01:  # 1% chance
         wrong_id = f"ds{random.randint(0, 999999):06d}"
@@ -89,57 +88,46 @@ def generate_s3_version_check(dataset_id: str, latest_snapshot: str, scenario: s
             "extractedVersion": actual_version,
             "versionSource": "doi",
             "doiIdMismatch": True,
-            "doiDatasetId": wrong_id
+            "doiDatasetId": wrong_id,
         }
-    
+
     return {
         "schemaVersion": SCHEMA_VERSION,
         "lastChecked": random_datetime(days_ago=1),
         "accessible": True,
         "datasetDescriptionDOI": doi,
         "extractedVersion": actual_version,
-        "versionSource": "doi"
+        "versionSource": "doi",
     }
 
 
-def generate_s3_version_checks(output_dir: Path, seed: int = None):
+def generate(output_dir: Path, seed: int = None):
     """Generate S3 version check data for all datasets."""
     if seed is not None:
         random.seed(seed)
-    
+
     print("Generating S3 version check data...")
-    
+
     # Load registry
     registry = load_json(output_dir / "datasets-registry.json")
     datasets = registry["latestSnapshots"]
-    
+
     for i, (dataset_id, latest_snapshot) in enumerate(datasets.items(), 1):
         dataset_dir = output_dir / "datasets" / dataset_id
-        
+
         # Determine scenario with realistic weights
         scenario = random.choices(
             ["healthy", "version-mismatch", "custom_doi", "not_found", "blocked"],
-            weights=[75, 10, 8, 5, 2]
+            weights=[75, 10, 8, 5, 2],
         )[0]
-        
+
         # Generate s3-version.json
-        s3_version_data = generate_s3_version_check(dataset_id, latest_snapshot, scenario)
+        s3_version_data = _generate_s3_version_check(
+            dataset_id, latest_snapshot, scenario
+        )
         write_json(dataset_dir / "s3-version.json", s3_version_data)
-        
+
         if i % 100 == 0:
             print(f"  Processed {i}/{len(datasets)}")
-    
-    print(f"✓ S3 version check generation complete ({len(datasets)} datasets)")
 
-
-def main():
-    parser = argparse.ArgumentParser(description="Generate simulated S3 version check data")
-    parser.add_argument("--output-dir", type=Path, default=Path("data"))
-    parser.add_argument("--seed", type=int, help="Random seed for reproducibility")
-    args = parser.parse_args()
-    
-    generate_s3_version_checks(args.output_dir, args.seed)
-
-
-if __name__ == "__main__":
-    main()
+    print(f"S3 version check generation complete ({len(datasets)} datasets)")

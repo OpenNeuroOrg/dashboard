@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasetId": "ds000005",
+  "snapshotTag": "1.0.0",
+  "s3Version": "1.0.0",
+  "checkedAt": "2026-01-01T00:00:00.000Z",
+  "status": "error",
+  "exportMissing": true,
+  "totalS3Files": 0,
+  "totalGitFiles": 8,
+  "added": [
+    "file1.nii.gz",
+    "file2.nii.gz",
+    "file3.nii.gz",
+    "file4.nii.gz",
+    "file5.nii.gz",
+    "file6.nii.gz",
+    "file7.nii.gz",
+    "file8.nii.gz"
+  ],
+  "removed": [],
+  "context": []
+}

@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-"""
-Stage 4: Simulate git tree fetching.
+"""Stage 4: Generate simulated git tree file listings.
 
 Reads:
 - data/datasets-registry.json
@@ -10,14 +8,14 @@ Writes:
 - data/datasets/{id}/snapshots/{tag}/files.json
 """
 
-import argparse
 import random
 from pathlib import Path
 
-from utils import SCHEMA_VERSION, generate_file_paths, write_json, load_json
+from ..utils import SCHEMA_VERSION, load_json, write_json
+from .utils import generate_file_paths
 
 
-def generate_git_files(output_dir: Path, dataset_size: str, seed: int = None):
+def generate(output_dir: Path, dataset_size: str = "medium", seed: int = None):
     """Generate git file listings for all datasets."""
     if seed is not None:
         random.seed(seed)
@@ -33,7 +31,7 @@ def generate_git_files(output_dir: Path, dataset_size: str, seed: int = None):
 
         # Only generate for latest snapshot to save space
         latest_dir = dataset_dir / "snapshots" / latest_snapshot
-        metadata = load_json(latest_dir / "metadata.json")
+        load_json(latest_dir / "metadata.json")
 
         # Generate file list
         files = generate_file_paths(dataset_size)
@@ -48,22 +46,4 @@ def generate_git_files(output_dir: Path, dataset_size: str, seed: int = None):
         if i % 100 == 0:
             print(f"  Processed {i}/{len(datasets)}")
 
-    print(f"✓ Git file listing generation complete ({len(datasets)} datasets)")
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Generate simulated git file listings")
-    parser.add_argument("--output-dir", type=Path, default=Path("data"))
-    parser.add_argument(
-        "--dataset-size",
-        choices=["small", "medium", "large", "xlarge"],
-        default="medium",
-    )
-    parser.add_argument("--seed", type=int, help="Random seed for reproducibility")
-    args = parser.parse_args()
-
-    generate_git_files(args.output_dir, args.dataset_size, args.seed)
-
-
-if __name__ == "__main__":
-    main()
+    print(f"Git file listing generation complete ({len(datasets)} datasets)")

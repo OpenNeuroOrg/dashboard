@@ -1,13 +1,4 @@
-#!/usr/bin/env python3
-# /// script
-# requires-python = ">=3.13"
-# dependencies = [
-#     "aioboto3>=13.4.0",
-#     "pygit2>=1.17.0",
-# ]
-# ///
-"""
-Stage 4: Compare S3 file listing against git tree.
+"""Compare S3 file listing against git tree.
 
 Manages a bare repo cache for git trees. Clones on cache miss,
 fetches missing tags from existing repos.
@@ -21,53 +12,30 @@ Writes:
 - data/datasets/{id}/s3-diff.json
 """
 
-import argparse
+from __future__ import annotations
+
 import asyncio
-from asyncio.subprocess import PIPE
-from dataclasses import dataclass, field
-from datetime import datetime, UTC, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import aioboto3
 import pygit2
 from botocore import UNSIGNED
 from botocore.config import Config as BotoConfig
+from ondiagnostics.subprocs import git
 
-from utils import SCHEMA_VERSION, write_json, load_json, format_timestamp
-
+from .utils import (
+    SCHEMA_VERSION,
+    format_timestamp,
+    load_json,
+    load_json_safe,
+    write_json,
+)
 
 S3_BUCKET = "openneuro.org"
 S3_REGION = "us-east-1"
 GITHUB_BASE = "https://github.com/OpenNeuroDatasets"
 STALE_DAYS = 7
-
-
-@dataclass
-class SubprocessResult:
-    args: tuple[str, ...]
-    returncode: int
-    stdout: bytes = field(repr=False)
-    stderr: bytes = field(repr=False)
-
-
-async def git(*args: str, cwd: Path | None = None) -> SubprocessResult:
-    """Run a git command and return the result."""
-    args_tuple = ("git", *args)
-    proc = await asyncio.create_subprocess_exec(
-        *args_tuple, stdout=PIPE, stderr=PIPE, cwd=cwd
-    )
-    stdout, stderr = await proc.communicate()
-    assert proc.returncode is not None
-    return SubprocessResult(
-        args=args_tuple, returncode=proc.returncode, stdout=stdout, stderr=stderr
-    )
-
-
-def load_json_safe(path: Path) -> dict | None:
-    """Load JSON file if it exists, return None otherwise."""
-    if path.exists():
-        return load_json(path)
-    return None
 
 
 def is_eligible(
@@ -103,7 +71,7 @@ def is_eligible(
                 return False
             # Older than STALE_DAYS: re-run regardless
         except (ValueError, TypeError):
-            pass  # Can't parse timestamp — re-run
+            pass  # Can't parse timestamp -- re-run
 
     return True
 
@@ -118,17 +86,24 @@ async def ensure_tag_cached(
         if not repo_path.exists():
             # Clone bare repo
             result = await git(
-                "clone", "--bare", "--filter=blob:none", "--depth=1",
-                "--branch", tag,
+                "clone",
+                "--bare",
+                "--filter=blob:none",
+                "--depth=1",
+                "--branch",
+                tag,
                 f"{GITHUB_BASE}/{dataset_id}.git",
                 str(repo_path),
             )
             if result.returncode != 0:
-                print(f"✗ {dataset_id}: git clone failed: {result.stderr.decode().strip()}")
+                print(
+                    f"  {dataset_id}: git clone failed: "
+                    f"{result.stderr.decode().strip()}"
+                )
                 return False
             return True
 
-        # Repo exists — check if tag is present
+        # Repo exists -- check if tag is present
         try:
             repo = await asyncio.to_thread(pygit2.Repository, str(repo_path))
             ref_name = f"refs/tags/{tag}"
@@ -136,16 +111,25 @@ async def ensure_tag_cached(
             if has_tag:
                 return True
         except Exception as e:
-            print(f"⚠ {dataset_id}: Error checking repo: {e}")
+            print(f"  {dataset_id}: Error checking repo: {e}")
 
-        # Fetch the missing tag
+        # Fetch the missing tag (use -C to set working directory)
         result = await git(
-            "fetch", "--refetch", "--filter=blob:none", "--depth=1",
-            "origin", "tag", tag,
-            cwd=repo_path,
+            "-C",
+            str(repo_path),
+            "fetch",
+            "--refetch",
+            "--filter=blob:none",
+            "--depth=1",
+            "origin",
+            "tag",
+            tag,
         )
         if result.returncode != 0:
-            print(f"✗ {dataset_id}: git fetch failed: {result.stderr.decode().strip()}")
+            print(
+                f"  {dataset_id}: git fetch failed: "
+                f"{result.stderr.decode().strip()}"
+            )
             return False
 
         return True
@@ -161,9 +145,9 @@ def walk_git_tree(repo_path: Path, tag: str) -> set[str]:
     commit = ref.peel(pygit2.Commit)
     tree = commit.tree
 
-    files = set()
+    files: set[str] = set()
 
-    def _walk(tree_obj, prefix=""):
+    def _walk(tree_obj: pygit2.Tree, prefix: str = "") -> None:
         for entry in tree_obj:
             path = entry.name if not prefix else f"{prefix}/{entry.name}"
             if entry.type == pygit2.GIT_OBJECT_TREE:
@@ -178,7 +162,13 @@ def walk_git_tree(repo_path: Path, tag: str) -> set[str]:
 async def list_s3_files(
     dataset_id: str, semaphore: asyncio.Semaphore
 ) -> set[str] | None:
-    """List all S3 objects under the dataset prefix. Returns file paths as a set."""
+    """List all S3 objects under the dataset prefix.
+
+    Returns file paths relative to the dataset prefix as a set,
+    or None on failure.
+
+    Uses unsigned access for the public OpenNeuro bucket.
+    """
     prefix = f"{dataset_id}/"
 
     async with semaphore:
@@ -188,29 +178,35 @@ async def list_s3_files(
             region_name=S3_REGION,
             config=BotoConfig(signature_version=UNSIGNED),
         ) as s3:
-            files = set()
+            files: set[str] = set()
             paginator = s3.get_paginator("list_objects_v2")
             try:
-                async for page in paginator.paginate(Bucket=S3_BUCKET, Prefix=prefix):
+                async for page in paginator.paginate(
+                    Bucket=S3_BUCKET, Prefix=prefix
+                ):
                     for obj in page.get("Contents", []):
                         key = obj["Key"]
                         # Strip the dataset prefix
-                        rel_path = key[len(prefix):]
+                        rel_path = key[len(prefix) :]
                         if rel_path:
                             files.add(rel_path)
             except Exception as e:
-                print(f"✗ {dataset_id}: S3 listing failed: {e}")
+                print(f"  {dataset_id}: S3 listing failed: {e}")
                 return None
 
             return files
 
 
-def compute_context(sorted_files: list[str], changed: set[str], radius: int = 3) -> list[str]:
-    """Compute context files within `radius` sorted positions of any changed file."""
-    context = set()
+def compute_context(
+    sorted_files: list[str], changed: set[str], radius: int = 3
+) -> list[str]:
+    """Compute context files within ``radius`` sorted positions of any changed file."""
+    context: set[str] = set()
     for i, f in enumerate(sorted_files):
         if f in changed:
-            for j in range(max(0, i - radius), min(len(sorted_files), i + radius + 1)):
+            for j in range(
+                max(0, i - radius), min(len(sorted_files), i + radius + 1)
+            ):
                 neighbor = sorted_files[j]
                 if neighbor not in changed:
                     context.add(neighbor)
@@ -218,8 +214,11 @@ def compute_context(sorted_files: list[str], changed: set[str], radius: int = 3)
 
 
 def compute_diff(
-    dataset_id: str, tag: str, s3_version: str,
-    git_files: set[str], s3_files: set[str]
+    dataset_id: str,
+    tag: str,
+    s3_version: str,
+    git_files: set[str],
+    s3_files: set[str],
 ) -> dict:
     """Compute the S3 file diff and return the s3-diff.json data."""
     added = sorted(git_files - s3_files)
@@ -269,7 +268,7 @@ async def process_dataset(
     try:
         git_files = await asyncio.to_thread(walk_git_tree, repo_path, tag)
     except Exception as e:
-        print(f"✗ {dataset_id}: Failed to walk git tree: {e}")
+        print(f"  {dataset_id}: Failed to walk git tree: {e}")
         return False
 
     # Step 3: List S3 files
@@ -288,9 +287,11 @@ async def process_dataset(
         added_count = len(diff["added"])
         removed_count = len(diff["removed"])
         if added_count or removed_count:
-            print(f"✗ {dataset_id}: +{added_count} -{removed_count} ({diff['status']})")
+            print(
+                f"  {dataset_id}: +{added_count} -{removed_count} ({diff['status']})"
+            )
         else:
-            print(f"✓ {dataset_id}: ok")
+            print(f"  {dataset_id}: ok")
 
     return True
 
@@ -336,11 +337,18 @@ async def check_all_datasets(
     failed = 0
 
     # Process datasets concurrently
-    async def process_with_progress(dataset_id, s3_version_data, index):
+    async def process_with_progress(
+        dataset_id: str, s3_version_data: dict, index: int
+    ) -> None:
         nonlocal success, failed
         ok = await process_dataset(
-            dataset_id, s3_version_data, output_dir, cache_dir,
-            git_semaphore, s3_semaphore, verbose,
+            dataset_id,
+            s3_version_data,
+            output_dir,
+            cache_dir,
+            git_semaphore,
+            s3_semaphore,
+            verbose,
         )
         if ok:
             success += 1
@@ -356,54 +364,10 @@ async def check_all_datasets(
     ]
     await asyncio.gather(*tasks)
 
-    print(f"\n✓ S3 file check complete")
+    print("\nS3 file check complete")
     print(f"  Success: {success}/{len(eligible)}")
     print(f"  Failed: {failed}/{len(eligible)}")
     print(f"  Skipped: {total - len(eligible)}/{total}")
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description="Check S3 files against git tree for OpenNeuro datasets"
-    )
-    parser.add_argument(
-        "--output-dir", type=Path, default=Path("data"),
-        help="Output directory (default: data)",
-    )
-    parser.add_argument(
-        "--cache-dir", type=Path,
-        default=Path.home() / ".cache" / "openneuro-dashboard" / "repos",
-        help="Bare repo cache directory",
-    )
-    parser.add_argument(
-        "--git-concurrency", type=int, default=10,
-        help="Max concurrent git operations (default: 10)",
-    )
-    parser.add_argument(
-        "--s3-concurrency", type=int, default=20,
-        help="Max concurrent S3 requests (default: 20)",
-    )
-    parser.add_argument(
-        "--validate", action="store_true",
-        help="Validate results after checking",
-    )
-    parser.add_argument(
-        "--verbose", action="store_true",
-        help="Enable verbose logging",
-    )
-
-    args = parser.parse_args()
-
-    asyncio.run(
-        check_all_datasets(
-            args.output_dir, args.cache_dir,
-            args.git_concurrency, args.s3_concurrency,
-            args.verbose,
-        )
-    )
-
-    if args.validate:
-        validate_results(args.output_dir)
 
 
 def validate_results(output_dir: Path) -> None:
@@ -411,7 +375,7 @@ def validate_results(output_dir: Path) -> None:
     print("\nValidating S3 file check results...")
 
     registry = load_json(output_dir / "datasets-registry.json")
-    issues = []
+    issues: list[str] = []
 
     for dataset_id in registry["latestSnapshots"]:
         dataset_dir = output_dir / "datasets" / dataset_id
@@ -422,16 +386,26 @@ def validate_results(output_dir: Path) -> None:
         diff = load_json(diff_path)
 
         # Check required fields
-        for field in ("added", "removed", "context", "totalS3Files", "totalGitFiles", "status"):
-            if field not in diff:
-                issues.append(f"{dataset_id}: missing field '{field}'")
+        for fld in (
+            "added",
+            "removed",
+            "context",
+            "totalS3Files",
+            "totalGitFiles",
+            "status",
+        ):
+            if fld not in diff:
+                issues.append(f"{dataset_id}: missing field '{fld}'")
 
         # Check status consistency
         added = diff.get("added", [])
         removed = diff.get("removed", [])
         status = diff.get("status")
         if status == "ok" and (len(added) > 0 or len(removed) > 0):
-            issues.append(f"{dataset_id}: status is 'ok' but has {len(added)} added, {len(removed)} removed")
+            issues.append(
+                f"{dataset_id}: status is 'ok' but has "
+                f"{len(added)} added, {len(removed)} removed"
+            )
         if status == "error" and len(added) == 0 and len(removed) == 0:
             issues.append(f"{dataset_id}: status is 'error' but diff is empty")
 
@@ -442,8 +416,4 @@ def validate_results(output_dir: Path) -> None:
         if len(issues) > 20:
             print(f"    ... and {len(issues) - 20} more")
     else:
-        print("  ✓ No issues found")
-
-
-if __name__ == "__main__":
-    main()
+        print("  No issues found")

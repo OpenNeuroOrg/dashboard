@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-"""
-Check GitHub mirror status for all datasets.
+"""Check GitHub mirror status for all datasets.
 
 Reads:
 - data/datasets-registry.json
@@ -11,118 +9,66 @@ Writes:
 - data/datasets/{id}/github.json
 """
 
-import argparse
+from __future__ import annotations
+
 import asyncio
-from asyncio.subprocess import PIPE
 from pathlib import Path
-from dataclasses import dataclass, field
 
-from utils import SCHEMA_VERSION, write_json, load_json, format_timestamp
+from ondiagnostics.tasks.git import list_refs
 
-
-@dataclass
-class SubprocessResult:
-    args: tuple[str, ...]
-    returncode: int
-    stdout: bytes = field(repr=False)
-    stderr: bytes = field(repr=False)
-
-
-async def git(*args: str) -> SubprocessResult:
-    """Run a git command and return the exit code, stdout, and stderr."""
-    args_tuple = ("git", *args)
-
-    proc = await asyncio.create_subprocess_exec(*args_tuple, stdout=PIPE, stderr=PIPE)
-    stdout, stderr = await proc.communicate()
-    assert proc.returncode is not None
-    return SubprocessResult(
-        args=args_tuple, returncode=proc.returncode, stdout=stdout, stderr=stderr
-    )
+from .utils import SCHEMA_VERSION, format_timestamp, load_json, write_json
 
 
 async def check_github_mirror(
     dataset_id: str, output_dir: Path, verbose: bool = False
 ) -> dict | None:
+    """Check GitHub mirror status for a single dataset.
+
+    Parameters
+    ----------
+    dataset_id
+        Dataset ID to check.
+    output_dir
+        Base output directory.
+    verbose
+        Enable verbose logging.
+
+    Returns
+    -------
+    dict or None
+        GitHub status dict, or None if the check failed.
     """
-    Check GitHub mirror status for a single dataset.
+    repo_url = f"https://github.com/OpenNeuroDatasets/{dataset_id}.git"
 
-    Args:
-        dataset_id: Dataset ID to check
-        output_dir: Base output directory
-        verbose: Enable verbose logging
-
-    Returns:
-        GitHub status dict or None if check failed
-    """
-    repo = f"https://github.com/OpenNeuroDatasets/{dataset_id}.git"
-
-    # Run git ls-remote to get all refs
-    result = await git("ls-remote", "--symref", repo)
-
-    if result.returncode != 0:
-        if b"Repository not found" in result.stderr:
-            print(f"✗ {dataset_id}: Repository not found on GitHub")
-        else:
-            print(f"✗ {dataset_id}: git ls-remote failed: {result.stderr.decode()}")
+    refs = await list_refs(repo_url)
+    if refs is None:
+        print(f"  {dataset_id}: failed to list refs")
         return None
 
-    if not result.stdout.strip():
-        print(f"✗ {dataset_id}: Empty response from git ls-remote")
-        return None
-
-    # Parse output
-    lines = result.stdout.decode().strip().split("\n")
-
-    head_ref = None
-    branches = {}
-    tags = {}
-
-    for line in lines:
-        parts = line.split()
-
-        # Handle symref (HEAD)
-        if parts[0] == "ref:":
-            # Format: "ref: refs/heads/master	HEAD"
-            ref_target = parts[1]  # e.g., "refs/heads/master"
-            head_ref = ref_target.split("/")[-1]  # Extract "master"
-            continue
-
-        # Handle normal refs
-        if len(parts) != 2:
-            continue
-
-        sha, ref = parts
-
-        if ref == "HEAD":
-            continue  # Skip HEAD SHA line (we got symref above)
-        elif ref.startswith("refs/heads/"):
-            branch_name = ref.replace("refs/heads/", "")
-            branches[branch_name] = sha
-        elif ref.startswith("refs/tags/"):
-            tag_name = ref.replace("refs/tags/", "")
-            tags[tag_name] = sha
-
-    if head_ref is None:
-        print(f"⚠ {dataset_id}: Could not determine HEAD ref")
-        # Default to common values if not found
-        if "master" in branches:
-            head_ref = "master"
-        elif "main" in branches:
-            head_ref = "main"
+    head = refs.head
+    if head is None:
+        # Fallback to common defaults
+        if "master" in refs.branches:
+            head = "master"
+        elif "main" in refs.branches:
+            head = "main"
         else:
-            head_ref = "unknown"
+            head = "unknown"
 
     github_data = {
         "schemaVersion": SCHEMA_VERSION,
         "lastChecked": format_timestamp(),
-        "head": head_ref,
-        "branches": branches,
-        "tags": tags,
+        "head": head,
+        "branches": refs.branches,
+        "tags": refs.tags,
     }
 
     if verbose:
         print(
-            f"✓ {dataset_id}: {len(branches)} branches, {len(tags)} tags, HEAD={head_ref}"
+            f"  {dataset_id}: "
+            f"{len(refs.branches)} branches, "
+            f"{len(refs.tags)} tags, "
+            f"HEAD={head}"
         )
 
     return github_data
@@ -131,30 +77,30 @@ async def check_github_mirror(
 async def check_all_datasets(
     output_dir: Path, concurrency: int = 10, verbose: bool = False
 ) -> None:
-    """
-    Check GitHub mirrors for all datasets with concurrency control.
+    """Check GitHub mirrors for all datasets.
 
-    Args:
-        output_dir: Base output directory
-        concurrency: Maximum number of concurrent git operations
-        verbose: Enable verbose logging
+    Parameters
+    ----------
+    output_dir
+        Base output directory.
+    concurrency
+        Maximum number of concurrent git operations.
+    verbose
+        Enable verbose logging.
     """
     print("Checking GitHub mirrors...")
 
-    # Load registry
     registry = load_json(output_dir / "datasets-registry.json")
     datasets = list(registry["latestSnapshots"].keys())
     total = len(datasets)
 
     print(f"Found {total} datasets to check")
 
-    # Semaphore to limit concurrency
     semaphore = asyncio.Semaphore(concurrency)
 
     async def check_with_semaphore(
         dataset_id: str, index: int
     ) -> tuple[str, dict | None]:
-        """Check a dataset with semaphore for rate limiting."""
         async with semaphore:
             result = await check_github_mirror(dataset_id, output_dir, verbose)
 
@@ -163,14 +109,12 @@ async def check_all_datasets(
 
             return dataset_id, result
 
-    # Launch all checks concurrently (but semaphore limits actual parallelism)
     tasks = [
         check_with_semaphore(dataset_id, i) for i, dataset_id in enumerate(datasets)
     ]
 
     results = await asyncio.gather(*tasks)
 
-    # Write results
     success_count = 0
     failed_count = 0
 
@@ -183,25 +127,31 @@ async def check_all_datasets(
         write_json(dataset_dir / "github.json", github_data)
         success_count += 1
 
-    print("\n✓ GitHub check complete")
+    print("\nGitHub check complete")
     print(f"  Success: {success_count}/{total}")
     print(f"  Failed: {failed_count}/{total}")
 
 
 async def validate_github_data(output_dir: Path, verbose: bool = False) -> None:
-    """
-    Validate GitHub data against expected snapshots.
+    """Validate GitHub data against expected snapshots.
 
-    This checks that:
+    Checks that:
     - All expected tags exist on GitHub
     - HEAD points to the latest snapshot
     - Git SHAs match expected values
+
+    Parameters
+    ----------
+    output_dir
+        Base output directory.
+    verbose
+        Enable verbose logging.
     """
     print("\nValidating GitHub data...")
 
     registry = load_json(output_dir / "datasets-registry.json")
 
-    issues = {
+    issues: dict[str, list[str]] = {
         "missing_tags": [],
         "sha_mismatch": [],
         "head_mismatch": [],
@@ -210,14 +160,12 @@ async def validate_github_data(output_dir: Path, verbose: bool = False) -> None:
     for dataset_id, latest_snapshot in registry["latestSnapshots"].items():
         dataset_dir = output_dir / "datasets" / dataset_id
 
-        # Load GitHub data
         github_path = dataset_dir / "github.json"
         if not github_path.exists():
             continue
 
         github_data = load_json(github_path)
 
-        # Load snapshots
         snapshots_data = load_json(dataset_dir / "snapshots.json")
         tags = snapshots_data["tags"]
 
@@ -280,39 +228,3 @@ async def validate_github_data(output_dir: Path, verbose: bool = False) -> None:
 
         if not any(len(v) > 0 for v in issues.values()):
             print("  No issues found!")
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description="Check GitHub mirror status for OpenNeuro datasets"
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=Path,
-        default=Path("data"),
-        help="Output directory (default: data)",
-    )
-    parser.add_argument(
-        "--concurrency",
-        type=int,
-        default=10,
-        help="Maximum concurrent git operations (default: 10)",
-    )
-    parser.add_argument(
-        "--validate", action="store_true", help="Validate results after checking"
-    )
-    parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
-
-    args = parser.parse_args()
-
-    async def run():
-        await check_all_datasets(args.output_dir, args.concurrency, args.verbose)
-
-        if args.validate:
-            await validate_github_data(args.output_dir, args.verbose)
-
-    asyncio.run(run())
-
-
-if __name__ == "__main__":
-    main()

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.1.0",
+  "datasets": [
+    {
+      "id": "ds000001",
+      "status": "ok",
+      "checks": {
+        "github": "ok",
+        "s3Version": "ok",
+        "s3Files": "ok"
+      }
+    },
+    {
+      "id": "ds000002",
+      "status": "error",
+      "s3Blocked": true,
+      "checks": {
+        "github": "ok",
+        "s3Version": "error",
+        "s3Files": "error"
+      }
+    },
+    {
+      "id": "ds000003",
+      "status": "version-mismatch",
+      "checks": {
+        "github": "ok",
+        "s3Version": "version-mismatch",
+        "s3Files": "ok"
+      }
+    },
+    {
+      "id": "ds000004",
+      "status": "warning",
+      "checks": {
+        "github": "warning",
+        "s3Version": "warning",
+        "s3Files": "ok"
+      }
+    },
+    {
+      "id": "ds000005",
+      "status": "error",
+      "checks": {
+        "github": "ok",
+        "s3Version": "ok",
+        "s3Files": "error"
+      }
+    }
+  ]
+}

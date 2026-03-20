@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-"""
-Stage 5: Simulate S3 file diff.
+"""Stage 5: Generate simulated S3 file diff data.
 
 Reads:
 - data/datasets-registry.json
@@ -11,26 +9,30 @@ Writes:
 - data/datasets/{id}/s3-diff.json (only if S3 version matches latest)
 """
 
-import argparse
 import random
 from pathlib import Path
 
-from utils import SCHEMA_VERSION, random_datetime, write_json, load_json
+from ..utils import SCHEMA_VERSION, load_json, write_json
+from .utils import random_datetime
 
 
-def compute_context(sorted_files: list[str], changed: set[str], radius: int = 3) -> list[str]:
+def _compute_context(
+    sorted_files: list[str], changed: set[str], radius: int = 3
+) -> list[str]:
     """Compute context files within `radius` positions of any changed file."""
     context = set()
     for i, f in enumerate(sorted_files):
         if f in changed:
-            for j in range(max(0, i - radius), min(len(sorted_files), i + radius + 1)):
+            for j in range(
+                max(0, i - radius), min(len(sorted_files), i + radius + 1)
+            ):
                 neighbor = sorted_files[j]
                 if neighbor not in changed:
                     context.add(neighbor)
     return sorted(context)
 
 
-def generate_s3_diff(
+def _generate_s3_diff(
     dataset_id: str, version: str, git_files: list[str], scenario: str
 ) -> dict:
     """Generate s3-diff.json in v1.1.0 format."""
@@ -41,9 +43,9 @@ def generate_s3_diff(
     elif scenario == "error":
         num_missing = random.randint(1, min(5, max(1, len(git_files) // 10)))
         added = sorted(random.sample(git_files, num_missing))
-        removed = sorted([".DS_Store", "._sub-01_T1w.nii.gz", "Thumbs.db"][
-            : random.randint(1, 3)
-        ])
+        removed = sorted(
+            [".DS_Store", "._sub-01_T1w.nii.gz", "Thumbs.db"][: random.randint(1, 3)]
+        )
         total_s3 = len(git_files) - len(added) + len(removed)
     else:  # warning — treat as error in new schema (any diff = error)
         added = sorted([random.choice(git_files)])
@@ -51,7 +53,7 @@ def generate_s3_diff(
         total_s3 = len(git_files) - 1
 
     changed = set(added) | set(removed)
-    context = compute_context(git_files, changed) if changed else []
+    context = _compute_context(git_files, changed) if changed else []
 
     return {
         "schemaVersion": SCHEMA_VERSION,
@@ -69,7 +71,7 @@ def generate_s3_diff(
     }
 
 
-def generate_s3_diffs(output_dir: Path, seed: int = None):
+def generate(output_dir: Path, seed: int = None):
     """Generate S3 diff data for all datasets where version matches."""
     if seed is not None:
         random.seed(seed)
@@ -89,7 +91,7 @@ def generate_s3_diffs(output_dir: Path, seed: int = None):
         # Load S3 version
         s3_version_path = dataset_dir / "s3-version.json"
         if not s3_version_path.exists():
-            print(f"⚠ {dataset_id}: s3-version.json not found, skipping")
+            print(f"  {dataset_id}: s3-version.json not found, skipping")
             skipped += 1
             continue
 
@@ -103,7 +105,7 @@ def generate_s3_diffs(output_dir: Path, seed: int = None):
         # Load git files
         files_path = dataset_dir / "snapshots" / latest_snapshot / "files.json"
         if not files_path.exists():
-            print(f"⚠ {dataset_id}: files.json not found, skipping")
+            print(f"  {dataset_id}: files.json not found, skipping")
             skipped += 1
             continue
 
@@ -115,26 +117,15 @@ def generate_s3_diffs(output_dir: Path, seed: int = None):
         ]
 
         # Generate and write s3-diff.json
-        s3_diff = generate_s3_diff(dataset_id, latest_snapshot, files_data["files"], scenario)
+        s3_diff = _generate_s3_diff(
+            dataset_id, latest_snapshot, files_data["files"], scenario
+        )
         write_json(dataset_dir / "s3-diff.json", s3_diff)
         generated += 1
 
         if i % 100 == 0:
             print(f"  Processed {i}/{len(datasets)}")
 
-    print("✓ S3 diff generation complete")
+    print("S3 diff generation complete")
     print(f"  Generated: {generated} diffs")
     print(f"  Skipped: {skipped} (version mismatch or missing data)")
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Generate simulated S3 diff data")
-    parser.add_argument("--output-dir", type=Path, default=Path("data"))
-    parser.add_argument("--seed", type=int, help="Random seed for reproducibility")
-    args = parser.parse_args()
-
-    generate_s3_diffs(args.output_dir, args.seed)
-
-
-if __name__ == "__main__":
-    main()

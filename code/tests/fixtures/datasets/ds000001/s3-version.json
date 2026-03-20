@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1.1.0",
+  "lastChecked": "2026-01-01T00:00:00.000Z",
+  "datasetId": "ds000001",
+  "accessible": true,
+  "datasetDescriptionDOI": "10.18112/openneuro.ds000001.v1.0.2",
+  "extractedVersion": "1.0.2",
+  "versionSource": "doi"
+}

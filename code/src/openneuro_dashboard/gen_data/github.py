@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-"""
-Stage 2: Simulate GitHub mirror checks.
+"""Stage 2: Generate simulated GitHub mirror check data.
 
 Reads:
 - data/datasets-registry.json
@@ -11,14 +9,14 @@ Writes:
 - data/datasets/{id}/github.json
 """
 
-import argparse
 import random
 from pathlib import Path
 
-from utils import SCHEMA_VERSION, random_datetime, random_sha, write_json, load_json
+from ..utils import SCHEMA_VERSION, load_json, write_json
+from .utils import random_datetime, random_sha
 
 
-def generate_github_check(
+def _generate_github_check(
     dataset_id: str, tags: list[str], snapshot_metadata: dict[str, dict], scenario: str
 ) -> dict:
     """Generate github.json for a dataset."""
@@ -61,7 +59,7 @@ def generate_github_check(
     }
 
 
-def generate_github_checks(output_dir: Path, seed: int = None):
+def generate(output_dir: Path, seed: int = None):
     """Generate GitHub check data for all datasets."""
     if seed is not None:
         random.seed(seed)
@@ -91,7 +89,7 @@ def generate_github_checks(output_dir: Path, seed: int = None):
         ]
 
         # Generate and write github.json
-        github_data = generate_github_check(
+        github_data = _generate_github_check(
             dataset_id, tags, snapshot_metadata, scenario
         )
         write_json(dataset_dir / "github.json", github_data)
@@ -99,17 +97,4 @@ def generate_github_checks(output_dir: Path, seed: int = None):
         if i % 100 == 0:
             print(f"  Processed {i}/{len(datasets)}")
 
-    print(f"✓ GitHub check generation complete ({len(datasets)} datasets)")
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Generate simulated GitHub check data")
-    parser.add_argument("--output-dir", type=Path, default=Path("data"))
-    parser.add_argument("--seed", type=int, help="Random seed for reproducibility")
-    args = parser.parse_args()
-
-    generate_github_checks(args.output_dir, args.seed)
-
-
-if __name__ == "__main__":
-    main()
+    print(f"GitHub check generation complete ({len(datasets)} datasets)")

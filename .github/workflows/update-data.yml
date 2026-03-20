@@ -2,7 +2,7 @@ name: Update Dashboard Data
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Daily at 6am UTC
+    - cron: "0 6 * * *" # Daily at 6am UTC
   workflow_dispatch:
 
 permissions:
@@ -22,7 +22,7 @@ jobs:
         uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
 
       - name: Set up Python
-        run: uv python install 3.13
+        run: uv python install 3.14
 
       - name: Restore bare repo cache
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
@@ -31,20 +31,8 @@ jobs:
           key: git-repos-${{ github.run_id }}
           restore-keys: git-repos-
 
-      - name: Fetch GraphQL data
-        run: uv run scripts/fetch_graphql.py --output-dir data
-
-      - name: Check GitHub mirrors
-        run: uv run scripts/check_github.py --output-dir data
-
-      - name: Check S3 versions
-        run: uv run scripts/check_s3_version.py --output-dir data
-
-      - name: Check S3 files
-        run: uv run scripts/check_s3_files.py --output-dir data --cache-dir ~/.cache/openneuro-dashboard/repos
-
-      - name: Generate summary
-        run: uv run scripts/summarize.py --output-dir data
+      - name: Run pipeline
+        run: uv run openneuro-dashboard run-all
 
       - name: Commit and push if changed
         run: |

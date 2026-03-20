@@ -1,5 +1,6 @@
 """Shared test fixtures for the OpenNeuro Dashboard test suite."""
 
+from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -184,3 +185,32 @@ def mock_s3_client():
     client.get_object = AsyncMock(side_effect=_get_object)
 
     return client
+
+
+# ---------------------------------------------------------------------------
+# Path fixtures (filesystem locations for fixture data and schema)
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture()
+def fixtures_dir():
+    """Root of the test fixture data directory."""
+    return Path(__file__).parent / "fixtures"
+
+
+@pytest.fixture()
+def datasets_dir(fixtures_dir):
+    """Per-dataset fixture directory (fixtures/datasets/)."""
+    return fixtures_dir / "datasets"
+
+
+@pytest.fixture()
+def schema_path():
+    """Path to the LinkML schema YAML file."""
+    return Path(__file__).parent.parent.parent / "schema" / "openneuro-dashboard.yaml"
+
+
+@pytest.fixture(params=["ds000001", "ds000002", "ds000003", "ds000004", "ds000005"])
+def dataset_id(request):
+    """Parametrized dataset ID for per-dataset tests."""
+    return request.param

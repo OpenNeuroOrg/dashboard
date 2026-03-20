@@ -4,7 +4,7 @@ title: OpenNeuro Dashboard Data Model
 description: >-
   Data model for tracking OpenNeuro datasets and their synchronization status
   across GraphQL API, GitHub mirrors, and S3 exports.
-version: 1.1.0
+version: 2.0.0
 license: https://creativecommons.org/publicdomain/zero/1.0/
 
 prefixes:
@@ -64,6 +64,22 @@ classes:
         multivalued: true
         inlined_as_list: true
 
+  IssueSubtypes:
+    description: Per-check issue subtype for filtering and display
+    attributes:
+      github:
+        range: GithubIssueSubtype
+        required: false
+        description: Specific GitHub issue type (null if ok/pending)
+      s3Version:
+        range: S3VersionIssueSubtype
+        required: false
+        description: Specific S3 version issue type (null if ok/pending)
+      s3Files:
+        range: S3FilesIssueSubtype
+        required: false
+        description: Specific S3 files issue type (null if ok/pending)
+
   DatasetSummary:
     description: Summary of check results for a single dataset
     attributes:
@@ -92,6 +108,27 @@ classes:
         required: false
         inlined: true
         description: Timestamps for individual checks
+      s3FilesAdded:
+        range: integer
+        required: false
+        description: Count of files in git but not S3 (null if no diff or pending)
+      s3FilesRemoved:
+        range: integer
+        required: false
+        description: Count of files in S3 but not git (null if no diff or pending)
+      issueSubtypes:
+        range: IssueSubtypes
+        required: false
+        inlined: true
+        description: Per-check issue subtypes for dashboard filtering
+      githubVersion:
+        range: string
+        required: false
+        description: Discovered version from GitHub mirror (latest tag found, or null)
+      s3Version:
+        range: string
+        required: false
+        description: Discovered version from S3 DOI extraction (or null)
 
   CheckResults:
     description: Status of individual checks
@@ -355,3 +392,31 @@ enums:
         description: >-
           Could not extract from DOI (missing, custom format, or error).
           Using latest snapshot for comparison.
+
+  GithubIssueSubtype:
+    description: Specific issue type for GitHub mirror checks
+    permissible_values:
+      tag-missing:
+        description: Latest snapshot tag not found on GitHub mirror
+      head-mismatch:
+        description: HEAD points to different commit than latest tag
+
+  S3VersionIssueSubtype:
+    description: Specific issue type for S3 version checks
+    permissible_values:
+      doi-mismatch:
+        description: DOI version does not match latest snapshot
+      no-doi:
+        description: DOI field missing or unparseable; version assumed from latest snapshot
+      blocked:
+        description: S3 returned 403 (access denied)
+
+  S3FilesIssueSubtype:
+    description: Specific issue type for S3 file diff checks
+    permissible_values:
+      files-missing:
+        description: Files exist in git but not in S3
+      files-orphaned:
+        description: Files exist in S3 but not in git
+      export-missing:
+        description: S3 has zero files (entire export missing)

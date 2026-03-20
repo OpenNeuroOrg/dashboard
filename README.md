@@ -91,7 +91,6 @@ data/datasets/{id}/
 ## Setup
 
 ```bash
-cd code
 uv sync
 ```
 
@@ -102,29 +101,26 @@ Requires Python 3.14+.
 ### Full Pipeline
 
 ```bash
-cd code
-uv run openneuro-dashboard run-all --output-dir ../data
+uv run openneuro-dashboard run-all
 ```
 
 ### Individual Stages
 
 ```bash
-cd code
-
 # Stage 1: Fetch GraphQL data
-uv run openneuro-dashboard fetch-graphql --output-dir ../data
+uv run openneuro-dashboard fetch-graphql
 
 # Stage 2: Check GitHub mirrors
-uv run openneuro-dashboard check-github --output-dir ../data
+uv run openneuro-dashboard check-github
 
 # Stage 3: Check S3 versions
-uv run openneuro-dashboard check-s3-version --output-dir ../data
+uv run openneuro-dashboard check-s3-version
 
 # Stage 4: Check S3 files
-uv run openneuro-dashboard check-s3-files --output-dir ../data --cache-dir ~/.cache/openneuro-dashboard/repos
+uv run openneuro-dashboard check-s3-files --cache-dir ~/.cache/openneuro-dashboard/repos
 
 # Stage 5: Summarize
-uv run openneuro-dashboard summarize --output-dir ../data
+uv run openneuro-dashboard summarize
 ```
 
 Common options:
@@ -135,14 +131,12 @@ Common options:
 ### Generating Test Data
 
 ```bash
-cd code
-uv run openneuro-dashboard gen-data --output-dir ../data --num-datasets 50 --seed 42
+uv run openneuro-dashboard gen-data --num-datasets 50 --seed 42
 ```
 
 ## Running Tests
 
 ```bash
-cd code
 uv run --group test pytest -v
 ```
 

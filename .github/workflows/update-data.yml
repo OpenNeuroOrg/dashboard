@@ -32,8 +32,7 @@ jobs:
           restore-keys: git-repos-
 
       - name: Run pipeline
-        working-directory: code
-        run: uv run openneuro-dashboard run-all --output-dir ../data --cache-dir ~/.cache/openneuro-dashboard/repos
+        run: uv run openneuro-dashboard run-all
 
       - name: Commit and push if changed
         run: |

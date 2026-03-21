@@ -16,9 +16,9 @@ from pathlib import Path
 
 import httpx
 
-from .converter import dump_typed
-from .models import S3Version, VersionSource
-from .utils import SCHEMA_VERSION, format_timestamp, load_json
+from .converter import dump_typed, load_typed
+from .models import DatasetsRegistry, S3Version, SnapshotIndex, VersionSource
+from .utils import SCHEMA_VERSION, format_timestamp
 
 S3_BASE_URL = "https://s3.amazonaws.com/openneuro.org"
 DOI_PATTERN = re.compile(r"10\.18112/openneuro\.([^.]+)\.v(.+)")
@@ -228,8 +228,8 @@ async def check_all_datasets(
     print("Checking S3 versions...")
 
     # Load registry
-    registry = load_json(output_dir / "datasets-registry.json")
-    datasets = registry["latestSnapshots"]
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
+    datasets = registry.latestSnapshots
     total = len(datasets)
 
     print(f"Found {total} datasets to check")
@@ -315,7 +315,7 @@ async def validate_s3_versions(
     """
     print("\nValidating S3 versions...")
 
-    registry = load_json(output_dir / "datasets-registry.json")
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
 
     issues: dict[str, list[str]] = {
         "version_mismatch": [],
@@ -323,7 +323,7 @@ async def validate_s3_versions(
         "blocked": [],
     }
 
-    for dataset_id, latest_snapshot in registry["latestSnapshots"].items():
+    for dataset_id, latest_snapshot in registry.latestSnapshots.items():
         dataset_dir = output_dir / "datasets" / dataset_id
 
         # Load S3 version
@@ -331,25 +331,25 @@ async def validate_s3_versions(
         if not s3_version_path.exists():
             continue
 
-        s3_version_data = load_json(s3_version_path)
+        s3_version_data = load_typed(s3_version_path, S3Version)
 
         # Track blocked datasets
-        if not s3_version_data.get("accessible", True):
+        if not s3_version_data.accessible:
             issues["blocked"].append(dataset_id)
             continue
 
-        extracted_version = s3_version_data.get("extractedVersion")
+        extracted_version = s3_version_data.extractedVersion
 
         if not extracted_version:
             continue
 
         # Load snapshots to check if version is valid
-        snapshots_data = load_json(dataset_dir / "snapshots.json")
-        valid_tags = snapshots_data["tags"]
+        snapshots_data = load_typed(dataset_dir / "snapshots.json", SnapshotIndex)
+        valid_tags = snapshots_data.tags
 
         # Check if version matches latest (only flag if from DOI)
         if (
-            s3_version_data.get("versionSource") == "doi"
+            s3_version_data.versionSource == "doi"
             and extracted_version != latest_snapshot
         ):
             issues["version_mismatch"].append(

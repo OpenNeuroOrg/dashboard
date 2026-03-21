@@ -18,7 +18,9 @@ from ondiagnostics.graphql import (
     get_page,
 )
 
-from .utils import SCHEMA_VERSION, format_timestamp, load_json, write_json
+from .converter import dump_typed, load_typed
+from .models import DatasetsRegistry, SnapshotIndex, SnapshotMetadata
+from .utils import format_timestamp
 
 
 async def _fetch_pages(
@@ -82,26 +84,24 @@ def _write_dataset_json(
     dry_run: bool,
 ) -> None:
     """Write snapshots.json and per-snapshot metadata.json for one dataset."""
-    snapshots_index = {
-        "schemaVersion": SCHEMA_VERSION,
-        "tags": [snap.tag for snap in snapshots_data],
-    }
+    snapshots_index = SnapshotIndex(
+        tags=[snap.tag for snap in snapshots_data],
+    )
     if dry_run:
         print(f"  [dry-run] Would write {dataset_dir / 'snapshots.json'}")
     else:
-        write_json(dataset_dir / "snapshots.json", snapshots_index)
+        dump_typed(dataset_dir / "snapshots.json", snapshots_index)
 
     for snapshot in snapshots_data:
         snapshot_dir = dataset_dir / "snapshots" / snapshot.tag
-        metadata = {
-            "schemaVersion": SCHEMA_VERSION,
-            "hexsha": snapshot.hexsha,
-            "created": snapshot.created,
-        }
+        metadata = SnapshotMetadata(
+            hexsha=snapshot.hexsha,
+            created=snapshot.created,
+        )
         if dry_run:
             print(f"  [dry-run] Would write {snapshot_dir / 'metadata.json'}")
         else:
-            write_json(snapshot_dir / "metadata.json", metadata)
+            dump_typed(snapshot_dir / "metadata.json", metadata)
 
 
 async def fetch_and_write(
@@ -204,18 +204,17 @@ async def fetch_and_write(
         await fetch_task
 
     # Write registry
-    registry = {
-        "schemaVersion": SCHEMA_VERSION,
-        "lastChecked": timestamp,
-        "totalCount": len(latest_snapshots),
-        "latestSnapshots": latest_snapshots,
-    }
+    registry = DatasetsRegistry(
+        lastChecked=timestamp,
+        totalCount=len(latest_snapshots),
+        latestSnapshots=latest_snapshots,
+    )
 
     registry_path = output_dir / "datasets-registry.json"
     if dry_run:
         print(f"  [dry-run] Would write {registry_path}")
     else:
-        write_json(registry_path, registry)
+        dump_typed(registry_path, registry)
 
     print(f"\nFetch complete: {processed} datasets processed")
     if not dry_run:
@@ -231,10 +230,10 @@ def validate_output(output_dir: Path) -> None:
         print("  FAIL: datasets-registry.json not found")
         return
 
-    registry = load_json(registry_path)
+    registry = load_typed(registry_path, DatasetsRegistry)
 
     issues = []
-    for dataset_id, latest_snapshot in registry["latestSnapshots"].items():
+    for dataset_id, latest_snapshot in registry.latestSnapshots.items():
         dataset_dir = output_dir / "datasets" / dataset_id
 
         snapshots_path = dataset_dir / "snapshots.json"
@@ -242,12 +241,12 @@ def validate_output(output_dir: Path) -> None:
             issues.append(f"{dataset_id}: snapshots.json missing")
             continue
 
-        snapshots = load_json(snapshots_path)
+        snapshots = load_typed(snapshots_path, SnapshotIndex)
 
-        if latest_snapshot not in snapshots["tags"]:
+        if latest_snapshot not in snapshots.tags:
             issues.append(f"{dataset_id}: latest {latest_snapshot} not in tags")
 
-        for tag in snapshots["tags"]:
+        for tag in snapshots.tags:
             metadata_path = dataset_dir / "snapshots" / tag / "metadata.json"
             if not metadata_path.exists():
                 issues.append(f"{dataset_id}: metadata.json missing for {tag}")

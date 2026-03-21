@@ -1,40 +1,40 @@
 :root {
-    /* Status colors */
-    --status-ok: #2ecc71;
-    --status-warning: #f39c12;
-    --status-error: #e74c3c;
-    --status-version-mismatch: #9b59b6;
-    --status-pending: #95a5a6;
-    
-    /* Lighter versions for backgrounds */
-    --status-ok-bg: #d5f4e6;
-    --status-warning-bg: #fef5e7;
-    --status-error-bg: #fadbd8;
-    --status-version-mismatch-bg: #ebdff0;
-    --status-pending-bg: #ecf0f1;
+  /* Colorblind-safe palette (Okabe-Ito) */
+  --status-ok: #009e73;
+  --status-warning: #e69f00;
+  --status-error: #d55e00;
+  --status-version-mismatch: #56b4e9; /* Sky blue — NOT #cc79a7 */
+  --status-pending: #999999;
+
+  /* Background tints */
+  --status-ok-bg: #ccede4;
+  --status-warning-bg: #faeacc;
+  --status-error-bg: #f5d5c6;
+  --status-version-mismatch-bg: #d5eaf7;
+  --status-pending-bg: #e8e8e8;
 }
 
-@media (min-width:576px) {
+@media (min-width: 576px) {
   :root {
     --grid-item-min-width: 319px;
   }
 }
-@media (min-width:768px) {
+@media (min-width: 768px) {
   :root {
     --grid-item-min-width: 338px;
   }
 }
-@media (min-width:1024px) {
+@media (min-width: 1024px) {
   :root {
     --grid-item-min-width: 357px;
   }
 }
-@media (min-width:1280px) {
+@media (min-width: 1280px) {
   :root {
     --grid-item-min-width: 376px;
   }
 }
-@media (min-width:1536px) {
+@media (min-width: 1536px) {
   :root {
     --grid-item-min-width: 394px;
   }
@@ -42,237 +42,346 @@
 
 /* Header */
 header {
-    text-align: center;
-    margin-bottom: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 header h1 {
-    margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 header p {
-    color: var(--muted-color);
-    margin-top: 0;
+  color: var(--muted-color);
+  margin-top: 0;
 }
 
 /* Alerts */
 .alert {
-    padding: 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .alert.warning {
-    background: var(--status-warning-bg);
-    border-left: 4px solid var(--status-warning);
+  background: var(--status-warning-bg);
+  border-left: 4px solid var(--status-warning);
 }
 
 .alert.error {
-    background: var(--status-error-bg);
-    border-left: 4px solid var(--status-error);
+  background: var(--status-error-bg);
+  border-left: 4px solid var(--status-error);
 }
 
 .alert strong {
-    display: block;
-    margin-bottom: 0.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
 .alert p {
-    margin: 0;
+  margin: 0;
 }
 
 /* Summary Stats */
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(var(--grid-item-min-width), 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--grid-item-min-width), 1fr)
+  );
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .stat-card {
-    background: var(--card-background-color);
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    text-align: center;
-    border: 2px solid var(--muted-border-color);
+  background: var(--card-background-color);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  border: 2px solid var(--muted-border-color);
 }
 
 .stat-card.status-ok {
-    border-color: var(--status-ok);
-    background: var(--status-ok-bg);
+  border-color: var(--status-ok);
+  background: var(--status-ok-bg);
 }
 
 .stat-card.status-warning {
-    border-color: var(--status-warning);
-    background: var(--status-warning-bg);
+  border-color: var(--status-warning);
+  background: var(--status-warning-bg);
 }
 
 .stat-card.status-error {
-    border-color: var(--status-error);
-    background: var(--status-error-bg);
+  border-color: var(--status-error);
+  background: var(--status-error-bg);
 }
 
 .stat-card.status-version-mismatch {
-    border-color: var(--status-version-mismatch);
-    background: var(--status-version-mismatch-bg);
+  border-color: var(--status-version-mismatch);
+  background: var(--status-version-mismatch-bg);
 }
 
 .stat-card.status-pending {
-    border-color: var(--status-pending);
-    background: var(--status-pending-bg);
+  border-color: var(--status-pending);
+  background: var(--status-pending-bg);
 }
 
 .stat-value {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 0.25rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
 }
 
 .stat-label {
-    font-size: 0.875rem;
-    color: var(--muted-color);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  color: var(--muted-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* Controls */
 .controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .filter-group,
 .search-group {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .filter-group label,
 .search-group label {
-    font-size: 0.875rem;
-    margin-bottom: 0.25rem;
-    font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {
-    .controls {
-        grid-template-columns: 1fr;
-    }
+  .controls {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Table */
 table {
-    width: 100%;
+  width: 100%;
 }
 
 th.sortable {
-    cursor: pointer;
-    user-select: none;
-    position: relative;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
 }
 
 th.sortable:hover {
-    background: var(--table-hover-background-color);
+  background: var(--table-hover-background-color);
 }
 
 .sort-indicator {
-    margin-left: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--muted-color);
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted-color);
 }
 
 th.sort-asc .sort-indicator::after {
-    content: "▲";
+  content: "▲";
 }
 
 th.sort-desc .sort-indicator::after {
-    content: "▼";
+  content: "▼";
 }
 
 /* Status badges */
 .status-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    white-space: nowrap;
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .status-badge.ok {
-    background: var(--status-ok-bg);
-    color: var(--status-ok);
+  background: var(--status-ok-bg);
+  color: var(--status-ok);
 }
 
 .status-badge.warning {
-    background: var(--status-warning-bg);
-    color: var(--status-warning);
+  background: var(--status-warning-bg);
+  color: var(--status-warning);
 }
 
 .status-badge.error {
-    background: var(--status-error-bg);
-    color: var(--status-error);
+  background: var(--status-error-bg);
+  color: var(--status-error);
 }
 
 .status-badge.version-mismatch {
-    background: var(--status-version-mismatch-bg);
-    color: var(--status-version-mismatch);
+  background: var(--status-version-mismatch-bg);
+  color: var(--status-version-mismatch);
 }
 
 .status-badge.pending {
-    background: var(--status-pending-bg);
-    color: var(--status-pending);
+  background: var(--status-pending-bg);
+  color: var(--status-pending);
 }
 
 /* Check icons */
 .check-icon {
-    font-size: 1.25rem;
-    display: inline-block;
+  font-size: 1.25rem;
+  display: inline-block;
 }
 
 .check-icon.ok {
-    color: var(--status-ok);
+  color: var(--status-ok);
 }
 
 .check-icon.warning {
-    color: var(--status-warning);
+  color: var(--status-warning);
 }
 
 .check-icon.error {
-    color: var(--status-error);
+  color: var(--status-error);
 }
 
 .check-icon.version-mismatch {
-    color: var(--status-version-mismatch);
+  color: var(--status-version-mismatch);
 }
 
 .check-icon.pending {
-    color: var(--status-pending);
+  color: var(--status-pending);
+}
+
+/* Composite status indicator (3 dots) */
+.status-dots {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+.status-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+}
+.status-dot.ok {
+  background: var(--status-ok);
+}
+.status-dot.warning {
+  background: var(--status-warning);
+}
+.status-dot.error {
+  background: var(--status-error);
+}
+.status-dot.version-mismatch {
+  background: var(--status-version-mismatch);
+}
+.status-dot.pending {
+  background: var(--status-pending);
+}
+
+/* Icon overlay for colorblind accessibility */
+.status-dot::after {
+  font-size: 0.5rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1;
+}
+.status-dot.ok::after {
+  content: "\2713";
+  color: white;
+}
+.status-dot.warning::after {
+  content: "!";
+  color: white;
+  font-weight: bold;
+}
+.status-dot.error::after {
+  content: "\2717";
+  color: white;
+}
+.status-dot.version-mismatch::after {
+  content: "\2260";
+  color: white;
+}
+.status-dot.pending::after {
+  content: "\00B7";
+  color: white;
+}
+
+/* Version tags in table */
+.version-tag {
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+}
+.version-tag.ok {
+  background: var(--status-ok-bg);
+  color: var(--status-ok);
+}
+.version-tag.warning {
+  background: var(--status-warning-bg);
+  color: var(--status-warning);
+}
+.version-tag.error {
+  background: var(--status-error-bg);
+  color: var(--status-error);
+}
+.version-tag.version-mismatch {
+  background: var(--status-version-mismatch-bg);
+  color: var(--status-version-mismatch);
+}
+.version-tag.pending {
+  background: var(--status-pending-bg);
+  color: var(--status-pending);
+}
+
+/* Compact diff counts */
+.diff-compact {
+  font-family: monospace;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+.diff-added {
+  color: var(--status-ok);
+  font-weight: 600;
+}
+.diff-removed {
+  color: var(--status-error);
+  font-weight: 600;
+}
+.diff-sep {
+  color: var(--muted-color);
+  margin: 0 0.1rem;
 }
 
 /* Links */
 .dataset-link {
-    font-family: monospace;
-    font-weight: 600;
+  font-family: monospace;
+  font-weight: 600;
 }
 
 /* Footer */
 footer {
-    text-align: center;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--muted-border-color);
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--muted-border-color);
 }
 
 /* Responsive table */
 @media (max-width: 768px) {
-    table {
-        font-size: 0.875rem;
-    }
-    
-    .stat-value {
-        font-size: 2rem;
-    }
+  table {
+    font-size: 0.875rem;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+  }
 }

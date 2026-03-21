@@ -12,7 +12,9 @@ Writes:
 import random
 from pathlib import Path
 
-from ..utils import SCHEMA_VERSION, load_json, write_json
+from ..converter import dump_typed, load_typed
+from ..models import CheckStatus, DatasetsRegistry, FileList, S3FileDiff, S3Version
+from ..utils import SCHEMA_VERSION
 from .utils import random_datetime
 
 
@@ -34,7 +36,7 @@ def _compute_context(
 
 def _generate_s3_diff(
     dataset_id: str, version: str, git_files: list[str], scenario: str
-) -> dict:
+) -> S3FileDiff:
     """Generate s3-diff.json in v1.1.0 format."""
     if scenario == "healthy":
         added = []
@@ -55,20 +57,20 @@ def _generate_s3_diff(
     changed = set(added) | set(removed)
     context = _compute_context(git_files, changed) if changed else []
 
-    return {
-        "schemaVersion": SCHEMA_VERSION,
-        "datasetId": dataset_id,
-        "snapshotTag": version,
-        "s3Version": version,
-        "checkedAt": random_datetime(days_ago=1),
-        "status": "ok" if not changed else "error",
-        "exportMissing": False,
-        "totalS3Files": total_s3,
-        "totalGitFiles": len(git_files),
-        "added": added,
-        "removed": removed,
-        "context": context,
-    }
+    return S3FileDiff(
+        schemaVersion=SCHEMA_VERSION,
+        datasetId=dataset_id,
+        snapshotTag=version,
+        s3Version=version,
+        checkedAt=random_datetime(days_ago=1),
+        status=CheckStatus.ok if not changed else CheckStatus.error,
+        exportMissing=False,
+        totalS3Files=total_s3,
+        totalGitFiles=len(git_files),
+        added=added,
+        removed=removed,
+        context=context,
+    )
 
 
 def generate(output_dir: Path, seed: int = None):
@@ -79,8 +81,8 @@ def generate(output_dir: Path, seed: int = None):
     print("Generating S3 file diff data...")
 
     # Load registry
-    registry = load_json(output_dir / "datasets-registry.json")
-    datasets = registry["latestSnapshots"]
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
+    datasets = registry.latestSnapshots
 
     generated = 0
     skipped = 0
@@ -95,10 +97,10 @@ def generate(output_dir: Path, seed: int = None):
             skipped += 1
             continue
 
-        s3_version = load_json(s3_version_path)
+        s3_version = load_typed(s3_version_path, S3Version)
 
         # Only generate diff if versions match
-        if s3_version["extractedVersion"] != latest_snapshot:
+        if s3_version.extractedVersion != latest_snapshot:
             skipped += 1
             continue
 
@@ -109,7 +111,7 @@ def generate(output_dir: Path, seed: int = None):
             skipped += 1
             continue
 
-        files_data = load_json(files_path)
+        files_data = load_typed(files_path, FileList)
 
         # Determine scenario
         scenario = random.choices(["healthy", "warning", "error"], weights=[85, 10, 5])[
@@ -118,9 +120,9 @@ def generate(output_dir: Path, seed: int = None):
 
         # Generate and write s3-diff.json
         s3_diff = _generate_s3_diff(
-            dataset_id, latest_snapshot, files_data["files"], scenario
+            dataset_id, latest_snapshot, files_data.files, scenario
         )
-        write_json(dataset_dir / "s3-diff.json", s3_diff)
+        dump_typed(dataset_dir / "s3-diff.json", s3_diff)
         generated += 1
 
         if i % 100 == 0:

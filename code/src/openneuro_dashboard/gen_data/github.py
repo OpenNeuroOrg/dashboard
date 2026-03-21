@@ -12,24 +12,27 @@ Writes:
 import random
 from pathlib import Path
 
-from ..utils import SCHEMA_VERSION, load_json, write_json
+from ..converter import dump_typed, load_typed
+from ..models import DatasetsRegistry, GitHubStatus, SnapshotIndex, SnapshotMetadata
 from .utils import random_datetime, random_sha
 
 
 def _generate_github_check(
-    dataset_id: str, tags: list[str], snapshot_metadata: dict[str, dict], scenario: str
-) -> dict:
+    dataset_id: str,
+    tags: list[str],
+    snapshot_metadata: dict[str, SnapshotMetadata],
+    scenario: str,
+) -> GitHubStatus:
     """Generate github.json for a dataset."""
     latest_tag = tags[-1]
-    latest_sha = snapshot_metadata[latest_tag]["hexsha"]
+    latest_sha = snapshot_metadata[latest_tag].hexsha
 
     # Generate tag mapping using actual SHAs
-    tag_mapping = {tag: snapshot_metadata[tag]["hexsha"] for tag in tags}
+    tag_mapping = {tag: snapshot_metadata[tag].hexsha for tag in tags}
 
     # For error scenario, remove a tag
     if scenario == "error" and len(tag_mapping) > 1:
-        missing_tag = random.choice(list(tag_mapping.keys())[:-1])
-        del tag_mapping[missing_tag]
+        del tag_mapping[latest_tag]
 
     # Determine HEAD
     head_branch = random.choice(["master", "main"])
@@ -40,7 +43,7 @@ def _generate_github_check(
     else:  # warning or error - HEAD is stale
         if len(tags) > 1:
             old_tag = tags[-2]
-            head_sha = snapshot_metadata[old_tag]["hexsha"]
+            head_sha = snapshot_metadata[old_tag].hexsha
         else:
             head_sha = random_sha()
 
@@ -50,13 +53,12 @@ def _generate_github_check(
         "master": head_sha if head_branch == "master" else random_sha(),
     }
 
-    return {
-        "schemaVersion": SCHEMA_VERSION,
-        "lastChecked": random_datetime(days_ago=1),
-        "head": head_branch,
-        "branches": branches,
-        "tags": tag_mapping,
-    }
+    return GitHubStatus(
+        lastChecked=random_datetime(days_ago=1),
+        head=head_branch,
+        branches=branches,
+        tags=tag_mapping,
+    )
 
 
 def generate(output_dir: Path, seed: int = None):
@@ -67,21 +69,21 @@ def generate(output_dir: Path, seed: int = None):
     print("Generating GitHub check data...")
 
     # Load registry
-    registry = load_json(output_dir / "datasets-registry.json")
-    datasets = registry["latestSnapshots"]
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
+    datasets = registry.latestSnapshots
 
     for i, (dataset_id, latest_snapshot) in enumerate(datasets.items(), 1):
         dataset_dir = output_dir / "datasets" / dataset_id
 
         # Load snapshots
-        snapshots_data = load_json(dataset_dir / "snapshots.json")
-        tags = snapshots_data["tags"]
+        snapshots_data = load_typed(dataset_dir / "snapshots.json", SnapshotIndex)
+        tags = snapshots_data.tags
 
         # Load metadata for all snapshots
-        snapshot_metadata = {}
+        snapshot_metadata: dict[str, SnapshotMetadata] = {}
         for tag in tags:
             metadata_path = dataset_dir / "snapshots" / tag / "metadata.json"
-            snapshot_metadata[tag] = load_json(metadata_path)
+            snapshot_metadata[tag] = load_typed(metadata_path, SnapshotMetadata)
 
         # Determine scenario
         scenario = random.choices(["healthy", "warning", "error"], weights=[85, 10, 5])[
@@ -92,7 +94,7 @@ def generate(output_dir: Path, seed: int = None):
         github_data = _generate_github_check(
             dataset_id, tags, snapshot_metadata, scenario
         )
-        write_json(dataset_dir / "github.json", github_data)
+        dump_typed(dataset_dir / "github.json", github_data)
 
         if i % 100 == 0:
             print(f"  Processed {i}/{len(datasets)}")

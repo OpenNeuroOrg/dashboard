@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.1.0",
+  "lastUpdated": "2026-01-01T00:00:00.000Z",
   "datasets": [
     {
       "id": "ds000001",
@@ -8,17 +8,42 @@
         "github": "ok",
         "s3Version": "ok",
         "s3Files": "ok"
-      }
+      },
+      "s3Blocked": null,
+      "lastChecked": {
+        "github": "2026-01-01T00:00:00.000Z",
+        "s3Version": "2026-01-01T00:00:00.000Z",
+        "s3Files": "2026-01-01T00:00:00.000Z"
+      },
+      "s3FilesAdded": null,
+      "s3FilesRemoved": null,
+      "issueSubtypes": null,
+      "githubVersion": "1.0.2",
+      "s3Version": "1.0.2"
     },
     {
       "id": "ds000002",
       "status": "error",
-      "s3Blocked": true,
       "checks": {
         "github": "ok",
         "s3Version": "error",
         "s3Files": "error"
-      }
+      },
+      "s3Blocked": true,
+      "lastChecked": {
+        "github": "2026-01-01T00:00:00.000Z",
+        "s3Version": "2026-01-01T00:00:00.000Z",
+        "s3Files": null
+      },
+      "s3FilesAdded": null,
+      "s3FilesRemoved": null,
+      "issueSubtypes": {
+        "github": null,
+        "s3Version": "blocked",
+        "s3Files": null
+      },
+      "githubVersion": "2.0.0",
+      "s3Version": null
     },
     {
       "id": "ds000003",
@@ -27,7 +52,22 @@
         "github": "ok",
         "s3Version": "version-mismatch",
         "s3Files": "ok"
-      }
+      },
+      "s3Blocked": null,
+      "lastChecked": {
+        "github": "2026-01-01T00:00:00.000Z",
+        "s3Version": "2026-01-01T00:00:00.000Z",
+        "s3Files": "2026-01-01T00:00:00.000Z"
+      },
+      "s3FilesAdded": null,
+      "s3FilesRemoved": null,
+      "issueSubtypes": {
+        "github": null,
+        "s3Version": "doi-mismatch",
+        "s3Files": null
+      },
+      "githubVersion": "1.1.0",
+      "s3Version": "1.0.0"
     },
     {
       "id": "ds000004",
@@ -36,7 +76,22 @@
         "github": "warning",
         "s3Version": "warning",
         "s3Files": "ok"
-      }
+      },
+      "s3Blocked": null,
+      "lastChecked": {
+        "github": "2026-01-01T00:00:00.000Z",
+        "s3Version": "2026-01-01T00:00:00.000Z",
+        "s3Files": "2026-01-01T00:00:00.000Z"
+      },
+      "s3FilesAdded": null,
+      "s3FilesRemoved": null,
+      "issueSubtypes": {
+        "github": "head-mismatch",
+        "s3Version": "no-doi",
+        "s3Files": null
+      },
+      "githubVersion": "1.0.0",
+      "s3Version": "1.0.0"
     },
     {
       "id": "ds000005",
@@ -45,7 +100,22 @@
         "github": "ok",
         "s3Version": "ok",
         "s3Files": "error"
-      }
+      },
+      "s3Blocked": null,
+      "lastChecked": {
+        "github": "2026-01-01T00:00:00.000Z",
+        "s3Version": "2026-01-01T00:00:00.000Z",
+        "s3Files": "2026-01-01T00:00:00.000Z"
+      },
+      "s3FilesAdded": null,
+      "s3FilesRemoved": null,
+      "issueSubtypes": {
+        "github": null,
+        "s3Version": null,
+        "s3Files": "export-missing"
+      },
+      "githubVersion": "1.0.0",
+      "s3Version": "1.0.0"
     }
   ]
 }

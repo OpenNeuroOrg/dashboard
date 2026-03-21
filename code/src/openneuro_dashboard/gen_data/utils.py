@@ -3,7 +3,7 @@
 import random
 from datetime import UTC, datetime, timedelta
 
-from ..utils import SCHEMA_VERSION, write_json  # noqa: F401
+from ..utils import SCHEMA_VERSION  # noqa: F401
 
 
 def random_sha() -> str:

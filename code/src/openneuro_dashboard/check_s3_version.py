@@ -16,7 +16,9 @@ from pathlib import Path
 
 import httpx
 
-from .utils import SCHEMA_VERSION, format_timestamp, load_json, write_json
+from .converter import dump_typed, load_typed
+from .models import DatasetsRegistry, S3Version, SnapshotIndex, VersionSource
+from .utils import SCHEMA_VERSION, format_timestamp
 
 S3_BASE_URL = "https://s3.amazonaws.com/openneuro.org"
 DOI_PATTERN = re.compile(r"10\.18112/openneuro\.([^.]+)\.v(.+)")
@@ -27,7 +29,7 @@ async def fetch_dataset_description(
     dataset_id: str,
     latest_snapshot: str,
     verbose: bool = False,
-) -> dict:
+) -> S3Version:
     """Fetch dataset_description.json from S3 for a dataset.
 
     Parameters
@@ -43,8 +45,8 @@ async def fetch_dataset_description(
 
     Returns
     -------
-    dict
-        S3 version data dict (always returns a dict).
+    S3Version
+        S3 version data (always returns an instance).
     """
     url = f"{S3_BASE_URL}/{dataset_id}/dataset_description.json"
 
@@ -64,14 +66,13 @@ async def fetch_dataset_description(
                     f"  {dataset_id}: No DatasetDOI field, "
                     f"assuming latest ({latest_snapshot})"
                 )
-            return {
-                "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": format_timestamp(),
-                "accessible": True,
-                "datasetDescriptionDOI": None,
-                "extractedVersion": latest_snapshot,
-                "versionSource": "assumed_latest",
-            }
+            return S3Version(
+                schemaVersion=SCHEMA_VERSION,
+                lastChecked=format_timestamp(),
+                accessible=True,
+                extractedVersion=latest_snapshot,
+                versionSource=VersionSource.assumed_latest,
+            )
 
         # Try to extract version from DOI
         match = DOI_PATTERN.search(doi)
@@ -82,14 +83,14 @@ async def fetch_dataset_description(
                     f"  {dataset_id}: Custom DOI ({doi}), "
                     f"assuming latest ({latest_snapshot})"
                 )
-            return {
-                "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": format_timestamp(),
-                "accessible": True,
-                "datasetDescriptionDOI": doi,
-                "extractedVersion": latest_snapshot,
-                "versionSource": "assumed_latest",
-            }
+            return S3Version(
+                schemaVersion=SCHEMA_VERSION,
+                lastChecked=format_timestamp(),
+                accessible=True,
+                datasetDescriptionDOI=doi,
+                extractedVersion=latest_snapshot,
+                versionSource=VersionSource.assumed_latest,
+            )
 
         doi_dataset_id = match.group(1)
         version = match.group(2)
@@ -101,102 +102,96 @@ async def fetch_dataset_description(
                     f"  {dataset_id}: DOI has wrong ID ({doi_dataset_id}), "
                     f"using version {version}"
                 )
-            return {
-                "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": format_timestamp(),
-                "accessible": True,
-                "datasetDescriptionDOI": doi,
-                "extractedVersion": version,
-                "versionSource": "doi",
-                "doiIdMismatch": True,
-                "doiDatasetId": doi_dataset_id,
-            }
+            return S3Version(
+                schemaVersion=SCHEMA_VERSION,
+                lastChecked=format_timestamp(),
+                accessible=True,
+                datasetDescriptionDOI=doi,
+                extractedVersion=version,
+                versionSource=VersionSource.doi,
+                doiIdMismatch=True,
+                doiDatasetId=doi_dataset_id,
+            )
 
         # Case 1: Success - version from DOI
         if verbose:
             print(f"  {dataset_id}: version {version}")
 
-        return {
-            "schemaVersion": SCHEMA_VERSION,
-            "lastChecked": format_timestamp(),
-            "accessible": True,
-            "datasetDescriptionDOI": doi,
-            "extractedVersion": version,
-            "versionSource": "doi",
-        }
+        return S3Version(
+            schemaVersion=SCHEMA_VERSION,
+            lastChecked=format_timestamp(),
+            accessible=True,
+            datasetDescriptionDOI=doi,
+            extractedVersion=version,
+            versionSource=VersionSource.doi,
+        )
 
     except httpx.HTTPStatusError as e:
         if e.response.status_code == 403:
             # Case 3: BLOCKED - Access denied
             print(f"  {dataset_id}: Access denied (403)")
-            return {
-                "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": format_timestamp(),
-                "accessible": False,
-                "httpStatus": 403,
-                "datasetDescriptionDOI": None,
-                "extractedVersion": None,
-            }
+            return S3Version(
+                schemaVersion=SCHEMA_VERSION,
+                lastChecked=format_timestamp(),
+                accessible=False,
+                httpStatus=403,
+            )
         elif e.response.status_code == 404:
             # Case 4: Missing dataset_description.json - assume latest
             print(
                 f"  {dataset_id}: dataset_description.json not found (404), "
                 f"assuming latest ({latest_snapshot})"
             )
-            return {
-                "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": format_timestamp(),
-                "accessible": True,
-                "datasetDescriptionDOI": None,
-                "extractedVersion": latest_snapshot,
-                "versionSource": "assumed_latest",
-                "datasetDescriptionMissing": True,
-            }
+            return S3Version(
+                schemaVersion=SCHEMA_VERSION,
+                lastChecked=format_timestamp(),
+                accessible=True,
+                extractedVersion=latest_snapshot,
+                versionSource=VersionSource.assumed_latest,
+                datasetDescriptionMissing=True,
+            )
         else:
             # Other HTTP errors - assume latest
             print(
                 f"  {dataset_id}: HTTP {e.response.status_code}, "
                 f"assuming latest ({latest_snapshot})"
             )
-            return {
-                "schemaVersion": SCHEMA_VERSION,
-                "lastChecked": format_timestamp(),
-                "accessible": True,
-                "datasetDescriptionDOI": None,
-                "extractedVersion": latest_snapshot,
-                "versionSource": "assumed_latest",
-                "httpError": e.response.status_code,
-            }
+            return S3Version(
+                schemaVersion=SCHEMA_VERSION,
+                lastChecked=format_timestamp(),
+                accessible=True,
+                extractedVersion=latest_snapshot,
+                versionSource=VersionSource.assumed_latest,
+                httpError=e.response.status_code,
+            )
 
     except httpx.RequestError as e:
         # Network error - assume latest
         print(
             f"  {dataset_id}: Request error, assuming latest ({latest_snapshot})"
         )
-        return {
-            "schemaVersion": SCHEMA_VERSION,
-            "lastChecked": format_timestamp(),
-            "accessible": True,
-            "datasetDescriptionDOI": None,
-            "extractedVersion": latest_snapshot,
-            "versionSource": "assumed_latest",
-            "requestError": str(e),
-        }
+        return S3Version(
+            schemaVersion=SCHEMA_VERSION,
+            lastChecked=format_timestamp(),
+            accessible=True,
+            extractedVersion=latest_snapshot,
+            versionSource=VersionSource.assumed_latest,
+            requestError=str(e),
+        )
 
     except json.JSONDecodeError:
         # Invalid JSON - assume latest
         print(
             f"  {dataset_id}: Invalid JSON, assuming latest ({latest_snapshot})"
         )
-        return {
-            "schemaVersion": SCHEMA_VERSION,
-            "lastChecked": format_timestamp(),
-            "accessible": True,
-            "datasetDescriptionDOI": None,
-            "extractedVersion": latest_snapshot,
-            "versionSource": "assumed_latest",
-            "invalidJson": True,
-        }
+        return S3Version(
+            schemaVersion=SCHEMA_VERSION,
+            lastChecked=format_timestamp(),
+            accessible=True,
+            extractedVersion=latest_snapshot,
+            versionSource=VersionSource.assumed_latest,
+            invalidJson=True,
+        )
 
     except Exception as e:
         # Unexpected error - assume latest
@@ -204,15 +199,14 @@ async def fetch_dataset_description(
             f"  {dataset_id}: Unexpected error ({e}), "
             f"assuming latest ({latest_snapshot})"
         )
-        return {
-            "schemaVersion": SCHEMA_VERSION,
-            "lastChecked": format_timestamp(),
-            "accessible": True,
-            "datasetDescriptionDOI": None,
-            "extractedVersion": latest_snapshot,
-            "versionSource": "assumed_latest",
-            "unexpectedError": str(e),
-        }
+        return S3Version(
+            schemaVersion=SCHEMA_VERSION,
+            lastChecked=format_timestamp(),
+            accessible=True,
+            extractedVersion=latest_snapshot,
+            versionSource=VersionSource.assumed_latest,
+            unexpectedError=str(e),
+        )
 
 
 async def check_all_datasets(
@@ -234,8 +228,8 @@ async def check_all_datasets(
     print("Checking S3 versions...")
 
     # Load registry
-    registry = load_json(output_dir / "datasets-registry.json")
-    datasets = registry["latestSnapshots"]
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
+    datasets = registry.latestSnapshots
     total = len(datasets)
 
     print(f"Found {total} datasets to check")
@@ -251,7 +245,7 @@ async def check_all_datasets(
 
         async def check_with_semaphore(
             dataset_id: str, latest_snapshot: str, index: int
-        ) -> tuple[str, dict]:
+        ) -> tuple[str, S3Version]:
             """Check a dataset with semaphore for rate limiting."""
             async with semaphore:
                 result = await fetch_dataset_description(
@@ -282,16 +276,16 @@ async def check_all_datasets(
 
     for dataset_id, s3_version_data in results:
         dataset_dir = output_dir / "datasets" / dataset_id
-        write_json(dataset_dir / "s3-version.json", s3_version_data)
+        dump_typed(dataset_dir / "s3-version.json", s3_version_data)
 
         # Categorize
-        if not s3_version_data.get("accessible", True):
+        if not s3_version_data.accessible:
             stats["case3_blocked"] += 1
-        elif s3_version_data.get("versionSource") == "doi":
+        elif s3_version_data.versionSource == VersionSource.doi:
             stats["case1_doi"] += 1
-            if s3_version_data.get("doiIdMismatch"):
+            if s3_version_data.doiIdMismatch:
                 stats["doi_mismatch"] += 1
-        elif s3_version_data.get("datasetDescriptionMissing"):
+        elif s3_version_data.datasetDescriptionMissing:
             stats["case4_not_found"] += 1
         else:
             stats["case2_assumed"] += 1
@@ -321,7 +315,7 @@ async def validate_s3_versions(
     """
     print("\nValidating S3 versions...")
 
-    registry = load_json(output_dir / "datasets-registry.json")
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
 
     issues: dict[str, list[str]] = {
         "version_mismatch": [],
@@ -329,7 +323,7 @@ async def validate_s3_versions(
         "blocked": [],
     }
 
-    for dataset_id, latest_snapshot in registry["latestSnapshots"].items():
+    for dataset_id, latest_snapshot in registry.latestSnapshots.items():
         dataset_dir = output_dir / "datasets" / dataset_id
 
         # Load S3 version
@@ -337,25 +331,25 @@ async def validate_s3_versions(
         if not s3_version_path.exists():
             continue
 
-        s3_version_data = load_json(s3_version_path)
+        s3_version_data = load_typed(s3_version_path, S3Version)
 
         # Track blocked datasets
-        if not s3_version_data.get("accessible", True):
+        if not s3_version_data.accessible:
             issues["blocked"].append(dataset_id)
             continue
 
-        extracted_version = s3_version_data.get("extractedVersion")
+        extracted_version = s3_version_data.extractedVersion
 
         if not extracted_version:
             continue
 
         # Load snapshots to check if version is valid
-        snapshots_data = load_json(dataset_dir / "snapshots.json")
-        valid_tags = snapshots_data["tags"]
+        snapshots_data = load_typed(dataset_dir / "snapshots.json", SnapshotIndex)
+        valid_tags = snapshots_data.tags
 
         # Check if version matches latest (only flag if from DOI)
         if (
-            s3_version_data.get("versionSource") == "doi"
+            s3_version_data.versionSource == "doi"
             and extracted_version != latest_snapshot
         ):
             issues["version_mismatch"].append(

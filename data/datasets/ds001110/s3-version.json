@@ -1,8 +1,16 @@
 {
-  "schemaVersion": "1.1.0",
-  "lastChecked": "2026-03-20T07:06:31.000Z",
+  "schemaVersion": "2.0.0",
+  "lastChecked": "2026-03-21T01:51:48.000Z",
   "accessible": true,
+  "httpStatus": null,
   "datasetDescriptionDOI": null,
   "extractedVersion": "00003",
-  "versionSource": "assumed_latest"
+  "versionSource": "assumed_latest",
+  "datasetDescriptionMissing": null,
+  "doiIdMismatch": null,
+  "doiDatasetId": null,
+  "invalidJson": null,
+  "httpError": null,
+  "requestError": null,
+  "unexpectedError": null
 }

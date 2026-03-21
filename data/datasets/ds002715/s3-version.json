@@ -1,8 +1,16 @@
 {
-  "schemaVersion": "1.1.0",
-  "lastChecked": "2026-03-20T07:06:32.000Z",
+  "schemaVersion": "2.0.0",
+  "lastChecked": "2026-03-21T01:51:49.000Z",
   "accessible": true,
+  "httpStatus": null,
   "datasetDescriptionDOI": "10.18112/openneuro.ds002715.v1.0.0",
   "extractedVersion": "1.0.0",
-  "versionSource": "doi"
+  "versionSource": "doi",
+  "datasetDescriptionMissing": null,
+  "doiIdMismatch": null,
+  "doiDatasetId": null,
+  "invalidJson": null,
+  "httpError": null,
+  "requestError": null,
+  "unexpectedError": null
 }

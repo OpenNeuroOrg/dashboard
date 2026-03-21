@@ -24,6 +24,13 @@ def load_typed(path: Path, cls: type[T]) -> T:
     return converter.structure(data, cls)
 
 
+def load_typed_safe(path: Path, cls: type[T]) -> T | None:
+    """Load a JSON file and structure into a dataclass, or None if missing."""
+    if not path.exists():
+        return None
+    return load_typed(path, cls)
+
+
 def dump_typed(path: Path, instance: object) -> None:
     """Unstructure a dataclass and write as JSON."""
     data = converter.unstructure(instance)

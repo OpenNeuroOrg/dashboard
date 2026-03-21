@@ -38,21 +38,20 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
     github = load_json_safe(dataset_dir / "github.json")
     if github:
         last_checked.github = github["lastChecked"]
+        tags = github.get("tags", {})
 
-        if latest_snapshot not in github.get("tags", {}):
+        if latest_snapshot not in tags:
             github_check = CheckStatus.error
             github_subtype = GithubIssueSubtype.tag_missing
-        elif github["branches"].get(github["head"]) != github["tags"].get(
-            latest_snapshot
-        ):
+        elif github["branches"].get(github["head"]) != tags.get(latest_snapshot):
             github_check = CheckStatus.warning
             github_subtype = GithubIssueSubtype.head_mismatch
         else:
             github_check = CheckStatus.ok
 
         # Extract the version from github tags matching latest_snapshot
-        if latest_snapshot in github.get("tags", {}):
-            github_version = latest_snapshot
+        if tags:
+            github_version = next(reversed(tags.keys()))
 
     # S3 version check
     s3_version = load_json_safe(dataset_dir / "s3-version.json")

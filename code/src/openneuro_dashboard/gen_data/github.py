@@ -28,8 +28,7 @@ def _generate_github_check(
 
     # For error scenario, remove a tag
     if scenario == "error" and len(tag_mapping) > 1:
-        missing_tag = random.choice(list(tag_mapping.keys())[:-1])
-        del tag_mapping[missing_tag]
+        del tag_mapping[latest_tag]
 
     # Determine HEAD
     head_branch = random.choice(["master", "main"])

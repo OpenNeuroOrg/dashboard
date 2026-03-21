@@ -9,7 +9,8 @@ Generates:
 import random
 from pathlib import Path
 
-from ..utils import SCHEMA_VERSION, write_json
+from ..converter import dump_typed
+from ..models import DatasetsRegistry, SnapshotIndex, SnapshotMetadata
 from .utils import (
     generate_dataset_id,
     generate_snapshots,
@@ -38,8 +39,8 @@ def generate(output_dir: Path, num_datasets: int = 50, seed: int = None):
 
         # Write snapshots.json
         dataset_dir = output_dir / "datasets" / dataset_id
-        snapshots_index = {"schemaVersion": SCHEMA_VERSION, "tags": tags}
-        write_json(dataset_dir / "snapshots.json", snapshots_index)
+        snapshots_index = SnapshotIndex(tags=tags)
+        dump_typed(dataset_dir / "snapshots.json", snapshots_index)
 
         # Write metadata.json for each snapshot
         for idx, tag in enumerate(tags):
@@ -47,24 +48,22 @@ def generate(output_dir: Path, num_datasets: int = 50, seed: int = None):
             days_ago = (len(tags) - idx) * 180 + random.randint(0, 100)
 
             snapshot_dir = dataset_dir / "snapshots" / tag
-            metadata = {
-                "schemaVersion": SCHEMA_VERSION,
-                "hexsha": random_sha(),
-                "created": random_datetime(days_ago=days_ago),
-            }
-            write_json(snapshot_dir / "metadata.json", metadata)
+            metadata = SnapshotMetadata(
+                hexsha=random_sha(),
+                created=random_datetime(days_ago=days_ago),
+            )
+            dump_typed(snapshot_dir / "metadata.json", metadata)
 
         if i % 100 == 0:
             print(f"  Processed {i}/{num_datasets}")
 
     # Write registry
-    registry = {
-        "schemaVersion": SCHEMA_VERSION,
-        "lastChecked": timestamp,
-        "totalCount": num_datasets,
-        "latestSnapshots": latest_snapshots,
-    }
-    write_json(output_dir / "datasets-registry.json", registry)
+    registry = DatasetsRegistry(
+        lastChecked=timestamp,
+        totalCount=num_datasets,
+        latestSnapshots=latest_snapshots,
+    )
+    dump_typed(output_dir / "datasets-registry.json", registry)
 
     print(f"GraphQL data generation complete")
     print(f"  Registry: datasets-registry.json ({num_datasets} datasets)")

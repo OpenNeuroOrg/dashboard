@@ -2,42 +2,61 @@
 
 from __future__ import annotations
 
-from openneuro_dashboard.models import DatasetSummary
+from openneuro_dashboard.converter import dump_typed
+from openneuro_dashboard.models import (
+    CheckStatus,
+    DatasetSummary,
+    GitHubStatus,
+    S3FileDiff,
+    S3Version,
+    VersionSource,
+)
 from openneuro_dashboard.summarize import summarize_dataset
-from openneuro_dashboard.utils import write_json
 
 
-def _write_fixtures(dataset_dir, github=None, s3_version=None, s3_diff=None):
-    """Write JSON fixture files into *dataset_dir*."""
+def _write_fixtures(
+    dataset_dir,
+    github: GitHubStatus | None = None,
+    s3_version: S3Version | None = None,
+    s3_diff: S3FileDiff | None = None,
+):
+    """Write typed fixture files into *dataset_dir*."""
     if github is not None:
-        write_json(dataset_dir / "github.json", github)
+        dump_typed(dataset_dir / "github.json", github)
     if s3_version is not None:
-        write_json(dataset_dir / "s3-version.json", s3_version)
+        dump_typed(dataset_dir / "s3-version.json", s3_version)
     if s3_diff is not None:
-        write_json(dataset_dir / "s3-diff.json", s3_diff)
+        dump_typed(dataset_dir / "s3-diff.json", s3_diff)
 
 
-GITHUB_OK = {
-    "lastChecked": "2026-01-01T00:00:00.000Z",
-    "head": "main",
-    "branches": {"main": "abc123"},
-    "tags": {"1.0.2": "abc123"},
-}
+GITHUB_OK = GitHubStatus(
+    lastChecked="2026-01-01T00:00:00.000Z",
+    head="main",
+    branches={"main": "abc123"},
+    tags={"1.0.2": "abc123"},
+)
 
-S3_VERSION_DOI_OK = {
-    "lastChecked": "2026-01-01T00:00:00.000Z",
-    "accessible": True,
-    "datasetDescriptionDOI": "10.18112/openneuro.ds000001.v1.0.2",
-    "extractedVersion": "1.0.2",
-    "versionSource": "doi",
-}
+S3_VERSION_DOI_OK = S3Version(
+    schemaVersion="2.0.0",
+    lastChecked="2026-01-01T00:00:00.000Z",
+    accessible=True,
+    datasetDescriptionDOI="10.18112/openneuro.ds000001.v1.0.2",
+    extractedVersion="1.0.2",
+    versionSource=VersionSource.doi,
+)
 
-S3_DIFF_OK = {
-    "checkedAt": "2026-01-01T00:00:00.000Z",
-    "status": "ok",
-    "added": [],
-    "removed": [],
-}
+S3_DIFF_OK = S3FileDiff(
+    schemaVersion="2.0.0",
+    datasetId="ds000001",
+    snapshotTag="1.0.2",
+    s3Version="1.0.2",
+    checkedAt="2026-01-01T00:00:00.000Z",
+    status=CheckStatus.ok,
+    totalS3Files=0,
+    totalGitFiles=0,
+    added=[],
+    removed=[],
+)
 
 
 # ------------------------------------------------------------------
@@ -60,12 +79,12 @@ def test_all_ok(tmp_path):
 def test_github_error(tmp_path):
     """Latest tag missing from GitHub -> github 'error', overall 'error'."""
     dd = tmp_path / "datasets" / "ds000001"
-    github_missing_tag = {
-        "lastChecked": "2026-01-01T00:00:00.000Z",
-        "head": "main",
-        "branches": {"main": "abc123"},
-        "tags": {},
-    }
+    github_missing_tag = GitHubStatus(
+        lastChecked="2026-01-01T00:00:00.000Z",
+        head="main",
+        branches={"main": "abc123"},
+        tags={},
+    )
     _write_fixtures(dd, github=github_missing_tag, s3_version=S3_VERSION_DOI_OK, s3_diff=S3_DIFF_OK)
 
     result = summarize_dataset("ds000001", "1.0.2", dd)
@@ -77,11 +96,12 @@ def test_github_error(tmp_path):
 def test_s3_blocked_403(tmp_path):
     """S3 inaccessible (403) -> s3Blocked=True, overall 'error'."""
     dd = tmp_path / "datasets" / "ds000001"
-    s3_blocked = {
-        "lastChecked": "2026-01-01T00:00:00.000Z",
-        "accessible": False,
-        "httpStatus": 403,
-    }
+    s3_blocked = S3Version(
+        schemaVersion="2.0.0",
+        lastChecked="2026-01-01T00:00:00.000Z",
+        accessible=False,
+        httpStatus=403,
+    )
     _write_fixtures(dd, github=GITHUB_OK, s3_version=s3_blocked)
 
     result = summarize_dataset("ds000001", "1.0.2", dd)
@@ -95,12 +115,13 @@ def test_s3_blocked_403(tmp_path):
 def test_version_mismatch(tmp_path):
     """DOI version != latest -> s3Version 'version-mismatch'."""
     dd = tmp_path / "datasets" / "ds000001"
-    s3_old = {
-        "lastChecked": "2026-01-01T00:00:00.000Z",
-        "accessible": True,
-        "extractedVersion": "1.0.1",
-        "versionSource": "doi",
-    }
+    s3_old = S3Version(
+        schemaVersion="2.0.0",
+        lastChecked="2026-01-01T00:00:00.000Z",
+        accessible=True,
+        extractedVersion="1.0.1",
+        versionSource=VersionSource.doi,
+    )
     _write_fixtures(dd, github=GITHUB_OK, s3_version=s3_old, s3_diff=S3_DIFF_OK)
 
     result = summarize_dataset("ds000001", "1.0.2", dd)
@@ -126,12 +147,13 @@ def test_precedence(tmp_path):
     """ok < warning < version-mismatch < error < pending."""
     dd = tmp_path / "datasets" / "ds000001"
     # github ok, s3Version version-mismatch, s3Files pending (no s3-diff)
-    s3_old = {
-        "lastChecked": "2026-01-01T00:00:00.000Z",
-        "accessible": True,
-        "extractedVersion": "1.0.1",
-        "versionSource": "doi",
-    }
+    s3_old = S3Version(
+        schemaVersion="2.0.0",
+        lastChecked="2026-01-01T00:00:00.000Z",
+        accessible=True,
+        extractedVersion="1.0.1",
+        versionSource=VersionSource.doi,
+    )
     _write_fixtures(dd, github=GITHUB_OK, s3_version=s3_old)
     # s3-diff absent -> s3Files pending
 

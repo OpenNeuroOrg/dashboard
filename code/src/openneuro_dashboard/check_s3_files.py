@@ -24,13 +24,17 @@ from botocore import UNSIGNED
 from botocore.config import Config as BotoConfig
 from ondiagnostics.subprocs import git
 
-from .converter import dump_typed
-from .models import CheckStatus, S3FileDiff
+from .converter import dump_typed, load_typed, load_typed_safe
+from .models import (
+    CheckStatus,
+    DatasetsRegistry,
+    GitHubStatus,
+    S3FileDiff,
+    S3Version,
+)
 from .utils import (
     SCHEMA_VERSION,
     format_timestamp,
-    load_json,
-    load_json_safe,
 )
 
 S3_BUCKET = "openneuro.org"
@@ -41,30 +45,30 @@ STALE_DAYS = 7
 
 def is_eligible(
     dataset_id: str,
-    s3_version: dict | None,
-    github: dict | None,
-    existing_diff: dict | None,
+    s3_version: S3Version | None,
+    github: GitHubStatus | None,
+    existing_diff: S3FileDiff | None,
 ) -> bool:
     """Check preconditions for running the S3 file diff."""
     if not s3_version:
         return False
 
     # Skip if S3 is blocked (403) or has no extracted version
-    if not s3_version.get("accessible", True):
+    if not s3_version.accessible:
         return False
-    extracted = s3_version.get("extractedVersion")
+    extracted = s3_version.extractedVersion
     if not extracted:
         return False
 
     # Skip if tag not available on GitHub
     if not github:
         return False
-    if extracted not in github.get("tags", {}):
+    if extracted not in github.tags:
         return False
 
     # Incremental skip logic
-    if existing_diff and existing_diff.get("s3Version") == extracted:
-        checked_at = existing_diff.get("checkedAt", "")
+    if existing_diff and existing_diff.s3Version == extracted:
+        checked_at = existing_diff.checkedAt
         try:
             checked_time = datetime.fromisoformat(checked_at.replace("Z", "+00:00"))
             age = datetime.now(UTC) - checked_time
@@ -250,7 +254,7 @@ def compute_diff(
 
 async def process_dataset(
     dataset_id: str,
-    s3_version_data: dict,
+    s3_version_data: S3Version,
     output_dir: Path,
     cache_dir: Path,
     git_semaphore: asyncio.Semaphore,
@@ -258,7 +262,7 @@ async def process_dataset(
     verbose: bool = False,
 ) -> bool:
     """Process a single dataset: ensure cache, get git tree, list S3, compute diff."""
-    tag = s3_version_data["extractedVersion"]
+    tag = s3_version_data.extractedVersion
 
     # Step 1: Ensure git cache
     if not await ensure_tag_cached(dataset_id, tag, cache_dir, git_semaphore):
@@ -310,17 +314,17 @@ async def check_all_datasets(
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     # Load registry
-    registry = load_json(output_dir / "datasets-registry.json")
-    datasets = registry["latestSnapshots"]
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
+    datasets = registry.latestSnapshots
     total = len(datasets)
 
     # Filter eligible datasets
     eligible = []
     for dataset_id in datasets:
         dataset_dir = output_dir / "datasets" / dataset_id
-        s3_version = load_json_safe(dataset_dir / "s3-version.json")
-        github = load_json_safe(dataset_dir / "github.json")
-        existing_diff = load_json_safe(dataset_dir / "s3-diff.json")
+        s3_version = load_typed_safe(dataset_dir / "s3-version.json", S3Version)
+        github = load_typed_safe(dataset_dir / "github.json", GitHubStatus)
+        existing_diff = load_typed_safe(dataset_dir / "s3-diff.json", S3FileDiff)
 
         if is_eligible(dataset_id, s3_version, github, existing_diff):
             eligible.append((dataset_id, s3_version))
@@ -339,7 +343,7 @@ async def check_all_datasets(
 
     # Process datasets concurrently
     async def process_with_progress(
-        dataset_id: str, s3_version_data: dict, index: int
+        dataset_id: str, s3_version_data: S3Version, index: int
     ) -> None:
         nonlocal success, failed
         ok = await process_dataset(
@@ -375,39 +379,24 @@ def validate_results(output_dir: Path) -> None:
     """Validate s3-diff.json files for consistency."""
     print("\nValidating S3 file check results...")
 
-    registry = load_json(output_dir / "datasets-registry.json")
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
     issues: list[str] = []
 
-    for dataset_id in registry["latestSnapshots"]:
+    for dataset_id in registry.latestSnapshots:
         dataset_dir = output_dir / "datasets" / dataset_id
         diff_path = dataset_dir / "s3-diff.json"
         if not diff_path.exists():
             continue
 
-        diff = load_json(diff_path)
-
-        # Check required fields
-        for fld in (
-            "added",
-            "removed",
-            "context",
-            "totalS3Files",
-            "totalGitFiles",
-            "status",
-        ):
-            if fld not in diff:
-                issues.append(f"{dataset_id}: missing field '{fld}'")
+        diff = load_typed(diff_path, S3FileDiff)
 
         # Check status consistency
-        added = diff.get("added", [])
-        removed = diff.get("removed", [])
-        status = diff.get("status")
-        if status == "ok" and (len(added) > 0 or len(removed) > 0):
+        if diff.status == "ok" and (len(diff.added) > 0 or len(diff.removed) > 0):
             issues.append(
                 f"{dataset_id}: status is 'ok' but has "
-                f"{len(added)} added, {len(removed)} removed"
+                f"{len(diff.added)} added, {len(diff.removed)} removed"
             )
-        if status == "error" and len(added) == 0 and len(removed) == 0:
+        if diff.status == "error" and len(diff.added) == 0 and len(diff.removed) == 0:
             issues.append(f"{dataset_id}: status is 'error' but diff is empty")
 
     if issues:

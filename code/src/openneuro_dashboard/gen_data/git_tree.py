@@ -11,7 +11,9 @@ Writes:
 import random
 from pathlib import Path
 
-from ..utils import SCHEMA_VERSION, load_json, write_json
+from ..converter import dump_typed
+from ..models import FileList
+from ..utils import load_json
 from .utils import generate_file_paths
 
 
@@ -35,13 +37,9 @@ def generate(output_dir: Path, dataset_size: str = "medium", seed: int = None):
 
         # Generate file list
         files = generate_file_paths(dataset_size)
-        file_list = {
-            "schemaVersion": SCHEMA_VERSION,
-            "count": len(files),
-            "files": files,
-        }
+        file_list = FileList(count=len(files), files=files)
 
-        write_json(latest_dir / "files.json", file_list)
+        dump_typed(latest_dir / "files.json", file_list)
 
         if i % 100 == 0:
             print(f"  Processed {i}/{len(datasets)}")

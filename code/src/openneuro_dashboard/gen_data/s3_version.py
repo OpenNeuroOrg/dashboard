@@ -10,9 +10,9 @@ Writes:
 import random
 from pathlib import Path
 
-from ..converter import dump_typed
-from ..models import S3Version, VersionSource
-from ..utils import SCHEMA_VERSION, load_json
+from ..converter import dump_typed, load_typed
+from ..models import DatasetsRegistry, S3Version, VersionSource
+from ..utils import SCHEMA_VERSION
 from .utils import random_datetime
 
 
@@ -111,8 +111,8 @@ def generate(output_dir: Path, seed: int = None):
     print("Generating S3 version check data...")
 
     # Load registry
-    registry = load_json(output_dir / "datasets-registry.json")
-    datasets = registry["latestSnapshots"]
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
+    datasets = registry.latestSnapshots
 
     for i, (dataset_id, latest_snapshot) in enumerate(datasets.items(), 1):
         dataset_dir = output_dir / "datasets" / dataset_id

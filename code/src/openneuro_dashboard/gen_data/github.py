@@ -12,21 +12,23 @@ Writes:
 import random
 from pathlib import Path
 
-from ..converter import dump_typed
-from ..models import GitHubStatus
-from ..utils import load_json
+from ..converter import dump_typed, load_typed
+from ..models import DatasetsRegistry, GitHubStatus, SnapshotIndex, SnapshotMetadata
 from .utils import random_datetime, random_sha
 
 
 def _generate_github_check(
-    dataset_id: str, tags: list[str], snapshot_metadata: dict[str, dict], scenario: str
+    dataset_id: str,
+    tags: list[str],
+    snapshot_metadata: dict[str, SnapshotMetadata],
+    scenario: str,
 ) -> GitHubStatus:
     """Generate github.json for a dataset."""
     latest_tag = tags[-1]
-    latest_sha = snapshot_metadata[latest_tag]["hexsha"]
+    latest_sha = snapshot_metadata[latest_tag].hexsha
 
     # Generate tag mapping using actual SHAs
-    tag_mapping = {tag: snapshot_metadata[tag]["hexsha"] for tag in tags}
+    tag_mapping = {tag: snapshot_metadata[tag].hexsha for tag in tags}
 
     # For error scenario, remove a tag
     if scenario == "error" and len(tag_mapping) > 1:
@@ -41,7 +43,7 @@ def _generate_github_check(
     else:  # warning or error - HEAD is stale
         if len(tags) > 1:
             old_tag = tags[-2]
-            head_sha = snapshot_metadata[old_tag]["hexsha"]
+            head_sha = snapshot_metadata[old_tag].hexsha
         else:
             head_sha = random_sha()
 
@@ -67,21 +69,21 @@ def generate(output_dir: Path, seed: int = None):
     print("Generating GitHub check data...")
 
     # Load registry
-    registry = load_json(output_dir / "datasets-registry.json")
-    datasets = registry["latestSnapshots"]
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
+    datasets = registry.latestSnapshots
 
     for i, (dataset_id, latest_snapshot) in enumerate(datasets.items(), 1):
         dataset_dir = output_dir / "datasets" / dataset_id
 
         # Load snapshots
-        snapshots_data = load_json(dataset_dir / "snapshots.json")
-        tags = snapshots_data["tags"]
+        snapshots_data = load_typed(dataset_dir / "snapshots.json", SnapshotIndex)
+        tags = snapshots_data.tags
 
         # Load metadata for all snapshots
-        snapshot_metadata = {}
+        snapshot_metadata: dict[str, SnapshotMetadata] = {}
         for tag in tags:
             metadata_path = dataset_dir / "snapshots" / tag / "metadata.json"
-            snapshot_metadata[tag] = load_json(metadata_path)
+            snapshot_metadata[tag] = load_typed(metadata_path, SnapshotMetadata)
 
         # Determine scenario
         scenario = random.choices(["healthy", "warning", "error"], weights=[85, 10, 5])[

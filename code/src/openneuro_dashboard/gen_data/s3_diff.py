@@ -12,9 +12,9 @@ Writes:
 import random
 from pathlib import Path
 
-from ..converter import dump_typed
-from ..models import CheckStatus, S3FileDiff
-from ..utils import SCHEMA_VERSION, load_json
+from ..converter import dump_typed, load_typed
+from ..models import CheckStatus, DatasetsRegistry, FileList, S3FileDiff, S3Version
+from ..utils import SCHEMA_VERSION
 from .utils import random_datetime
 
 
@@ -81,8 +81,8 @@ def generate(output_dir: Path, seed: int = None):
     print("Generating S3 file diff data...")
 
     # Load registry
-    registry = load_json(output_dir / "datasets-registry.json")
-    datasets = registry["latestSnapshots"]
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
+    datasets = registry.latestSnapshots
 
     generated = 0
     skipped = 0
@@ -97,10 +97,10 @@ def generate(output_dir: Path, seed: int = None):
             skipped += 1
             continue
 
-        s3_version = load_json(s3_version_path)
+        s3_version = load_typed(s3_version_path, S3Version)
 
         # Only generate diff if versions match
-        if s3_version["extractedVersion"] != latest_snapshot:
+        if s3_version.extractedVersion != latest_snapshot:
             skipped += 1
             continue
 
@@ -111,7 +111,7 @@ def generate(output_dir: Path, seed: int = None):
             skipped += 1
             continue
 
-        files_data = load_json(files_path)
+        files_data = load_typed(files_path, FileList)
 
         # Determine scenario
         scenario = random.choices(["healthy", "warning", "error"], weights=[85, 10, 5])[
@@ -120,7 +120,7 @@ def generate(output_dir: Path, seed: int = None):
 
         # Generate and write s3-diff.json
         s3_diff = _generate_s3_diff(
-            dataset_id, latest_snapshot, files_data["files"], scenario
+            dataset_id, latest_snapshot, files_data.files, scenario
         )
         dump_typed(dataset_dir / "s3-diff.json", s3_diff)
         generated += 1

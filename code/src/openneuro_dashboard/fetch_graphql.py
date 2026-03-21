@@ -18,9 +18,9 @@ from ondiagnostics.graphql import (
     get_page,
 )
 
-from .converter import dump_typed
+from .converter import dump_typed, load_typed
 from .models import DatasetsRegistry, SnapshotIndex, SnapshotMetadata
-from .utils import format_timestamp, load_json
+from .utils import format_timestamp
 
 
 async def _fetch_pages(
@@ -230,10 +230,10 @@ def validate_output(output_dir: Path) -> None:
         print("  FAIL: datasets-registry.json not found")
         return
 
-    registry = load_json(registry_path)
+    registry = load_typed(registry_path, DatasetsRegistry)
 
     issues = []
-    for dataset_id, latest_snapshot in registry["latestSnapshots"].items():
+    for dataset_id, latest_snapshot in registry.latestSnapshots.items():
         dataset_dir = output_dir / "datasets" / dataset_id
 
         snapshots_path = dataset_dir / "snapshots.json"
@@ -241,12 +241,12 @@ def validate_output(output_dir: Path) -> None:
             issues.append(f"{dataset_id}: snapshots.json missing")
             continue
 
-        snapshots = load_json(snapshots_path)
+        snapshots = load_typed(snapshots_path, SnapshotIndex)
 
-        if latest_snapshot not in snapshots["tags"]:
+        if latest_snapshot not in snapshots.tags:
             issues.append(f"{dataset_id}: latest {latest_snapshot} not in tags")
 
-        for tag in snapshots["tags"]:
+        for tag in snapshots.tags:
             metadata_path = dataset_dir / "snapshots" / tag / "metadata.json"
             if not metadata_path.exists():
                 issues.append(f"{dataset_id}: metadata.json missing for {tag}")

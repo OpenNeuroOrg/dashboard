@@ -1,9 +1,13 @@
 """Shared test fixtures for the OpenNeuro Dashboard test suite."""
 
+import json
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
+import jsonschema
 import pytest
+from linkml.generators.jsonschemagen import JsonSchemaGenerator
+from linkml_runtime import SchemaView
 
 # ---------------------------------------------------------------------------
 # Canned dataset metadata (3 datasets with different health states)
@@ -208,6 +212,52 @@ def datasets_dir(fixtures_dir):
 def schema_path():
     """Path to the LinkML schema YAML file."""
     return Path(__file__).parent.parent.parent / "schema" / "openneuro-dashboard.yaml"
+
+
+class LinkMLValidator:
+    """Validate data dicts against a LinkML schema (open-world, no additionalProperties)."""
+
+    def __init__(self, schema_path: str):
+        self._schema_path = schema_path
+        self._validators: dict[str, jsonschema.protocols.Validator] = {}
+
+    def _build_validator(self, target_class: str) -> jsonschema.protocols.Validator:
+        gen = JsonSchemaGenerator(
+            schema=self._schema_path,
+            mergeimports=True,
+            top_class=target_class,
+            not_closed=True,
+        )
+        schema = gen.generate()
+        # Strip additionalProperties: false from all definitions so that
+        # map-like objects with dynamic keys pass validation.
+        for defn in schema.get("$defs", {}).values():
+            if isinstance(defn, dict) and defn.get("additionalProperties") is False:
+                defn["additionalProperties"] = True
+            # Allow null for non-required $ref properties (LinkML generates
+            # bare $ref without anyOf/null for optional enum fields).
+            props = defn.get("properties", {}) if isinstance(defn, dict) else {}
+            required = set(defn.get("required", [])) if isinstance(defn, dict) else set()
+            for prop_name, prop_schema in props.items():
+                if prop_name not in required and "$ref" in prop_schema and "anyOf" not in prop_schema:
+                    ref = prop_schema.pop("$ref")
+                    prop_schema["anyOf"] = [{"$ref": ref}, {"type": "null"}]
+        validator_cls = jsonschema.validators.validator_for(
+            schema, default=jsonschema.Draft7Validator
+        )
+        return validator_cls(schema, format_checker=validator_cls.FORMAT_CHECKER)
+
+    def validate(self, data: dict, *, target_class: str) -> list[str]:
+        """Return a list of error messages (empty if valid)."""
+        if target_class not in self._validators:
+            self._validators[target_class] = self._build_validator(target_class)
+        return [e.message for e in self._validators[target_class].iter_errors(data)]
+
+
+@pytest.fixture()
+def linkml_validator(schema_path):
+    """Return a LinkML validator configured for the project schema."""
+    return LinkMLValidator(str(schema_path))
 
 
 @pytest.fixture(params=["ds000001", "ds000002", "ds000003", "ds000004", "ds000005"])

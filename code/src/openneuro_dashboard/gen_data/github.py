@@ -12,13 +12,15 @@ Writes:
 import random
 from pathlib import Path
 
-from ..utils import SCHEMA_VERSION, load_json, write_json
+from ..converter import dump_typed
+from ..models import GitHubStatus
+from ..utils import load_json
 from .utils import random_datetime, random_sha
 
 
 def _generate_github_check(
     dataset_id: str, tags: list[str], snapshot_metadata: dict[str, dict], scenario: str
-) -> dict:
+) -> GitHubStatus:
     """Generate github.json for a dataset."""
     latest_tag = tags[-1]
     latest_sha = snapshot_metadata[latest_tag]["hexsha"]
@@ -49,13 +51,12 @@ def _generate_github_check(
         "master": head_sha if head_branch == "master" else random_sha(),
     }
 
-    return {
-        "schemaVersion": SCHEMA_VERSION,
-        "lastChecked": random_datetime(days_ago=1),
-        "head": head_branch,
-        "branches": branches,
-        "tags": tag_mapping,
-    }
+    return GitHubStatus(
+        lastChecked=random_datetime(days_ago=1),
+        head=head_branch,
+        branches=branches,
+        tags=tag_mapping,
+    )
 
 
 def generate(output_dir: Path, seed: int = None):
@@ -91,7 +92,7 @@ def generate(output_dir: Path, seed: int = None):
         github_data = _generate_github_check(
             dataset_id, tags, snapshot_metadata, scenario
         )
-        write_json(dataset_dir / "github.json", github_data)
+        dump_typed(dataset_dir / "github.json", github_data)
 
         if i % 100 == 0:
             print(f"  Processed {i}/{len(datasets)}")

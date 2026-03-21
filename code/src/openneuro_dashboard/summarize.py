@@ -2,19 +2,23 @@
 
 from pathlib import Path
 
-from .converter import dump_typed
+from .converter import dump_typed, load_typed, load_typed_safe
 from .models import (
     AllDatasetsSummary,
     CheckResults,
     CheckStatus,
     CheckTimestamps,
+    DatasetsRegistry,
     DatasetSummary,
+    GitHubStatus,
     GithubIssueSubtype,
     IssueSubtypes,
+    S3FileDiff,
     S3FilesIssueSubtype,
+    S3Version,
     S3VersionIssueSubtype,
 )
-from .utils import format_timestamp, load_json, load_json_safe
+from .utils import format_timestamp
 
 
 def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummary:
@@ -35,15 +39,15 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
     s3_files_removed: int | None = None
 
     # GitHub check
-    github = load_json_safe(dataset_dir / "github.json")
+    github = load_typed_safe(dataset_dir / "github.json", GitHubStatus)
     if github:
-        last_checked.github = github["lastChecked"]
-        tags = github.get("tags", {})
+        last_checked.github = github.lastChecked
+        tags = github.tags
 
         if latest_snapshot not in tags:
             github_check = CheckStatus.error
             github_subtype = GithubIssueSubtype.tag_missing
-        elif github["branches"].get(github["head"]) != tags.get(latest_snapshot):
+        elif github.branches.get(github.head) != tags.get(latest_snapshot):
             github_check = CheckStatus.warning
             github_subtype = GithubIssueSubtype.head_mismatch
         else:
@@ -54,21 +58,21 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
             github_version = next(reversed(tags.keys()))
 
     # S3 version check
-    s3_version = load_json_safe(dataset_dir / "s3-version.json")
+    s3_version = load_typed_safe(dataset_dir / "s3-version.json", S3Version)
     if not s3_version:
         s3version_check = CheckStatus.pending
         s3files_check = CheckStatus.pending
-    elif not s3_version.get("accessible", True):
+    elif not s3_version.accessible:
         s3version_check = CheckStatus.error
         s3files_check = CheckStatus.error
         s3_blocked = True
         s3version_subtype = S3VersionIssueSubtype.blocked
-        last_checked.s3Version = s3_version["lastChecked"]
+        last_checked.s3Version = s3_version.lastChecked
     else:
-        s3_version_str = s3_version.get("extractedVersion")
+        s3_version_str = s3_version.extractedVersion
 
-        if s3_version.get("versionSource") == "doi":
-            if s3_version["extractedVersion"] == latest_snapshot:
+        if s3_version.versionSource == "doi":
+            if s3_version.extractedVersion == latest_snapshot:
                 s3version_check = CheckStatus.ok
             else:
                 s3version_check = CheckStatus.version_mismatch
@@ -76,23 +80,22 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
         else:
             s3version_check = CheckStatus.warning
             s3version_subtype = S3VersionIssueSubtype.no_doi
-        last_checked.s3Version = s3_version["lastChecked"]
+        last_checked.s3Version = s3_version.lastChecked
 
-        s3_diff = load_json_safe(dataset_dir / "s3-diff.json")
+        s3_diff = load_typed_safe(dataset_dir / "s3-diff.json", S3FileDiff)
         if not s3_diff:
             s3files_check = CheckStatus.pending
-        elif s3_diff.get("exportMissing"):
+        elif s3_diff.exportMissing:
             s3files_check = CheckStatus.error
             s3files_subtype = S3FilesIssueSubtype.export_missing
-            last_checked.s3Files = s3_diff["checkedAt"]
+            last_checked.s3Files = s3_diff.checkedAt
             # Do NOT populate s3FilesAdded/Removed when exportMissing
         else:
-            status_str = s3_diff.get("status", "pending")
-            s3files_check = CheckStatus(status_str)
-            last_checked.s3Files = s3_diff["checkedAt"]
+            s3files_check = CheckStatus(s3_diff.status)
+            last_checked.s3Files = s3_diff.checkedAt
 
-            added = s3_diff.get("added", [])
-            removed = s3_diff.get("removed", [])
+            added = s3_diff.added
+            removed = s3_diff.removed
             if added:
                 s3_files_added = len(added)
                 s3files_subtype = S3FilesIssueSubtype.files_missing
@@ -150,8 +153,8 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
 def generate_summary(output_dir: Path):
     """Generate summary from all check files."""
     print("Generating summary...")
-    registry = load_json(output_dir / "datasets-registry.json")
-    datasets_dict = registry["latestSnapshots"]
+    registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
+    datasets_dict = registry.latestSnapshots
 
     datasets = []
     for dataset_id, latest_snapshot in datasets_dict.items():

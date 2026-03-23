@@ -1,5 +1,6 @@
 """Stage 6: Summarize check results."""
 
+import re
 from pathlib import Path
 
 from .converter import dump_typed, load_typed, load_typed_safe
@@ -19,6 +20,19 @@ from .models import (
     S3VersionIssueSubtype,
 )
 from .utils import format_timestamp
+
+
+def _tag_generation(tag: str) -> tuple[int, str]:
+    if re.match(r'\d+\.\d+\.\d+', tag):
+        # Current, Version tag (e.g., "1.0.0")
+        return (2, tag)
+    if re.match(r'0\d{4}', tag):
+        # Legacy tag (e.g., "01234")
+        return (1, tag)
+    if re.match(r'[0-9a-f]+', tag):
+        # Checksum tag (e.g., "a1b2c3d")
+        return (0, tag)
+    raise ValueError(f"Unrecognized tag format: {tag}")
 
 
 def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummary:
@@ -55,7 +69,10 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
 
         # Extract the version from github tags matching latest_snapshot
         if tags:
-            github_version = next(reversed(tags.keys()))
+            try:
+                github_version = sorted(tags.keys(), key=_tag_generation, reverse=True)[0]
+            except ValueError:
+                print(f"Warning: Unrecognized tag format in GitHub tags for dataset {dataset_id}. Tags: {tags}")
 
     # S3 version check
     s3_version = load_typed_safe(dataset_dir / "s3-version.json", S3Version)

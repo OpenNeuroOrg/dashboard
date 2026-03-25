@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds006159",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-03-18T03:20:45.000Z",
+  "checkedAt": "2026-03-25T07:21:34.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 450,
   "totalGitFiles": 671,
+  "exportMissing": false,
   "added": [
     "derivatives/cleaned/filt/sub-1002/ses-01/eeg/sub-1002_task-implicitlearn_desc-filtered_eeg.fif",
     "derivatives/cleaned/filt/sub-1003/ses-01/eeg/sub-1003_task-implicitlearn_desc-filtered_eeg.fif",

@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds001796",
   "snapshotTag": "1.7.0",
   "s3Version": "1.7.0",
-  "checkedAt": "2026-03-18T03:12:32.000Z",
+  "checkedAt": "2026-03-25T07:14:30.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 1477,
   "totalGitFiles": 1681,
+  "exportMissing": false,
   "added": [
     "bidsignore/RT_analysis/flanker_RT_analysis.txt",
     "bidsignore/RT_analysis/flanker_RT_data.tsv",

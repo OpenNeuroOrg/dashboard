@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds000011",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-03-18T03:11:51.000Z",
+  "checkedAt": "2026-03-25T07:13:58.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 207,
   "totalGitFiles": 207,
+  "exportMissing": false,
   "added": [
     "sub-09/func/sub-09_task-Classificationprobewithoutfeedback_bold.nii.gz"
   ],

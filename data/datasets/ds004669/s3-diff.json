@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds004669",
   "snapshotTag": "2.0.2",
   "s3Version": "2.0.2",
-  "checkedAt": "2026-03-18T03:17:15.000Z",
+  "checkedAt": "2026-03-25T07:18:35.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 2156,
   "totalGitFiles": 2214,
+  "exportMissing": false,
   "added": [
     "derivative/preprocessed_data/sub-OSU01/sub-OSU01_chatgptneox_cl-8.hdf",
     "derivative/preprocessed_data/sub-OSU01/sub-OSU01_chatgptneox_unified_cl-16.hdf",

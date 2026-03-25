@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds002041",
   "snapshotTag": "1.2.1",
   "s3Version": "1.2.1",
-  "checkedAt": "2026-03-18T03:12:50.000Z",
+  "checkedAt": "2026-03-25T07:14:46.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 11223,
   "totalGitFiles": 312,
+  "exportMissing": false,
   "added": [
     ".bidsignore",
     "sub-2001/pet/sub-2001_task-rest_acq-fallypride_rec-acdyn_pet_bpnd.nii.gz",

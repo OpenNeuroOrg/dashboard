@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds004212",
   "snapshotTag": "3.0.0",
   "s3Version": "3.0.0",
-  "checkedAt": "2026-03-18T03:15:58.000Z",
+  "checkedAt": "2026-03-25T07:17:28.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 16639,
   "totalGitFiles": 29034,
+  "exportMissing": false,
   "added": [
     "derivatives/meg_paper/output/regression/Ridge-reg_cross_ypred_trainP2_testP4_cv9.npy",
     "derivatives/meg_paper/output/regression/Ridge-reg_cross_ypred_trainP3_testP1_cv1.npy",

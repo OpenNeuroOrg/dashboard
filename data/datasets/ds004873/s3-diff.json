@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds004873",
   "snapshotTag": "1.0.4",
   "s3Version": "1.0.4",
-  "checkedAt": "2026-03-18T03:17:52.000Z",
+  "checkedAt": "2026-03-25T07:19:08.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 821,
   "totalGitFiles": 859,
+  "exportMissing": false,
   "added": [
     "sub-p021/anat/sub-p021_FLAIR.nii.gz",
     "sub-p023/anat/sub-p023_FLAIR.nii.gz",

@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds004038",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-03-18T03:15:19.000Z",
+  "checkedAt": "2026-03-25T07:16:55.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 35,
   "totalGitFiles": 35,
+  "exportMissing": false,
   "added": [
     "sub-TOME3046/anat/sub-TOME3046_T2w.nii.gz"
   ],

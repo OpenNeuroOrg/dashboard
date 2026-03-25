@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds003768",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-03-18T03:14:48.000Z",
+  "checkedAt": "2026-03-25T07:16:29.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 1718,
   "totalGitFiles": 1380,
+  "exportMissing": false,
   "added": [
     "sub-16/eeg/sub-16_task-sleep_run-1_eeg.eeg"
   ],

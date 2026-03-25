@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds003404",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-03-18T03:13:52.000Z",
+  "checkedAt": "2026-03-25T07:15:39.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 629,
   "totalGitFiles": 664,
+  "exportMissing": false,
   "added": [
     "sub-C05/anat/sub-C05_rec-1_T1w.nii.gz",
     "sub-C05/anat/sub-C05_rec-1_T2w.nii.gz",

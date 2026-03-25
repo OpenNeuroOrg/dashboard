@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds002620",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-03-18T03:13:05.000Z",
+  "checkedAt": "2026-03-25T07:14:58.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 1785,
   "totalGitFiles": 1784,
+  "exportMissing": false,
   "added": [],
   "removed": [
     "annex-uuid"

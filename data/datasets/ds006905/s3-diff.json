@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds006905",
   "snapshotTag": "1.1.0",
   "s3Version": "1.1.0",
-  "checkedAt": "2026-03-18T03:21:57.000Z",
+  "checkedAt": "2026-03-25T07:22:45.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 3018,
   "totalGitFiles": 3020,
+  "exportMissing": false,
   "added": [
     "sub-678410/ses-pre/func/.sub-678410_ses-pre_task-inscapes_acq-normal_run-01_bold.nii.gz.DQ20lE",
     "sub-678467/ses-post/func/.sub-678467_ses-post_task-films_acq-normal_run-01_bold.nii.gz.plsLkX"

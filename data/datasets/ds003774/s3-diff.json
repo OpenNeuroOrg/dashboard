@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds003774",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-03-18T03:14:50.000Z",
+  "checkedAt": "2026-03-25T07:16:29.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 1844,
   "totalGitFiles": 1688,
+  "exportMissing": false,
   "added": [],
   "removed": [
     "Code/ESongs/1.esh.wav",

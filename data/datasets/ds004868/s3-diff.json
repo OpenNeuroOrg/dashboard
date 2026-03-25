@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds004868",
   "snapshotTag": "1.0.1",
   "s3Version": "1.0.1",
-  "checkedAt": "2026-03-18T03:17:51.000Z",
+  "checkedAt": "2026-03-25T07:19:05.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 111,
   "totalGitFiles": 114,
+  "exportMissing": false,
   "added": [
     "sub-PS53/ses-baseline/anat/sub-PS53_ses-baseline_T1w.nii.gz",
     "sub-PS53/ses-baseline/pet/sub-PS53_ses-baseline_pet.nii.gz",

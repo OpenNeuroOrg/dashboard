@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds000117",
   "snapshotTag": "1.1.0",
   "s3Version": "1.1.0",
-  "checkedAt": "2026-03-18T03:12:03.000Z",
+  "checkedAt": "2026-03-25T07:14:06.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 978,
   "totalGitFiles": 2628,
+  "exportMissing": false,
   "added": [
     "derivatives/freesurfer/README",
     "derivatives/freesurfer/sub-01/ses-mri/anat/label/.lh.BA.thresh.annot.f3h5wZ",

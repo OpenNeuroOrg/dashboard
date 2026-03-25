@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds003553",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-03-18T03:14:16.000Z",
+  "checkedAt": "2026-03-25T07:16:02.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 103,
   "totalGitFiles": 102,
+  "exportMissing": false,
   "added": [
     "sub-sc001/anat/sub-sc001_T1w.nii.gz",
     "sub-sc001/func/sub-sc001_task-FacesHousesTE27_bold.nii.gz",

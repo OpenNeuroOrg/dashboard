@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds001506",
   "snapshotTag": "1.3.1",
   "s3Version": "1.3.1",
-  "checkedAt": "2026-03-18T03:12:21.000Z",
+  "checkedAt": "2026-03-25T07:14:21.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 2036,
   "totalGitFiles": 1914,
+  "exportMissing": false,
   "added": [
     "sourcedata/sub-01/anat/sub-01_mask_LH_FFA.nii.gz",
     "sourcedata/sub-01/anat/sub-01_mask_LH_HVC.nii.gz",

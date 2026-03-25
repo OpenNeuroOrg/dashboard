@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds002013",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-03-18T03:12:42.000Z",
+  "checkedAt": "2026-03-25T07:14:37.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 292,
   "totalGitFiles": 294,
+  "exportMissing": false,
   "added": [
     "sub-AAA03/func/sub-AAA03_task-CircRun_run-05_events.xls",
     "sub-AAX02/func/sub-AAX02_task-CircRun_run-01_events.mat"

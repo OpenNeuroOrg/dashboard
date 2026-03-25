@@ -1,13 +1,13 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "datasetId": "ds001499",
   "snapshotTag": "1.3.1",
   "s3Version": "1.3.1",
-  "checkedAt": "2026-03-18T03:12:30.000Z",
+  "checkedAt": "2026-03-25T07:14:28.000Z",
   "status": "error",
-  "exportMissing": false,
   "totalS3Files": 14865,
   "totalGitFiles": 14884,
+  "exportMissing": false,
   "added": [
     "sub-CSI1/ses-06/func/sub-CSI1_ses-06_task-5000scenes_run-02_recording-cardiac_physio.tsv.gz",
     "sub-CSI1/ses-07/func/sub-CSI1_ses-07_task-5000scenes_run-02_recording-trigger_physio.tsv.gz",

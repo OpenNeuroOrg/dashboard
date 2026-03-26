@@ -111,6 +111,16 @@ function updateSummaryStats() {
 }
 
 /**
+ * Update stat card aria-pressed states
+ */
+function updateStatCardStates() {
+  document.querySelectorAll(".stat-card").forEach((card) => {
+    const isActive = card.dataset.status === currentFilter;
+    card.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+}
+
+/**
  * Setup event listeners
  */
 function setupEventListeners() {
@@ -129,10 +139,25 @@ function setupEventListeners() {
     });
   });
 
-  // Status filter
-  document.getElementById("status-filter").addEventListener("change", (e) => {
-    currentFilter = e.target.value;
-    renderTable();
+  // Stat card filters
+  document.querySelectorAll(".stat-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const status = card.dataset.status;
+      if (currentFilter === status) {
+        currentFilter = "all";
+      } else {
+        currentFilter = status;
+      }
+      updateStatCardStates();
+      renderTable();
+    });
+
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        card.click();
+      }
+    });
   });
 
   // Issue type filter

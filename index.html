@@ -28,27 +28,27 @@
 
       <!-- Summary Stats -->
       <section id="summary-stats" class="stats-grid">
-        <div class="stat-card">
+        <div class="stat-card" role="button" tabindex="0" aria-pressed="false" data-status="all">
           <div class="stat-value" id="total-datasets">-</div>
           <div class="stat-label">Total Datasets</div>
         </div>
-        <div class="stat-card status-ok">
+        <div class="stat-card status-ok" role="button" tabindex="0" aria-pressed="false" data-status="ok">
           <div class="stat-value" id="count-ok">-</div>
           <div class="stat-label">Healthy</div>
         </div>
-        <div class="stat-card status-warning">
+        <div class="stat-card status-warning" role="button" tabindex="0" aria-pressed="false" data-status="warning">
           <div class="stat-value" id="count-warning">-</div>
           <div class="stat-label">Warnings</div>
         </div>
-        <div class="stat-card status-error">
+        <div class="stat-card status-error" role="button" tabindex="0" aria-pressed="false" data-status="error">
           <div class="stat-value" id="count-error">-</div>
           <div class="stat-label">Errors</div>
         </div>
-        <div class="stat-card status-version-mismatch">
+        <div class="stat-card status-version-mismatch" role="button" tabindex="0" aria-pressed="false" data-status="version-mismatch">
           <div class="stat-value" id="count-version-mismatch">-</div>
           <div class="stat-label">Version Mismatch</div>
         </div>
-        <div class="stat-card status-pending">
+        <div class="stat-card status-pending" role="button" tabindex="0" aria-pressed="false" data-status="pending">
           <div class="stat-value" id="count-pending">-</div>
           <div class="stat-label">Pending</div>
         </div>
@@ -56,17 +56,6 @@
 
       <!-- Filters and Search -->
       <section class="controls">
-        <div class="filter-group">
-          <label for="status-filter">Filter by status:</label>
-          <select id="status-filter">
-            <option value="all">All</option>
-            <option value="ok">Healthy</option>
-            <option value="warning">Warning</option>
-            <option value="error">Error</option>
-            <option value="version-mismatch">Version Mismatch</option>
-            <option value="pending">Pending</option>
-          </select>
-        </div>
         <div class="filter-group">
           <label for="issue-filter">Filter by issue type:</label>
           <select id="issue-filter">

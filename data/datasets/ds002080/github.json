@@ -1,9 +1,9 @@
 {
-  "lastChecked": "2026-03-25T07:13:06.000Z",
-  "head": "master",
+  "lastChecked": "2026-03-26T07:21:44.000Z",
+  "head": "main",
   "branches": {
-    "git-annex": "3f0e7a1e625518f090b763a57c02205beea247f3",
-    "main": "59bfa4c56681b913d3f3d1e958122a297a7f04c0",
+    "git-annex": "3661cd4cee5e8c6d1182cc11bbca69143ab91d70",
+    "main": "4e7326e5c0bd01464cb8573f2bb277500c3a5881",
     "master": "59bfa4c56681b913d3f3d1e958122a297a7f04c0"
   },
   "tags": {
@@ -12,6 +12,7 @@
     "2.0.0": "ee2a7aa0c529d1f681d2f5d4814e2e24cadf8c2e",
     "2.1.0": "86eb510b64fe76f442376116a0b37f89973fe86c",
     "3.0.0": "18900a0a39b58c1ef484ed6e554f5f23dbdcd96b",
-    "4.0.0": "59bfa4c56681b913d3f3d1e958122a297a7f04c0"
+    "4.0.0": "59bfa4c56681b913d3f3d1e958122a297a7f04c0",
+    "4.0.1": "4e7326e5c0bd01464cb8573f2bb277500c3a5881"
   }
 }

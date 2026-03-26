@@ -1,10 +1,10 @@
 {
   "schemaVersion": "2.0.0",
-  "lastChecked": "2026-03-25T07:13:47.000Z",
+  "lastChecked": "2026-03-26T07:22:44.000Z",
   "accessible": true,
   "httpStatus": null,
-  "datasetDescriptionDOI": "doi:10.18112/openneuro.ds002080.v4.0.0",
-  "extractedVersion": "4.0.0",
+  "datasetDescriptionDOI": "doi:10.18112/openneuro.ds002080.v4.0.1",
+  "extractedVersion": "4.0.1",
   "versionSource": "doi",
   "datasetDescriptionMissing": null,
   "doiIdMismatch": null,

@@ -276,66 +276,6 @@ th.sort-desc .sort-indicator::after {
   color: var(--status-pending);
 }
 
-/* Composite status indicator (3 dots) */
-.status-dots {
-  display: inline-flex;
-  gap: 0.35rem;
-  align-items: center;
-}
-.status-dot {
-  width: 0.75rem;
-  height: 0.75rem;
-  border-radius: 50%;
-  display: inline-block;
-  position: relative;
-}
-.status-dot.ok {
-  background: var(--status-ok);
-}
-.status-dot.warning {
-  background: var(--status-warning);
-}
-.status-dot.error {
-  background: var(--status-error);
-}
-.status-dot.version-mismatch {
-  background: var(--status-version-mismatch);
-}
-.status-dot.pending {
-  background: var(--status-pending);
-}
-
-/* Icon overlay for colorblind accessibility */
-.status-dot::after {
-  font-size: 0.5rem;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  line-height: 1;
-}
-.status-dot.ok::after {
-  content: "\2713";
-  color: white;
-}
-.status-dot.warning::after {
-  content: "!";
-  color: white;
-  font-weight: bold;
-}
-.status-dot.error::after {
-  content: "\2717";
-  color: white;
-}
-.status-dot.version-mismatch::after {
-  content: "\2260";
-  color: white;
-}
-.status-dot.pending::after {
-  content: "\00B7";
-  color: white;
-}
-
 /* Version tags in table */
 .version-tag {
   padding: 0.15rem 0.4rem;

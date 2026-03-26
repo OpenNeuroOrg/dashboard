@@ -6,7 +6,6 @@ import {
   loadJSON,
   getStatusBadge,
   getCheckIcon,
-  getStatusDots,
   formatCompactNumber,
   formatDiffCounts,
   formatDate,
@@ -216,18 +215,6 @@ function getFilteredDatasets() {
         aVal = a.latestSnapshot;
         bVal = b.latestSnapshot;
         break;
-      case "status":
-        // Sort by severity
-        const priority = {
-          error: 0,
-          "version-mismatch": 1,
-          warning: 2,
-          pending: 3,
-          ok: 4,
-        };
-        aVal = priority[a.status];
-        bVal = priority[b.status];
-        break;
       case "diffSize":
         aVal = (a.s3FilesAdded || 0) + (a.s3FilesRemoved || 0);
         bVal = (b.s3FilesAdded || 0) + (b.s3FilesRemoved || 0);
@@ -305,7 +292,6 @@ function renderTable() {
             <tr>
                 <td><a href="dataset.html?id=${ds.id}" class="dataset-link">${ds.id}</a></td>
                 <td><code>${ds.latestSnapshot}</code></td>
-                <td>${getStatusDots(ds.checks, s3Blocked)}</td>
                 <td>${ghVersion}</td>
                 <td>${s3VersionCell}</td>
                 <td>${diffCell}</td>

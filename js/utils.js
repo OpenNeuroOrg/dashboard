@@ -118,25 +118,6 @@ export function getMostRecentTimestamp(timestamps) {
 }
 
 /**
- * Get composite status dots HTML (3 dots for GitHub, S3 Version, S3 Files)
- */
-export function getStatusDots(checks, s3Blocked = false) {
-  const dotFor = (status, label, blocked = false) => {
-    const cls = blocked ? "error" : status;
-    const title = blocked ? `${label}: Blocked (403)` : `${label}: ${status}`;
-    const icon = blocked ? "\uD83D\uDD12" : "";
-    return `<span class="status-dot ${cls}" title="${title}">${icon}</span>`;
-  };
-  return (
-    `<span class="status-dots">` +
-    dotFor(checks.github, "GitHub") +
-    dotFor(checks.s3Version, "S3 Version", s3Blocked) +
-    dotFor(checks.s3Files, "S3 Files", s3Blocked) +
-    `</span>`
-  );
-}
-
-/**
  * Format a number compactly (e.g., 1234 -> "1.2k")
  */
 export function formatCompactNumber(n) {

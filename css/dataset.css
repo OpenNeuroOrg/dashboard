@@ -429,3 +429,13 @@ button[aria-busy="true"] {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .diff-line.added {
+    background: rgba(0, 158, 115, 0.15);
+  }
+
+  :root:not([data-theme="light"]) .diff-line.removed {
+    background: rgba(213, 94, 0, 0.15);
+  }
+}

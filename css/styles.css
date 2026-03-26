@@ -385,3 +385,13 @@ footer {
     font-size: 2rem;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --status-ok-bg: #143031;
+    --status-warning-bg: #37301f;
+    --status-error-bg: #34261f;
+    --status-version-mismatch-bg: #213342;
+    --status-pending-bg: #2b2f36;
+  }
+}

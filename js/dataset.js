@@ -201,6 +201,10 @@ function renderSnapshots() {
 function getGitHubStatus() {
   if (!github) return "pending";
 
+  if (github.error) {
+    return github.error === "command-failed" ? "pending" : "error";
+  }
+
   if (!(latestSnapshot in github.tags)) {
     return "error";
   }
@@ -230,6 +234,22 @@ function renderGitHubCheck() {
 
   if (!github) {
     document.getElementById("github-summary").textContent = "Check not yet run";
+    document.getElementById("github-details").style.display = "none";
+    return;
+  }
+
+  // Handle error states from the pipeline
+  if (github.error) {
+    let summary;
+    if (github.error === "repo-not-found") {
+      summary = "✗ Repository not found on GitHub";
+    } else if (github.error === "repo-empty") {
+      summary = "✗ Repository exists but has not been pushed to";
+    } else {
+      // command-failed: ephemeral, treated as pending
+      summary = "Check not yet run";
+    }
+    document.getElementById("github-summary").textContent = summary;
     document.getElementById("github-details").style.display = "none";
     return;
   }

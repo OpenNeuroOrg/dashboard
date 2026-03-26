@@ -129,6 +129,9 @@ classes:
         range: string
         required: false
         description: Discovered version from S3 DOI extraction (or null)
+      latestSnapshotDate:
+        range: datetime
+        description: Creation date of the latest snapshot (for display and sorting)
 
   CheckResults:
     description: Status of individual checks
@@ -174,7 +177,6 @@ classes:
         required: true
       head:
         range: string
-        required: true
         description: Name of the branch HEAD points to (e.g., "master")
       branches:
         range: GitRefMapping
@@ -186,6 +188,9 @@ classes:
         required: true
         inlined: true
         description: Map of tag names to commit SHAs
+      error:
+        range: string
+        description: Error condition if check failed (repo-not-found, repo-empty, command-failed)
 
   GitRefMapping:
     description: Map from ref name to commit SHA
@@ -400,6 +405,10 @@ enums:
         description: Latest snapshot tag not found on GitHub mirror
       head-mismatch:
         description: HEAD points to different commit than latest tag
+      repo-not-found:
+        description: GitHub repository does not exist
+      repo-empty:
+        description: Repository exists but has no refs pushed
 
   S3VersionIssueSubtype:
     description: Specific issue type for S3 version checks

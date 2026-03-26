@@ -56,23 +56,34 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
     github = load_typed_safe(dataset_dir / "github.json", GitHubStatus)
     if github:
         last_checked.github = github.lastChecked
-        tags = github.tags
 
-        if latest_snapshot not in tags:
-            github_check = CheckStatus.error
-            github_subtype = GithubIssueSubtype.tag_missing
-        elif github.branches.get(github.head) != tags.get(latest_snapshot):
-            github_check = CheckStatus.warning
-            github_subtype = GithubIssueSubtype.head_mismatch
+        if github.error:
+            if github.error == "command-failed":
+                github_check = CheckStatus.pending
+            elif github.error == "repo-empty":
+                github_check = CheckStatus.error
+                github_subtype = GithubIssueSubtype.repo_empty
+            else:  # repo-not-found or unknown
+                github_check = CheckStatus.error
+                github_subtype = GithubIssueSubtype.repo_not_found
         else:
-            github_check = CheckStatus.ok
+            tags = github.tags
 
-        # Extract the version from github tags matching latest_snapshot
-        if tags:
-            try:
-                github_version = sorted(tags.keys(), key=_tag_generation, reverse=True)[0]
-            except ValueError:
-                print(f"Warning: Unrecognized tag format in GitHub tags for dataset {dataset_id}. Tags: {tags}")
+            if latest_snapshot not in tags:
+                github_check = CheckStatus.error
+                github_subtype = GithubIssueSubtype.tag_missing
+            elif github.branches.get(github.head) != tags.get(latest_snapshot):
+                github_check = CheckStatus.warning
+                github_subtype = GithubIssueSubtype.head_mismatch
+            else:
+                github_check = CheckStatus.ok
+
+            # Extract the version from github tags matching latest_snapshot
+            if tags:
+                try:
+                    github_version = sorted(tags.keys(), key=_tag_generation, reverse=True)[0]
+                except ValueError:
+                    print(f"Warning: Unrecognized tag format in GitHub tags for dataset {dataset_id}. Tags: {tags}")
 
     # S3 version check
     s3_version = load_typed_safe(dataset_dir / "s3-version.json", S3Version)

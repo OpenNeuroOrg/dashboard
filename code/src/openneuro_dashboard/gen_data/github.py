@@ -86,14 +86,25 @@ def generate(output_dir: Path, seed: int = None):
             snapshot_metadata[tag] = load_typed(metadata_path, SnapshotMetadata)
 
         # Determine scenario
-        scenario = random.choices(["healthy", "warning", "error"], weights=[85, 10, 5])[
-            0
-        ]
+        scenario = random.choices(
+            ["healthy", "warning", "error", "repo_not_found", "repo_empty"],
+            weights=[81, 10, 5, 2, 2],
+        )[0]
 
         # Generate and write github.json
-        github_data = _generate_github_check(
-            dataset_id, tags, snapshot_metadata, scenario
-        )
+        if scenario in ("repo_not_found", "repo_empty"):
+            error_value = "repo-not-found" if scenario == "repo_not_found" else "repo-empty"
+            github_data = GitHubStatus(
+                lastChecked=random_datetime(days_ago=1),
+                head=None,
+                branches={},
+                tags={},
+                error=error_value,
+            )
+        else:
+            github_data = _generate_github_check(
+                dataset_id, tags, snapshot_metadata, scenario
+            )
         dump_typed(dataset_dir / "github.json", github_data)
 
         if i % 100 == 0:

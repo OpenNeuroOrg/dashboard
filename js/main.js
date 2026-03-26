@@ -212,8 +212,8 @@ function getFilteredDatasets() {
         bVal = b.id;
         break;
       case "latestSnapshot":
-        aVal = a.latestSnapshot;
-        bVal = b.latestSnapshot;
+        aVal = a.latestSnapshotDate || "1970-01-01T00:00:00.000Z";
+        bVal = b.latestSnapshotDate || "1970-01-01T00:00:00.000Z";
         break;
       case "diffSize":
         aVal = (a.s3FilesAdded || 0) + (a.s3FilesRemoved || 0);
@@ -291,7 +291,7 @@ function renderTable() {
       return `
             <tr>
                 <td><a href="dataset.html?id=${ds.id}" class="dataset-link">${ds.id}</a></td>
-                <td><code>${ds.latestSnapshot}</code></td>
+                <td><code>${ds.latestSnapshot}</code>${ds.latestSnapshotDate ? ` <span class="snapshot-date">(${formatDate(ds.latestSnapshotDate)})</span>` : ""}</td>
                 <td>${ghVersion}</td>
                 <td>${s3VersionCell}</td>
                 <td>${diffCell}</td>

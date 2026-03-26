@@ -18,6 +18,7 @@ from .models import (
     S3FilesIssueSubtype,
     S3Version,
     S3VersionIssueSubtype,
+    SnapshotMetadata,
 )
 from .utils import format_timestamp
 
@@ -164,6 +165,12 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
     if last_checked.github or last_checked.s3Version or last_checked.s3Files:
         timestamps = last_checked
 
+    latest_snapshot_date: str | None = None
+    metadata_path = dataset_dir / "snapshots" / latest_snapshot / "metadata.json"
+    metadata = load_typed_safe(metadata_path, SnapshotMetadata)
+    if metadata:
+        latest_snapshot_date = metadata.created
+
     return DatasetSummary(
         id=dataset_id,
         status=overall_status,
@@ -175,6 +182,7 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
         issueSubtypes=issue_subtypes,
         githubVersion=github_version,
         s3Version=s3_version_str,
+        latestSnapshotDate=latest_snapshot_date,
     )
 
 

@@ -90,9 +90,6 @@ async function init() {
         "var(--status-error)";
     }
 
-    // Setup file list loader
-    setupFileListLoader();
-
     // Show content, hide loading
     document.getElementById("loading").style.display = "none";
     document.getElementById("dataset-details").style.display = "block";
@@ -201,6 +198,10 @@ function renderSnapshots() {
 function getGitHubStatus() {
   if (!github) return "pending";
 
+  if (github.error) {
+    return github.error === "command-failed" ? "pending" : "error";
+  }
+
   if (!(latestSnapshot in github.tags)) {
     return "error";
   }
@@ -230,6 +231,22 @@ function renderGitHubCheck() {
 
   if (!github) {
     document.getElementById("github-summary").textContent = "Check not yet run";
+    document.getElementById("github-details").style.display = "none";
+    return;
+  }
+
+  // Handle error states from the pipeline
+  if (github.error) {
+    let summary;
+    if (github.error === "repo-not-found") {
+      summary = "✗ Repository not found on GitHub";
+    } else if (github.error === "repo-empty") {
+      summary = "✗ Repository exists but has not been pushed to";
+    } else {
+      // command-failed: ephemeral, treated as pending
+      summary = "Check not yet run";
+    }
+    document.getElementById("github-summary").textContent = summary;
     document.getElementById("github-details").style.display = "none";
     return;
   }
@@ -544,40 +561,6 @@ function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
-}
-
-/**
- * Setup file list loader
- */
-function setupFileListLoader() {
-  const btn = document.getElementById("load-files-btn");
-  const container = document.getElementById("files-container");
-
-  document.getElementById("files-snapshot-tag").textContent = latestSnapshot;
-
-  btn.addEventListener("click", async () => {
-    btn.setAttribute("aria-busy", "true");
-    btn.textContent = "Loading...";
-
-    try {
-      const files = await loadJSON(
-        `data/datasets/${datasetId}/snapshots/${latestSnapshot}/files.json`,
-      );
-
-      document.getElementById("files-count").textContent = files.count;
-      document.getElementById("files-list").innerHTML = files.files
-        .map((file) => `<div>${escapeHtml(file)}</div>`)
-        .join("");
-
-      container.style.display = "block";
-      btn.style.display = "none";
-    } catch (error) {
-      alert(`Failed to load file list: ${error.message}`);
-    } finally {
-      btn.removeAttribute("aria-busy");
-      btn.textContent = "Load File List";
-    }
-  });
 }
 
 // Initialize on load

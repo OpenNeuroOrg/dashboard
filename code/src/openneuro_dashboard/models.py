@@ -32,6 +32,8 @@ class GithubIssueSubtype(str, Enum):
 
     tag_missing = "tag-missing"
     head_mismatch = "head-mismatch"
+    repo_not_found = "repo-not-found"
+    repo_empty = "repo-empty"
 
 
 class S3VersionIssueSubtype(str, Enum):
@@ -92,6 +94,7 @@ class DatasetSummary:
     issueSubtypes: IssueSubtypes | None = None
     githubVersion: str | None = None
     s3Version: str | None = None
+    latestSnapshotDate: str | None = None
 
 
 @dataclass
@@ -124,9 +127,10 @@ class GitHubStatus:
     """Status of GitHub mirror from git ls-remote"""
 
     lastChecked: str
-    head: str
     branches: dict[str, str]
     tags: dict[str, str]
+    head: str | None = None
+    error: str | None = None
 
 
 @dataclass

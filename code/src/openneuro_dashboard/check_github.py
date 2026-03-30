@@ -14,7 +14,7 @@ from __future__ import annotations
 import asyncio
 from pathlib import Path
 
-from ondiagnostics.tasks.git import list_refs
+from ondiagnostics.tasks.git import GitRefs, list_refs
 
 from .converter import dump_typed, load_typed
 from .models import DatasetsRegistry, GitHubStatus, SnapshotIndex, SnapshotMetadata
@@ -23,7 +23,7 @@ from .utils import format_timestamp
 
 async def check_github_mirror(
     dataset_id: str, output_dir: Path, verbose: bool = False
-) -> GitHubStatus | None:
+) -> GitHubStatus:
     """Check GitHub mirror status for a single dataset.
 
     Parameters
@@ -37,15 +37,21 @@ async def check_github_mirror(
 
     Returns
     -------
-    GitHubStatus or None
-        GitHub status, or None if the check failed.
+    GitHubStatus
+        GitHub status. Error cases populate the ``error`` field.
     """
     repo_url = f"https://github.com/OpenNeuroDatasets/{dataset_id}.git"
 
     refs = await list_refs(repo_url)
-    if refs is None:
-        print(f"  {dataset_id}: failed to list refs")
-        return None
+    if isinstance(refs, str):
+        print(f"  {dataset_id}: {refs}")
+        return GitHubStatus(
+            lastChecked=format_timestamp(),
+            head=None,
+            branches={},
+            tags={},
+            error=refs,
+        )
 
     head = refs.head
     if head is None:
@@ -101,7 +107,7 @@ async def check_all_datasets(
 
     async def check_with_semaphore(
         dataset_id: str, index: int
-    ) -> tuple[str, GitHubStatus | None]:
+    ) -> tuple[str, GitHubStatus]:
         async with semaphore:
             result = await check_github_mirror(dataset_id, output_dir, verbose)
 
@@ -117,20 +123,20 @@ async def check_all_datasets(
     results = await asyncio.gather(*tasks)
 
     success_count = 0
-    failed_count = 0
+    error_count = 0
 
     for dataset_id, github_data in results:
-        if github_data is None:
-            failed_count += 1
-            continue
-
         dataset_dir = output_dir / "datasets" / dataset_id
         dump_typed(dataset_dir / "github.json", github_data)
-        success_count += 1
+        if github_data.error:
+            error_count += 1
+        else:
+            success_count += 1
 
     print("\nGitHub check complete")
     print(f"  Success: {success_count}/{total}")
-    print(f"  Failed: {failed_count}/{total}")
+    if error_count:
+        print(f"  Errors: {error_count}/{total}")
 
 
 async def validate_github_data(output_dir: Path, verbose: bool = False) -> None:

@@ -322,6 +322,12 @@ th.sort-desc .sort-indicator::after {
   margin: 0 0.1rem;
 }
 
+/* Snapshot date beside tag */
+.snapshot-date {
+  color: var(--muted-color);
+  font-size: 0.8rem;
+}
+
 /* Links */
 .dataset-link {
   font-family: monospace;

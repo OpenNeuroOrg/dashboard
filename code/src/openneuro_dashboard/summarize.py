@@ -18,6 +18,7 @@ from .models import (
     S3FilesIssueSubtype,
     S3Version,
     S3VersionIssueSubtype,
+    SnapshotMetadata,
 )
 from .utils import format_timestamp
 
@@ -56,23 +57,34 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
     github = load_typed_safe(dataset_dir / "github.json", GitHubStatus)
     if github:
         last_checked.github = github.lastChecked
-        tags = github.tags
 
-        if latest_snapshot not in tags:
-            github_check = CheckStatus.error
-            github_subtype = GithubIssueSubtype.tag_missing
-        elif github.branches.get(github.head) != tags.get(latest_snapshot):
-            github_check = CheckStatus.warning
-            github_subtype = GithubIssueSubtype.head_mismatch
+        if github.error:
+            if github.error == "command-failed":
+                github_check = CheckStatus.pending
+            elif github.error == "repo-empty":
+                github_check = CheckStatus.error
+                github_subtype = GithubIssueSubtype.repo_empty
+            else:  # repo-not-found or unknown
+                github_check = CheckStatus.error
+                github_subtype = GithubIssueSubtype.repo_not_found
         else:
-            github_check = CheckStatus.ok
+            tags = github.tags
 
-        # Extract the version from github tags matching latest_snapshot
-        if tags:
-            try:
-                github_version = sorted(tags.keys(), key=_tag_generation, reverse=True)[0]
-            except ValueError:
-                print(f"Warning: Unrecognized tag format in GitHub tags for dataset {dataset_id}. Tags: {tags}")
+            if latest_snapshot not in tags:
+                github_check = CheckStatus.error
+                github_subtype = GithubIssueSubtype.tag_missing
+            elif github.branches.get(github.head) != tags.get(latest_snapshot):
+                github_check = CheckStatus.warning
+                github_subtype = GithubIssueSubtype.head_mismatch
+            else:
+                github_check = CheckStatus.ok
+
+            # Extract the version from github tags matching latest_snapshot
+            if tags:
+                try:
+                    github_version = sorted(tags.keys(), key=_tag_generation, reverse=True)[0]
+                except ValueError:
+                    print(f"Warning: Unrecognized tag format in GitHub tags for dataset {dataset_id}. Tags: {tags}")
 
     # S3 version check
     s3_version = load_typed_safe(dataset_dir / "s3-version.json", S3Version)
@@ -153,6 +165,12 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
     if last_checked.github or last_checked.s3Version or last_checked.s3Files:
         timestamps = last_checked
 
+    latest_snapshot_date: str | None = None
+    metadata_path = dataset_dir / "snapshots" / latest_snapshot / "metadata.json"
+    metadata = load_typed_safe(metadata_path, SnapshotMetadata)
+    if metadata:
+        latest_snapshot_date = metadata.created
+
     return DatasetSummary(
         id=dataset_id,
         status=overall_status,
@@ -164,6 +182,7 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
         issueSubtypes=issue_subtypes,
         githubVersion=github_version,
         s3Version=s3_version_str,
+        latestSnapshotDate=latest_snapshot_date,
     )
 
 

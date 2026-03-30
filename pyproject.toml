@@ -30,8 +30,8 @@ build-backend = "uv_build"
 module-root = "code/src"
 
 ## Use this to work on paired refactors
-# [tool.uv.sources]
-# ondiagnostics = { path = "../ondiagnostics", editable = true }
+[tool.uv.sources]
+ondiagnostics = { path = "../ondiagnostics", editable = true }
 
 [dependency-groups]
 dev = [

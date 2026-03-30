@@ -1013,7 +1013,7 @@ wheels = [
 [[package]]
 name = "ondiagnostics"
 version = "0.1.0"
-source = { git = "https://github.com/openneuroorg/ondiagnostics#68cf92e077dc9d31112d0e75e445f81f47b0cf9d" }
+source = { git = "https://github.com/openneuroorg/ondiagnostics#ac26ec993ee09d59d58a1cd7fca683a3c85cbb82" }
 dependencies = [
     { name = "aioboto3" },
     { name = "cattrs" },

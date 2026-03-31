@@ -69,5 +69,5 @@ def test_format_timestamp():
 
 
 def test_schema_version():
-    """SCHEMA_VERSION is '2.1.0'."""
-    assert SCHEMA_VERSION == "2.1.0"
+    """SCHEMA_VERSION is '2.2.0'."""
+    assert SCHEMA_VERSION == "2.2.0"

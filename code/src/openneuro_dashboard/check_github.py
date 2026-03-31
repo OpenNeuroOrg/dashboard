@@ -18,6 +18,7 @@ from ondiagnostics.tasks.git import GitRefs, list_refs
 
 from .converter import dump_typed, load_typed
 from .models import DatasetsRegistry, GitHubStatus, SnapshotIndex, SnapshotMetadata
+from .timestamps import GITHUB_MANIFEST, load_timestamp_manifest, save_timestamp_manifest
 from .utils import format_timestamp
 
 
@@ -46,7 +47,6 @@ async def check_github_mirror(
     if isinstance(refs, str):
         print(f"  {dataset_id}: {refs}")
         return GitHubStatus(
-            lastChecked=format_timestamp(),
             head=None,
             branches={},
             tags={},
@@ -64,7 +64,6 @@ async def check_github_mirror(
             head = "unknown"
 
     github_data = GitHubStatus(
-        lastChecked=format_timestamp(),
         head=head,
         branches=refs.branches,
         tags=refs.tags,
@@ -122,16 +121,23 @@ async def check_all_datasets(
 
     results = await asyncio.gather(*tasks)
 
+    # Load existing manifest and prepare timestamp
+    manifest = load_timestamp_manifest(output_dir / GITHUB_MANIFEST)
+    now = format_timestamp()
+
     success_count = 0
     error_count = 0
 
     for dataset_id, github_data in results:
         dataset_dir = output_dir / "datasets" / dataset_id
         dump_typed(dataset_dir / "github.json", github_data)
+        manifest[dataset_id] = now
         if github_data.error:
             error_count += 1
         else:
             success_count += 1
+
+    save_timestamp_manifest(output_dir / GITHUB_MANIFEST, manifest)
 
     print("\nGitHub check complete")
     print(f"  Success: {success_count}/{total}")

@@ -18,6 +18,7 @@ import httpx
 
 from .converter import dump_typed, load_typed
 from .models import DatasetsRegistry, S3Version, SnapshotIndex, VersionSource
+from .timestamps import S3_VERSION_MANIFEST, load_timestamp_manifest, save_timestamp_manifest
 from .utils import SCHEMA_VERSION, format_timestamp
 
 S3_BASE_URL = "https://s3.amazonaws.com/openneuro.org"
@@ -68,7 +69,6 @@ async def fetch_dataset_description(
                 )
             return S3Version(
                 schemaVersion=SCHEMA_VERSION,
-                lastChecked=format_timestamp(),
                 accessible=True,
                 extractedVersion=latest_snapshot,
                 versionSource=VersionSource.assumed_latest,
@@ -85,7 +85,6 @@ async def fetch_dataset_description(
                 )
             return S3Version(
                 schemaVersion=SCHEMA_VERSION,
-                lastChecked=format_timestamp(),
                 accessible=True,
                 datasetDescriptionDOI=doi,
                 extractedVersion=latest_snapshot,
@@ -104,7 +103,6 @@ async def fetch_dataset_description(
                 )
             return S3Version(
                 schemaVersion=SCHEMA_VERSION,
-                lastChecked=format_timestamp(),
                 accessible=True,
                 datasetDescriptionDOI=doi,
                 extractedVersion=version,
@@ -119,7 +117,6 @@ async def fetch_dataset_description(
 
         return S3Version(
             schemaVersion=SCHEMA_VERSION,
-            lastChecked=format_timestamp(),
             accessible=True,
             datasetDescriptionDOI=doi,
             extractedVersion=version,
@@ -132,7 +129,6 @@ async def fetch_dataset_description(
             print(f"  {dataset_id}: Access denied (403)")
             return S3Version(
                 schemaVersion=SCHEMA_VERSION,
-                lastChecked=format_timestamp(),
                 accessible=False,
                 httpStatus=403,
             )
@@ -144,7 +140,6 @@ async def fetch_dataset_description(
             )
             return S3Version(
                 schemaVersion=SCHEMA_VERSION,
-                lastChecked=format_timestamp(),
                 accessible=True,
                 extractedVersion=latest_snapshot,
                 versionSource=VersionSource.assumed_latest,
@@ -158,7 +153,6 @@ async def fetch_dataset_description(
             )
             return S3Version(
                 schemaVersion=SCHEMA_VERSION,
-                lastChecked=format_timestamp(),
                 accessible=True,
                 extractedVersion=latest_snapshot,
                 versionSource=VersionSource.assumed_latest,
@@ -172,7 +166,6 @@ async def fetch_dataset_description(
         )
         return S3Version(
             schemaVersion=SCHEMA_VERSION,
-            lastChecked=format_timestamp(),
             accessible=True,
             extractedVersion=latest_snapshot,
             versionSource=VersionSource.assumed_latest,
@@ -186,7 +179,6 @@ async def fetch_dataset_description(
         )
         return S3Version(
             schemaVersion=SCHEMA_VERSION,
-            lastChecked=format_timestamp(),
             accessible=True,
             extractedVersion=latest_snapshot,
             versionSource=VersionSource.assumed_latest,
@@ -201,7 +193,6 @@ async def fetch_dataset_description(
         )
         return S3Version(
             schemaVersion=SCHEMA_VERSION,
-            lastChecked=format_timestamp(),
             accessible=True,
             extractedVersion=latest_snapshot,
             versionSource=VersionSource.assumed_latest,
@@ -274,9 +265,14 @@ async def check_all_datasets(
         "doi_mismatch": 0,  # Wrong dataset ID in DOI
     }
 
+    # Load existing manifest
+    manifest = load_timestamp_manifest(output_dir / S3_VERSION_MANIFEST)
+    now = format_timestamp()
+
     for dataset_id, s3_version_data in results:
         dataset_dir = output_dir / "datasets" / dataset_id
         dump_typed(dataset_dir / "s3-version.json", s3_version_data)
+        manifest[dataset_id] = now
 
         # Categorize
         if not s3_version_data.accessible:
@@ -289,6 +285,8 @@ async def check_all_datasets(
             stats["case4_not_found"] += 1
         else:
             stats["case2_assumed"] += 1
+
+    save_timestamp_manifest(output_dir / S3_VERSION_MANIFEST, manifest)
 
     print(f"\nS3 version check complete ({total} datasets)")
     print("\nBreakdown:")

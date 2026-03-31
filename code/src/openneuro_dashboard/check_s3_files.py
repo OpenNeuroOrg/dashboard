@@ -32,6 +32,7 @@ from .models import (
     S3FileDiff,
     S3Version,
 )
+from .timestamps import S3_FILES_MANIFEST, load_timestamp_manifest, save_timestamp_manifest
 from .utils import (
     SCHEMA_VERSION,
     format_timestamp,
@@ -48,6 +49,7 @@ def is_eligible(
     s3_version: S3Version | None,
     github: GitHubStatus | None,
     existing_diff: S3FileDiff | None,
+    checked_at: str | None = None,
 ) -> bool:
     """Check preconditions for running the S3 file diff."""
     if not s3_version:
@@ -67,8 +69,7 @@ def is_eligible(
         return False
 
     # Incremental skip logic
-    if existing_diff and existing_diff.s3Version == extracted:
-        checked_at = existing_diff.checkedAt
+    if existing_diff and existing_diff.s3Version == extracted and checked_at:
         try:
             checked_time = datetime.fromisoformat(checked_at.replace("Z", "+00:00"))
             age = datetime.now(UTC) - checked_time
@@ -241,7 +242,6 @@ def compute_diff(
         datasetId=dataset_id,
         snapshotTag=tag,
         s3Version=s3_version,
-        checkedAt=format_timestamp(),
         status=status,
         exportMissing=export_missing,
         totalS3Files=len(s3_files),
@@ -313,6 +313,8 @@ async def check_all_datasets(
 
     cache_dir.mkdir(parents=True, exist_ok=True)
 
+    manifest = load_timestamp_manifest(output_dir / S3_FILES_MANIFEST)
+
     # Load registry
     registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
     datasets = registry.latestSnapshots
@@ -326,7 +328,7 @@ async def check_all_datasets(
         github = load_typed_safe(dataset_dir / "github.json", GitHubStatus)
         existing_diff = load_typed_safe(dataset_dir / "s3-diff.json", S3FileDiff)
 
-        if is_eligible(dataset_id, s3_version, github, existing_diff):
+        if is_eligible(dataset_id, s3_version, github, existing_diff, manifest.get(dataset_id)):
             eligible.append((dataset_id, s3_version))
 
     print(f"Found {len(eligible)}/{total} eligible datasets")
@@ -357,6 +359,7 @@ async def check_all_datasets(
         )
         if ok:
             success += 1
+            manifest[dataset_id] = format_timestamp()
         else:
             failed += 1
 
@@ -368,6 +371,7 @@ async def check_all_datasets(
         for i, (dataset_id, s3_version) in enumerate(eligible)
     ]
     await asyncio.gather(*tasks)
+    save_timestamp_manifest(output_dir / S3_FILES_MANIFEST, manifest)
 
     print("\nS3 file check complete")
     print(f"  Success: {success}/{len(eligible)}")

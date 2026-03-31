@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from unittest.mock import patch
-
 from openneuro_dashboard.check_s3_files import compute_context, compute_diff
 from openneuro_dashboard.models import CheckStatus, S3FileDiff
 
@@ -13,8 +11,7 @@ from openneuro_dashboard.models import CheckStatus, S3FileDiff
 # ------------------------------------------------------------------
 
 
-@patch("openneuro_dashboard.check_s3_files.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
-def test_identical_sets(_ts):
+def test_identical_sets():
     """Identical git and S3 file sets -> status 'ok', no diffs."""
     files = {"a.txt", "b.txt", "c.txt"}
     result = compute_diff("ds000001", "1.0.2", "1.0.2", files, files)
@@ -26,8 +23,7 @@ def test_identical_sets(_ts):
     assert result.exportMissing is False
 
 
-@patch("openneuro_dashboard.check_s3_files.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
-def test_added_files(_ts):
+def test_added_files():
     """Files in git but not S3 appear in 'added'."""
     git_files = {"a.txt", "b.txt", "new.txt"}
     s3_files = {"a.txt", "b.txt"}
@@ -38,8 +34,7 @@ def test_added_files(_ts):
     assert result.removed == []
 
 
-@patch("openneuro_dashboard.check_s3_files.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
-def test_removed_files(_ts):
+def test_removed_files():
     """Files in S3 but not git appear in 'removed'."""
     git_files = {"a.txt"}
     s3_files = {"a.txt", "old.txt"}
@@ -50,8 +45,7 @@ def test_removed_files(_ts):
     assert result.added == []
 
 
-@patch("openneuro_dashboard.check_s3_files.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
-def test_export_missing(_ts):
+def test_export_missing():
     """S3 has zero files -> exportMissing=True."""
     git_files = {"a.txt", "b.txt"}
     s3_files: set[str] = set()
@@ -62,8 +56,7 @@ def test_export_missing(_ts):
     assert sorted(result.added) == ["a.txt", "b.txt"]
 
 
-@patch("openneuro_dashboard.check_s3_files.format_timestamp", return_value="2026-01-01T00:00:00.000Z")
-def test_both_empty(_ts):
+def test_both_empty():
     """Both sets empty -> status 'ok'."""
     result = compute_diff("ds000001", "1.0.2", "1.0.2", set(), set())
 

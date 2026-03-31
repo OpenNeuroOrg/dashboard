@@ -174,7 +174,7 @@ classes:
     attributes:
       lastChecked:
         range: datetime
-        required: true
+        required: false
       head:
         range: string
         description: Name of the branch HEAD points to (e.g., "master")
@@ -215,7 +215,7 @@ classes:
         pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
       lastChecked:
         range: datetime
-        required: true
+        required: false
       accessible:
         range: boolean
         required: true
@@ -297,7 +297,7 @@ classes:
         description: Version tag that S3 was compared against
       checkedAt:
         range: datetime
-        required: true
+        required: false
         description: When this comparison was performed
       status:
         range: CheckStatus

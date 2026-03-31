@@ -126,9 +126,9 @@ class SnapshotIndex:
 class GitHubStatus:
     """Status of GitHub mirror from git ls-remote"""
 
-    lastChecked: str
     branches: dict[str, str]
     tags: dict[str, str]
+    lastChecked: str | None = None
     head: str | None = None
     error: str | None = None
 
@@ -139,8 +139,8 @@ class S3Version:
 tree to compare against for file validation."""
 
     schemaVersion: str
-    lastChecked: str
     accessible: bool
+    lastChecked: str | None = None
     httpStatus: int | None = None
     datasetDescriptionDOI: str | None = None
     extractedVersion: str | None = None
@@ -164,10 +164,10 @@ sync with git.'"""
     datasetId: str
     snapshotTag: str
     s3Version: str
-    checkedAt: str
     status: CheckStatus
     totalS3Files: int
     totalGitFiles: int
+    checkedAt: str | None = None
     exportMissing: bool | None = None
     added: list[str] = field(default_factory=list)
     removed: list[str] = field(default_factory=list)

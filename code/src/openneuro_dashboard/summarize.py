@@ -20,6 +20,12 @@ from .models import (
     S3VersionIssueSubtype,
     SnapshotMetadata,
 )
+from .timestamps import (
+    GITHUB_MANIFEST,
+    S3_FILES_MANIFEST,
+    S3_VERSION_MANIFEST,
+    load_timestamp_manifest,
+)
 from .utils import format_timestamp
 
 
@@ -36,7 +42,10 @@ def _tag_generation(tag: str) -> tuple[int, str]:
     raise ValueError(f"Unrecognized tag format: {tag}")
 
 
-def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummary:
+def summarize_dataset(
+    dataset_id, latest_snapshot, dataset_dir,
+    timestamps: CheckTimestamps | None = None,
+) -> DatasetSummary:
     """Summarize check results for a single dataset."""
     github_check = CheckStatus.pending
     s3version_check = CheckStatus.pending
@@ -56,7 +65,10 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
     # GitHub check
     github = load_typed_safe(dataset_dir / "github.json", GitHubStatus)
     if github:
-        last_checked.github = github.lastChecked
+        if timestamps and timestamps.github:
+            last_checked.github = timestamps.github
+        elif github.lastChecked:
+            last_checked.github = github.lastChecked
 
         if github.error:
             if github.error == "command-failed":
@@ -96,7 +108,10 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
         s3files_check = CheckStatus.error
         s3_blocked = True
         s3version_subtype = S3VersionIssueSubtype.blocked
-        last_checked.s3Version = s3_version.lastChecked
+        if timestamps and timestamps.s3Version:
+            last_checked.s3Version = timestamps.s3Version
+        elif s3_version.lastChecked:
+            last_checked.s3Version = s3_version.lastChecked
     else:
         s3_version_str = s3_version.extractedVersion
 
@@ -109,7 +124,10 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
         else:
             s3version_check = CheckStatus.warning
             s3version_subtype = S3VersionIssueSubtype.no_doi
-        last_checked.s3Version = s3_version.lastChecked
+        if timestamps and timestamps.s3Version:
+            last_checked.s3Version = timestamps.s3Version
+        elif s3_version.lastChecked:
+            last_checked.s3Version = s3_version.lastChecked
 
         s3_diff = load_typed_safe(dataset_dir / "s3-diff.json", S3FileDiff)
         if not s3_diff:
@@ -117,11 +135,17 @@ def summarize_dataset(dataset_id, latest_snapshot, dataset_dir) -> DatasetSummar
         elif s3_diff.exportMissing:
             s3files_check = CheckStatus.error
             s3files_subtype = S3FilesIssueSubtype.export_missing
-            last_checked.s3Files = s3_diff.checkedAt
+            if timestamps and timestamps.s3Files:
+                last_checked.s3Files = timestamps.s3Files
+            elif s3_diff.checkedAt:
+                last_checked.s3Files = s3_diff.checkedAt
             # Do NOT populate s3FilesAdded/Removed when exportMissing
         else:
             s3files_check = CheckStatus(s3_diff.status)
-            last_checked.s3Files = s3_diff.checkedAt
+            if timestamps and timestamps.s3Files:
+                last_checked.s3Files = timestamps.s3Files
+            elif s3_diff.checkedAt:
+                last_checked.s3Files = s3_diff.checkedAt
 
             added = s3_diff.added
             removed = s3_diff.removed
@@ -192,10 +216,20 @@ def generate_summary(output_dir: Path):
     registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
     datasets_dict = registry.latestSnapshots
 
+    # Load timestamp manifests
+    github_ts = load_timestamp_manifest(output_dir / GITHUB_MANIFEST)
+    s3ver_ts = load_timestamp_manifest(output_dir / S3_VERSION_MANIFEST)
+    s3files_ts = load_timestamp_manifest(output_dir / S3_FILES_MANIFEST)
+
     datasets = []
     for dataset_id, latest_snapshot in datasets_dict.items():
         dataset_dir = output_dir / "datasets" / dataset_id
-        summary = summarize_dataset(dataset_id, latest_snapshot, dataset_dir)
+        ts = CheckTimestamps(
+            github=github_ts.get(dataset_id),
+            s3Version=s3ver_ts.get(dataset_id),
+            s3Files=s3files_ts.get(dataset_id),
+        )
+        summary = summarize_dataset(dataset_id, latest_snapshot, dataset_dir, ts)
         datasets.append(summary)
 
     summary_doc = AllDatasetsSummary(

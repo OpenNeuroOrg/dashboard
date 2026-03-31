@@ -5,6 +5,7 @@ from __future__ import annotations
 from openneuro_dashboard.converter import dump_typed
 from openneuro_dashboard.models import (
     CheckStatus,
+    CheckTimestamps,
     DatasetSummary,
     GitHubStatus,
     S3FileDiff,
@@ -164,3 +165,20 @@ def test_precedence(tmp_path):
     assert result.checks.s3Files.value == "pending"
     # pending > version-mismatch > ok
     assert result.status.value == "pending"
+
+
+def test_timestamps_from_manifest(tmp_path):
+    """Manifest timestamps override data file timestamps."""
+    dd = tmp_path / "datasets" / "ds000001"
+    _write_fixtures(dd, github=GITHUB_OK, s3_version=S3_VERSION_DOI_OK, s3_diff=S3_DIFF_OK)
+
+    manifest_ts = CheckTimestamps(
+        github="2026-06-01T00:00:00.000Z",
+        s3Version="2026-06-02T00:00:00.000Z",
+        s3Files="2026-06-03T00:00:00.000Z",
+    )
+    result = summarize_dataset("ds000001", "1.0.2", dd, timestamps=manifest_ts)
+
+    assert result.lastChecked.github == "2026-06-01T00:00:00.000Z"
+    assert result.lastChecked.s3Version == "2026-06-02T00:00:00.000Z"
+    assert result.lastChecked.s3Files == "2026-06-03T00:00:00.000Z"

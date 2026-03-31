@@ -14,6 +14,7 @@ from pathlib import Path
 
 from ..converter import dump_typed, load_typed
 from ..models import DatasetsRegistry, GitHubStatus, SnapshotIndex, SnapshotMetadata
+from ..timestamps import GITHUB_MANIFEST, save_timestamp_manifest
 from .utils import random_datetime, random_sha
 
 
@@ -54,7 +55,6 @@ def _generate_github_check(
     }
 
     return GitHubStatus(
-        lastChecked=random_datetime(days_ago=1),
         head=head_branch,
         branches=branches,
         tags=tag_mapping,
@@ -71,6 +71,8 @@ def generate(output_dir: Path, seed: int = None):
     # Load registry
     registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
     datasets = registry.latestSnapshots
+
+    manifest = {}
 
     for i, (dataset_id, latest_snapshot) in enumerate(datasets.items(), 1):
         dataset_dir = output_dir / "datasets" / dataset_id
@@ -95,7 +97,6 @@ def generate(output_dir: Path, seed: int = None):
         if scenario in ("repo_not_found", "repo_empty"):
             error_value = "repo-not-found" if scenario == "repo_not_found" else "repo-empty"
             github_data = GitHubStatus(
-                lastChecked=random_datetime(days_ago=1),
                 head=None,
                 branches={},
                 tags={},
@@ -106,8 +107,10 @@ def generate(output_dir: Path, seed: int = None):
                 dataset_id, tags, snapshot_metadata, scenario
             )
         dump_typed(dataset_dir / "github.json", github_data)
+        manifest[dataset_id] = random_datetime(days_ago=1)
 
         if i % 100 == 0:
             print(f"  Processed {i}/{len(datasets)}")
 
+    save_timestamp_manifest(output_dir / GITHUB_MANIFEST, manifest)
     print(f"GitHub check generation complete ({len(datasets)} datasets)")

@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from openneuro_dashboard.converter import load_typed
+from openneuro_dashboard.utils import load_json
 from openneuro_dashboard.models import (
     DatasetsRegistry,
     FileList,
@@ -91,7 +92,7 @@ def test_s3_version_roundtrip(gen_data_dir, linkml_validator):
         path = ds_dir / "s3-version.json"
         if path.exists():
             obj = load_typed(path, S3Version)
-            assert obj.lastChecked is not None
+            assert obj.lastChecked is None
             # LinkML validation
             with open(path) as f:
                 data = json.load(f)
@@ -121,3 +122,16 @@ def test_file_list_roundtrip(gen_data_dir, linkml_validator):
             with open(path) as f:
                 data = json.load(f)
             _assert_linkml_valid(linkml_validator, data, "FileList")
+
+
+def test_timestamp_manifests_exist(gen_data_dir):
+    """gen-data produces timestamp manifest files."""
+    for name in ("github.json", "s3-version.json", "s3-files.json"):
+        path = gen_data_dir / "timestamps" / name
+        assert path.exists(), f"Missing manifest: {path}"
+        data = load_json(path)
+        assert isinstance(data, dict)
+        assert len(data) > 0
+        for key, value in data.items():
+            assert key.startswith("ds"), f"Bad key: {key}"
+            assert "T" in value, f"Bad timestamp: {value}"

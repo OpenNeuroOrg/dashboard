@@ -14,6 +14,7 @@ from pathlib import Path
 
 from ..converter import dump_typed, load_typed
 from ..models import CheckStatus, DatasetsRegistry, FileList, S3FileDiff, S3Version
+from ..timestamps import S3_FILES_MANIFEST, save_timestamp_manifest
 from ..utils import SCHEMA_VERSION
 from .utils import random_datetime
 
@@ -62,7 +63,6 @@ def _generate_s3_diff(
         datasetId=dataset_id,
         snapshotTag=version,
         s3Version=version,
-        checkedAt=random_datetime(days_ago=1),
         status=CheckStatus.ok if not changed else CheckStatus.error,
         exportMissing=False,
         totalS3Files=total_s3,
@@ -84,6 +84,7 @@ def generate(output_dir: Path, seed: int = None):
     registry = load_typed(output_dir / "datasets-registry.json", DatasetsRegistry)
     datasets = registry.latestSnapshots
 
+    manifest = {}
     generated = 0
     skipped = 0
 
@@ -123,11 +124,13 @@ def generate(output_dir: Path, seed: int = None):
             dataset_id, latest_snapshot, files_data.files, scenario
         )
         dump_typed(dataset_dir / "s3-diff.json", s3_diff)
+        manifest[dataset_id] = random_datetime(days_ago=1)
         generated += 1
 
         if i % 100 == 0:
             print(f"  Processed {i}/{len(datasets)}")
 
+    save_timestamp_manifest(output_dir / S3_FILES_MANIFEST, manifest)
     print("S3 diff generation complete")
     print(f"  Generated: {generated} diffs")
     print(f"  Skipped: {skipped} (version mismatch or missing data)")

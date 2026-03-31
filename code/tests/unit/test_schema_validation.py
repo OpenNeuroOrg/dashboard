@@ -25,7 +25,6 @@ def test_github_status_validates(datasets_dir, dataset_id, linkml_validator):
         pytest.skip(f"No github.json for {dataset_id}")
     # cattrs validation
     obj = load_typed(path, GitHubStatus)
-    assert obj.lastChecked is not None
     # LinkML validation
     with open(path) as f:
         data = json.load(f)
@@ -38,7 +37,6 @@ def test_s3_version_validates(datasets_dir, dataset_id, linkml_validator):
         pytest.skip(f"No s3-version.json for {dataset_id}")
     # cattrs validation
     obj = load_typed(path, S3Version)
-    assert obj.lastChecked is not None
     # LinkML validation
     with open(path) as f:
         data = json.load(f)

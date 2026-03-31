@@ -1,6 +1,5 @@
 {
-  "lastChecked": "2026-03-30T07:55:37.000Z",
-  "head": "main",
+  "lastChecked": "2026-03-31T13:00:58.000Z",
   "branches": {
     "git-annex": "f22d7450a06d27a1b9b2a067b57ae1c6e30ddf83",
     "main": "9095eaa56a92c163bea7ba5f6ecd8945a06fd2dd"
@@ -8,5 +7,7 @@
   "tags": {
     "1.0.0": "392bb67ac5e4616bbb03e2981a404f0b0de07bd2",
     "1.0.1": "9095eaa56a92c163bea7ba5f6ecd8945a06fd2dd"
-  }
+  },
+  "head": "main",
+  "error": null
 }

@@ -17,6 +17,9 @@ let snapshots = null;
 let github = null;
 let s3Version = null;
 let s3Diff = null;
+let githubTimestamps = {};
+let s3VersionTimestamps = {};
+let s3FilesTimestamps = {};
 
 /**
  * Initialize the dataset detail view
@@ -53,6 +56,13 @@ async function init() {
       loadJSON(`${basePath}/github.json`).catch(() => null),
       loadJSON(`${basePath}/s3-version.json`).catch(() => null),
       loadJSON(`${basePath}/s3-diff.json`).catch(() => null),
+    ]);
+
+    // Load timestamp manifests
+    [githubTimestamps, s3VersionTimestamps, s3FilesTimestamps] = await Promise.all([
+      loadJSON("data/timestamps/github.json").catch(() => ({})),
+      loadJSON("data/timestamps/s3-version.json").catch(() => ({})),
+      loadJSON("data/timestamps/s3-files.json").catch(() => ({})),
     ]);
 
     // Render all sections
@@ -281,7 +291,7 @@ function renderGitHubCheck() {
     .join("");
 
   document.getElementById("github-last-checked").textContent = formatDate(
-    github.lastChecked,
+    githubTimestamps[datasetId] || github.lastChecked,
   );
 }
 
@@ -328,7 +338,7 @@ function renderS3VersionCheck() {
     document.getElementById("s3-extracted-version").textContent = "N/A";
     document.getElementById("s3-expected-version").textContent = latestSnapshot;
     document.getElementById("s3-version-last-checked").textContent = formatDate(
-      s3Version.lastChecked,
+      s3VersionTimestamps[datasetId] || s3Version.lastChecked,
     );
 
     return;
@@ -382,7 +392,7 @@ function renderS3VersionCheck() {
     extractedVersion;
   document.getElementById("s3-expected-version").textContent = latestSnapshot;
   document.getElementById("s3-version-last-checked").textContent = formatDate(
-    s3Version.lastChecked,
+    s3VersionTimestamps[datasetId] || s3Version.lastChecked,
   );
 }
 
@@ -460,7 +470,7 @@ function renderS3FilesCheck() {
   document.getElementById("diff-snapshot-tag").textContent = s3Diff.snapshotTag;
   document.getElementById("diff-s3-version").textContent = s3Diff.s3Version;
   document.getElementById("s3-files-last-checked").textContent = formatDate(
-    s3Diff.checkedAt,
+    s3FilesTimestamps[datasetId] || s3Diff.checkedAt,
   );
 }
 

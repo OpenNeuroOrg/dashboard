@@ -1,9 +1,9 @@
 {
-  "schemaVersion": "2.0.0",
+  "schemaVersion": "2.1.0",
   "datasetId": "ds001247",
   "snapshotTag": "00001",
   "s3Version": "00001",
-  "checkedAt": "2026-03-25T07:14:02.000Z",
+  "checkedAt": "2026-04-01T07:46:34.000Z",
   "status": "ok",
   "totalS3Files": 348,
   "totalGitFiles": 348,

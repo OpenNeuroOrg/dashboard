@@ -1,7 +1,9 @@
 {
-  "lastChecked": "2026-04-01T07:46:20.000Z",
-  "branches": {},
+  "lastChecked": "2026-04-02T07:25:35.000Z",
+  "branches": {
+    "git-annex": "87cf3813253a72cc2cd7cc7ee71c831e4671949b"
+  },
   "tags": {},
-  "head": null,
-  "error": "repo-empty"
+  "head": "git-annex",
+  "error": null
 }

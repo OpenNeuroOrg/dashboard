@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds003516",
   "snapshotTag": "1.1.1",
   "s3Version": "1.1.1",
-  "checkedAt": "2026-04-01T07:48:45.000Z",
   "status": "error",
   "totalS3Files": 285,
   "totalGitFiles": 290,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "stimuli/Block_1_32k.wav",

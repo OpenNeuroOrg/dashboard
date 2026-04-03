@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds005059",
   "snapshotTag": "1.0.6",
   "s3Version": "1.0.6",
-  "checkedAt": "2026-04-01T07:52:31.000Z",
   "status": "error",
   "totalS3Files": 1723,
   "totalGitFiles": 2005,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "sub-R1001P/ses-0/beh/sub-R1001P_ses-0_task-PAL1_beh.json",

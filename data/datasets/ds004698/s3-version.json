@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "2.1.0",
-  "lastChecked": "2026-04-03T07:21:55.000Z",
+  "schemaVersion": "2.2.0",
   "accessible": true,
+  "lastChecked": null,
   "httpStatus": null,
   "datasetDescriptionDOI": "doi:10.18112/openneuro.ds004698.v3.0.0",
   "extractedVersion": "3.0.0",

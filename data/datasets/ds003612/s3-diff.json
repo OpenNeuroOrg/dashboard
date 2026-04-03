@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds003612",
   "snapshotTag": "1.0.1",
   "s3Version": "1.0.1",
-  "checkedAt": "2026-04-01T07:48:55.000Z",
   "status": "error",
   "totalS3Files": 616,
   "totalGitFiles": 1706,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "sourcedata/bidsonym/dataset_description.json",

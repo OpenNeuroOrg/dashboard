@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds004787",
   "snapshotTag": "1.1.0",
   "s3Version": "1.1.0",
-  "checkedAt": "2026-04-01T07:51:52.000Z",
   "status": "error",
   "totalS3Files": 2997,
   "totalGitFiles": 3688,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "derivatives/fmriprep-msmsulc/work/24563.wrk/fmriprep_23_2_wf/single_subject_24563_wf/anat_preproc_wf/anat_derivatives_wf/mask_t1w/sub-24563_ses-1_rec-orig_run-1_T1w_noise_corrected_template_corrected_xform_masked.nii.gz",

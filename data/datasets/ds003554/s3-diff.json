@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds003554",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-04-01T07:48:50.000Z",
   "status": "error",
   "totalS3Files": 334,
   "totalGitFiles": 336,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "sub-sc023/func/sub-sc023_task-RepYo1_bold.nii.gz",

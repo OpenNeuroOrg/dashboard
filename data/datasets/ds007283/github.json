@@ -1,9 +1,9 @@
 {
-  "lastChecked": "2026-04-03T07:21:51.000Z",
   "branches": {
     "git-annex": "87cf3813253a72cc2cd7cc7ee71c831e4671949b"
   },
   "tags": {},
+  "lastChecked": null,
   "head": "git-annex",
   "error": null
 }

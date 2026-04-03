@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds004663",
   "snapshotTag": "1.0.1",
   "s3Version": "1.0.1",
-  "checkedAt": "2026-04-01T07:51:27.000Z",
   "status": "error",
   "totalS3Files": 330,
   "totalGitFiles": 591,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "sub-18/func/sub-18_task-tv_run-03_bold.nii",

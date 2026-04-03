@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds003999",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-04-01T07:49:38.000Z",
   "status": "error",
   "totalS3Files": 209,
   "totalGitFiles": 209,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "sub-05/ses-pre/anat/sub-05_ses-pre_T1w_label-lesion_roi.nii.gz"

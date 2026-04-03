@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds003892",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "checkedAt": "2026-04-01T07:49:34.000Z",
   "status": "error",
   "totalS3Files": 610,
   "totalGitFiles": 610,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "sub-11/ses-02/anat/sub-11_ses-02_T1w.nii.gz"

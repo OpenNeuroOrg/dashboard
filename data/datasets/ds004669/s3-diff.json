@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds004669",
   "snapshotTag": "2.0.2",
   "s3Version": "2.0.2",
-  "checkedAt": "2026-04-01T07:51:29.000Z",
   "status": "error",
   "totalS3Files": 2156,
   "totalGitFiles": 2214,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "derivative/preprocessed_data/sub-OSU01/sub-OSU01_chatgptneox_cl-8.hdf",

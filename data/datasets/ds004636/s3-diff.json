@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds004636",
   "snapshotTag": "1.0.4",
   "s3Version": "1.0.4",
-  "checkedAt": "2026-04-01T07:51:29.000Z",
   "status": "error",
   "totalS3Files": 9738,
   "totalGitFiles": 9739,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     ".bidsignore"

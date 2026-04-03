@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds002879",
   "snapshotTag": "1.1.0",
   "s3Version": "1.1.0",
-  "checkedAt": "2026-04-01T07:47:50.000Z",
   "status": "error",
   "totalS3Files": 1138,
   "totalGitFiles": 1138,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "sub-2514/func/sub-2514_task-VVNonWord_run-02_bold.nii.gz"

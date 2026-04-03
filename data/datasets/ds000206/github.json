@@ -1,5 +1,4 @@
 {
-  "lastChecked": "2026-04-03T07:21:21.000Z",
   "branches": {
     "git-annex": "6de8d2c3ce4125d3b52599c5d6a73e4f417b8c9d",
     "master": "58e3c84e87a129bc7fba61cbd702e76fdb8bb83e"
@@ -9,6 +8,7 @@
     "00002": "efbff9d37f3654b3da294ca8293b9066576b3d1f",
     "1.0.0": "58e3c84e87a129bc7fba61cbd702e76fdb8bb83e"
   },
+  "lastChecked": null,
   "head": "master",
   "error": null
 }

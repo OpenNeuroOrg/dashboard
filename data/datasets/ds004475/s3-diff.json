@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds004475",
   "snapshotTag": "1.0.3",
   "s3Version": "1.0.3",
-  "checkedAt": "2026-04-01T07:50:43.000Z",
   "status": "error",
   "totalS3Files": 292,
   "totalGitFiles": 322,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "sub-S18/anat/sub-S18_T1w.nii",

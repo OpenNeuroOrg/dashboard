@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds003463",
   "snapshotTag": "1.0.1",
   "s3Version": "1.0.1",
-  "checkedAt": "2026-04-01T07:48:32.000Z",
   "status": "error",
   "totalS3Files": 785,
   "totalGitFiles": 921,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "sub-r01/ses-postMn/anat/sub-r01_ses-postMn_acq-MGE_rec-complex_echo-1_T2star.nii.gz",

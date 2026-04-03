@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "2.1.0",
+  "schemaVersion": "2.2.0",
   "datasetId": "ds001506",
   "snapshotTag": "1.3.1",
   "s3Version": "1.3.1",
-  "checkedAt": "2026-04-01T07:46:56.000Z",
   "status": "error",
   "totalS3Files": 2036,
   "totalGitFiles": 1914,
+  "checkedAt": null,
   "exportMissing": false,
   "added": [
     "sourcedata/sub-01/anat/sub-01_mask_LH_FFA.nii.gz",

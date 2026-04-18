@@ -1,7 +1,12 @@
 {
-  "branches": {},
-  "tags": {},
+  "branches": {
+    "git-annex": "5fe4bb540170bd686f9631c0be0916f94de58728",
+    "main": "361bc7a3898f8199559e857a887eaf48353101df"
+  },
+  "tags": {
+    "1.0.0": "361bc7a3898f8199559e857a887eaf48353101df"
+  },
   "lastChecked": null,
-  "head": null,
-  "error": "repo-not-found"
+  "head": "main",
+  "error": null
 }

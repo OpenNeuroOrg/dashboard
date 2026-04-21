@@ -1,14 +1,23 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds006661",
-  "snapshotTag": "1.0.2",
-  "s3Version": "1.0.2",
-  "status": "ok",
+  "snapshotTag": "1.0.3",
+  "s3Version": "1.0.3",
+  "status": "error",
   "totalS3Files": 764,
-  "totalGitFiles": 764,
+  "totalGitFiles": 765,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "sub-001/sub-001_task-floc_run-01_bold.nii.gz"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "sub-001/func/sub-001_task-main_run-08_events.tsv",
+    "sub-001/func/sub-001_task-main_run-08_physio.json",
+    "sub-001/func/sub-001_task-main_run-08_physio.tsv.gz",
+    "sub-002/anat/sub-002_T1w.json",
+    "sub-002/anat/sub-002_T1w.nii.gz",
+    "sub-002/func/sub-002_task-floc_events.json"
+  ]
 }

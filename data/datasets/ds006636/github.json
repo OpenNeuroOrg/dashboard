@@ -1,11 +1,14 @@
 {
   "branches": {
-    "git-annex": "212cbba606b1466a19c207ab855a7ca128972165",
-    "main": "69ad14932a588c7c81ef61b4caa3ec60c4dbcc71",
+    "git-annex": "d777952cc8d1a0f43813b073503ed5ef3328ecdf",
+    "main": "5370e774796edd26be391fd0fa07002bfb5b4e07",
     "master": "69ad14932a588c7c81ef61b4caa3ec60c4dbcc71"
   },
   "tags": {
-    "1.0.0": "69ad14932a588c7c81ef61b4caa3ec60c4dbcc71"
+    "1.0.0": "69ad14932a588c7c81ef61b4caa3ec60c4dbcc71",
+    "1.1.0": "52ae18b5fd97aaa45bc94c392de43a0bd6f5233b",
+    "1.1.1": "832c7969cfa319cc0e97e4fddf95f496292c0c1f",
+    "1.2.0": "5370e774796edd26be391fd0fa07002bfb5b4e07"
   },
   "lastChecked": null,
   "head": "main",

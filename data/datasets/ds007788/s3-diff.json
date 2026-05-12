@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "2.2.0",
+  "datasetId": "ds007788",
+  "snapshotTag": "1.0.1",
+  "s3Version": "1.0.1",
+  "status": "error",
+  "totalS3Files": 17278,
+  "totalGitFiles": 17281,
+  "checkedAt": null,
+  "exportMissing": false,
+  "added": [
+    "CHANGES",
+    "datacite.yml",
+    "dataset_description.json"
+  ],
+  "removed": [],
+  "context": [
+    ".datalad/config",
+    ".gitattributes",
+    "README.md",
+    "derivatives/MIQ-RS/sub-01_MIQ-RS.pdf",
+    "derivatives/MIQ-RS/sub-02_MIQ-RS.pdf",
+    "derivatives/MIQ-RS/sub-03_MIQ-RS.pdf"
+  ]
+}

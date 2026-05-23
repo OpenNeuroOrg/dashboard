@@ -1,14 +1,24 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds004602",
-  "snapshotTag": "1.0.1",
-  "s3Version": "1.0.1",
-  "status": "ok",
-  "totalS3Files": 3830,
-  "totalGitFiles": 3830,
+  "snapshotTag": "1.0.3",
+  "s3Version": "1.0.3",
+  "status": "error",
+  "totalS3Files": 5461,
+  "totalGitFiles": 5463,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "participants.json",
+    "participants.tsv"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "code/rrr_ern_convert_mff_to_set.m",
+    "code/rrr_ern_repair_bids_validator_metadata.m",
+    "dataset_description.json",
+    "sub-1002/ses-1/eeg/sub-1002_ses-1_coordsystem.json",
+    "sub-1002/ses-1/eeg/sub-1002_ses-1_electrodes.json",
+    "sub-1002/ses-1/eeg/sub-1002_ses-1_electrodes.tsv"
+  ]
 }

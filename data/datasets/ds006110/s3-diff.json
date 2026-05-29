@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "2.2.0",
+  "datasetId": "ds006110",
+  "snapshotTag": "1.2.0",
+  "s3Version": "1.2.0",
+  "status": "error",
+  "totalS3Files": 79506,
+  "totalGitFiles": 79509,
+  "checkedAt": null,
+  "exportMissing": false,
+  "added": [
+    "derivatives/fmriprep-22.0.2/sub-PC001/ses-01/func/.~lock.sub-PC001_ses-01_task-movie_run-1_desc-confounds_timeseries.tsv#",
+    "derivatives/fmriprep-22.0.2/sub-PC003/ses-01/func/.~lock.sub-PC003_ses-01_task-meditation_run-1_desc-confounds_timeseries.tsv#",
+    "derivatives/fmriprep-22.0.2/sub-PC003/ses-01/func/.~lock.sub-PC003_ses-01_task-rest_run-1_desc-confounds_timeseries.tsv#"
+  ],
+  "removed": [],
+  "context": [
+    "derivatives/fmriprep-22.0.2/sub-PC001/ses-01/anat/sub-PC001_ses-01_run-1_space-MNI152NLin2009cAsym_label-CSF_probseg.nii.gz",
+    "derivatives/fmriprep-22.0.2/sub-PC001/ses-01/anat/sub-PC001_ses-01_run-1_space-MNI152NLin2009cAsym_label-GM_probseg.nii.gz",
+    "derivatives/fmriprep-22.0.2/sub-PC001/ses-01/anat/sub-PC001_ses-01_run-1_space-MNI152NLin2009cAsym_label-WM_probseg.nii.gz",
+    "derivatives/fmriprep-22.0.2/sub-PC001/ses-01/func/sub-PC001_ses-01_task-meditation_run-1_boldref.nii.gz",
+    "derivatives/fmriprep-22.0.2/sub-PC001/ses-01/func/sub-PC001_ses-01_task-meditation_run-1_desc-brain_mask.json",
+    "derivatives/fmriprep-22.0.2/sub-PC001/ses-01/func/sub-PC001_ses-01_task-meditation_run-1_desc-brain_mask.nii.gz",
+    "derivatives/fmriprep-22.0.2/sub-PC003/ses-01/anat/sub-PC003_ses-01_run-1_space-MNI152NLin2009cAsym_label-CSF_probseg.nii.gz",
+    "derivatives/fmriprep-22.0.2/sub-PC003/ses-01/anat/sub-PC003_ses-01_run-1_space-MNI152NLin2009cAsym_label-GM_probseg.nii.gz",
+    "derivatives/fmriprep-22.0.2/sub-PC003/ses-01/anat/sub-PC003_ses-01_run-1_space-MNI152NLin2009cAsym_label-WM_probseg.nii.gz",
+    "derivatives/fmriprep-22.0.2/sub-PC003/ses-01/func/sub-PC003_ses-01_task-meditation_run-1_boldref.nii.gz",
+    "derivatives/fmriprep-22.0.2/sub-PC003/ses-01/func/sub-PC003_ses-01_task-meditation_run-1_desc-brain_mask.json",
+    "derivatives/fmriprep-22.0.2/sub-PC003/ses-01/func/sub-PC003_ses-01_task-meditation_run-1_desc-brain_mask.nii.gz"
+  ]
+}

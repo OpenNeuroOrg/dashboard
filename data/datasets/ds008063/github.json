@@ -1,0 +1,12 @@
+{
+  "branches": {
+    "git-annex": "730365660a2ad0d8b7aaf4651f6fd71cb6f35777",
+    "main": "a18004621023596fcc23749fbb5ec4fb21a3a547"
+  },
+  "tags": {
+    "1.0.0": "a18004621023596fcc23749fbb5ec4fb21a3a547"
+  },
+  "lastChecked": null,
+  "head": "main",
+  "error": null
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "2.2.0",
+  "datasetId": "ds007753",
+  "snapshotTag": "1.1.1",
+  "s3Version": "1.1.1",
+  "status": "error",
+  "totalS3Files": 502,
+  "totalGitFiles": 504,
+  "checkedAt": null,
+  "exportMissing": false,
+  "added": [
+    "derivatives/sub-43/eeg/sub-43_task-BCCWJreading_eeg_reref0.1-40-ica_raw.fif",
+    "derivatives/sub-44/eeg/sub-44_task-BCCWJreading_eeg_reref0.1-40-ica_raw.fif"
+  ],
+  "removed": [],
+  "context": [
+    "derivatives/sub-43/eeg/sub-43_task-BCCWJreading_eeg_0.1-40-ica_raw.fif",
+    "derivatives/sub-43/eeg/sub-43_task-BCCWJreading_eeg_0.1-40_raw.fif",
+    "derivatives/sub-43/eeg/sub-43_task-BCCWJreading_eeg_raw_raw.fif",
+    "derivatives/sub-44/eeg/sub-44_task-BCCWJreading_eeg_0.1-40-ica_raw.fif",
+    "derivatives/sub-44/eeg/sub-44_task-BCCWJreading_eeg_0.1-40_raw.fif",
+    "derivatives/sub-44/eeg/sub-44_task-BCCWJreading_eeg_raw_raw.fif",
+    "participants.json",
+    "participants.tsv",
+    "sub-01/eeg/sub-01_task-BCCWJreading_channels.tsv"
+  ]
+}

@@ -1,16 +1,25 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds004169",
-  "snapshotTag": "1.0.0",
-  "s3Version": "1.0.0",
+  "snapshotTag": "1.0.8",
+  "s3Version": "1.0.8",
   "status": "error",
-  "totalS3Files": 11576,
-  "totalGitFiles": 11575,
+  "totalS3Files": 14559,
+  "totalGitFiles": 14559,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "sub-0179/ses-01/func/sub-0179_ses-01_task-rest_bold.json"
+  ],
   "removed": [
     "annex-uuid"
   ],
-  "context": []
+  "context": [
+    "sub-0179/ses-01/func/sub-0179_ses-01_task-nback_bold.nii.gz",
+    "sub-0179/ses-01/func/sub-0179_ses-01_task-nback_events.json",
+    "sub-0179/ses-01/func/sub-0179_ses-01_task-nback_events.tsv",
+    "sub-0179/ses-01/func/sub-0179_ses-01_task-rest_bold.nii.gz",
+    "sub-0179/ses-02/anat/sub-0179_ses-02_T1w.json",
+    "sub-0179/ses-02/anat/sub-0179_ses-02_T1w.nii.gz"
+  ]
 }

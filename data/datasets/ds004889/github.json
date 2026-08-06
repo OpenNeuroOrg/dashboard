@@ -1,8 +1,7 @@
 {
   "branches": {
-    "git-annex": "ca700e1b8dd0205dddf225e09aa498a38b0ddaea",
-    "main": "a62344db73f18f384a95b452f4a1a423087e059b",
-    "master": "a62344db73f18f384a95b452f4a1a423087e059b"
+    "git-annex": "234d9e93de5064522517c13f6d984772c33fd774",
+    "main": "a62344db73f18f384a95b452f4a1a423087e059b"
   },
   "tags": {
     "1.0.0": "5341e6a36dff7b94af47cbe0ae75f368c258599e",

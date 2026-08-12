@@ -4,13 +4,14 @@
   "snapshotTag": "1.2.3",
   "s3Version": "1.2.3",
   "status": "error",
-  "totalS3Files": 764,
+  "totalS3Files": 765,
   "totalGitFiles": 763,
   "checkedAt": null,
   "exportMissing": false,
   "added": [],
   "removed": [
-    "annex-uuid"
+    "annex-uuid",
+    "pet_info/Monash_DaCRA_weight_BSL_Dose.xlsx"
   ],
   "context": []
 }

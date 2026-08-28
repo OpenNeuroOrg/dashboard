@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "2.2.0",
+  "datasetId": "ds008725",
+  "snapshotTag": "1.0.2",
+  "s3Version": "1.0.2",
+  "status": "error",
+  "totalS3Files": 509,
+  "totalGitFiles": 510,
+  "checkedAt": null,
+  "exportMissing": false,
+  "added": [
+    "README"
+  ],
+  "removed": [],
+  "context": [
+    ".datalad/config",
+    ".gitattributes",
+    "CHANGES",
+    "dataset_description.json",
+    "sub-01/ses-1/meg/sub-01_ses-1_coordsystem.json",
+    "sub-01/ses-1/meg/sub-01_ses-1_task-objectviewing_channels.tsv"
+  ]
+}

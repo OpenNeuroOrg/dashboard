@@ -1,14 +1,29 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds006444",
-  "snapshotTag": "1.0.10",
-  "s3Version": "1.0.10",
-  "status": "ok",
-  "totalS3Files": 1345,
-  "totalGitFiles": 1345,
+  "snapshotTag": "1.0.9",
+  "s3Version": "1.0.9",
+  "status": "error",
+  "totalS3Files": 1323,
+  "totalGitFiles": 1327,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "code/SegmentationScripts/ANTS_Segmentation/ants_seg.sh",
+    "code/Stats/BIASS_PercentDiff_calc_clean.R",
+    "code/Stats/BIASS_stats_clean.R",
+    "code/Stats/molar_clean.Rmd"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "README",
+    "acq-slaser_mrsref.json",
+    "acq-slaser_svs.json",
+    "code/SegmentationScripts/FSL_Segmentation/fsl_seg.sh",
+    "code/SegmentationScripts/SPM_Segmentation/createSegJob.m",
+    "code/Stats/figure_stats_analysis.Rmd",
+    "code/jobFile/osprey_jobFile_sLASER_BIASS_JA.m",
+    "code/misc/GetFullPath.m",
+    "code/misc/GetSVHeader.m"
+  ]
 }

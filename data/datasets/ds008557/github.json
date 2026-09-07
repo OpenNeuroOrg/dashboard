@@ -1,7 +1,12 @@
 {
-  "branches": {},
-  "tags": {},
+  "branches": {
+    "git-annex": "1d1a4da09e517af487e802993c0c867ab689252b",
+    "main": "f8e6fb7100e992320017ec48008419b96a998eb9"
+  },
+  "tags": {
+    "1.0.0": "f8e6fb7100e992320017ec48008419b96a998eb9"
+  },
   "lastChecked": null,
-  "head": null,
-  "error": "repo-empty"
+  "head": "main",
+  "error": null
 }

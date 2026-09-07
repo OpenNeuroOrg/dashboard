@@ -3,12 +3,15 @@
   "datasetId": "ds003990",
   "snapshotTag": "1.0.2",
   "s3Version": "1.0.2",
-  "status": "ok",
-  "totalS3Files": 426,
+  "status": "error",
+  "totalS3Files": 428,
   "totalGitFiles": 426,
   "checkedAt": null,
   "exportMissing": false,
   "added": [],
-  "removed": [],
+  "removed": [
+    ".datalad/config",
+    "T2starw.json"
+  ],
   "context": []
 }

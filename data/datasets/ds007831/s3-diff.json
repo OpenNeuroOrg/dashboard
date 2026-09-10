@@ -1,14 +1,23 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds007831",
-  "snapshotTag": "1.0.1",
-  "s3Version": "1.0.1",
-  "status": "ok",
-  "totalS3Files": 2899,
-  "totalGitFiles": 2899,
+  "snapshotTag": "1.0.3",
+  "s3Version": "1.0.3",
+  "status": "error",
+  "totalS3Files": 2871,
+  "totalGitFiles": 2872,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "README"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    ".datalad/config",
+    ".gitattributes",
+    "CHANGES",
+    "datacite.yml",
+    "dataset_description.json",
+    "derivatives/dataset_description.json"
+  ]
 }

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "2.2.0",
+  "datasetId": "ds008834",
+  "snapshotTag": "1.0.3",
+  "s3Version": "1.0.3",
+  "status": "error",
+  "totalS3Files": 3873,
+  "totalGitFiles": 3874,
+  "checkedAt": null,
+  "exportMissing": false,
+  "added": [
+    "datacite.yml"
+  ],
+  "removed": [],
+  "context": [
+    "code/requirements.txt",
+    "code/run_bids_validation.py",
+    "code/validate_layout.py",
+    "dataset_description.json",
+    "derivatives/npz_data_dictionary.json",
+    "derivatives/preproc_40hz/README"
+  ]
+}

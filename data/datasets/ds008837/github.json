@@ -1,7 +1,15 @@
 {
-  "branches": {},
-  "tags": {},
+  "branches": {
+    "git-annex": "e00b3bb14ffab636b2025785863d4f06a36e9dde",
+    "main": "ad8d1139c1efefe29f43416637db8e8c852245cd"
+  },
+  "tags": {
+    "v1.0.0": "cd8d43292b41ed5efbf81fa4bebdf2e45e5d64e1",
+    "v1.1.0": "f69c0b1fdcda51a02a81f31ae25d29a1670be7d6",
+    "v1.1.1": "dd8367c282c989c0f05246cf468df728779276c7",
+    "v1.1.2": "ad8d1139c1efefe29f43416637db8e8c852245cd"
+  },
   "lastChecked": null,
-  "head": null,
-  "error": "repo-empty"
+  "head": "main",
+  "error": null
 }

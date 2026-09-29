@@ -1,21 +1,14 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds003465",
-  "snapshotTag": "1.0.4",
-  "s3Version": "1.0.4",
-  "status": "error",
-  "totalS3Files": 9883,
-  "totalGitFiles": 9877,
+  "snapshotTag": "1.0.8",
+  "s3Version": "1.0.8",
+  "status": "ok",
+  "totalS3Files": 9886,
+  "totalGitFiles": 9886,
   "checkedAt": null,
   "exportMissing": false,
   "added": [],
-  "removed": [
-    "annex-uuid",
-    "participants.json",
-    "task-Axcpt_events.json",
-    "task-Cuedts_events.json",
-    "task-Stern_events.json",
-    "task-Stroop_events.json"
-  ],
+  "removed": [],
   "context": []
 }

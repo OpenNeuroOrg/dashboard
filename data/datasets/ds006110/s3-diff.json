@@ -1,8 +1,8 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds006110",
-  "snapshotTag": "1.2.1",
-  "s3Version": "1.2.1",
+  "snapshotTag": "1.2.2",
+  "s3Version": "1.2.2",
   "status": "error",
   "totalS3Files": 60407,
   "totalGitFiles": 79473,

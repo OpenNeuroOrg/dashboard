@@ -1,14 +1,19 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds007354",
-  "snapshotTag": "2.0.1",
-  "s3Version": "2.0.1",
-  "status": "ok",
-  "totalS3Files": 11326,
-  "totalGitFiles": 11326,
+  "snapshotTag": "2.0.2",
+  "s3Version": "2.0.2",
+  "status": "error",
+  "totalS3Files": 2074,
+  "totalGitFiles": 2070,
   "checkedAt": null,
   "exportMissing": false,
   "added": [],
-  "removed": [],
+  "removed": [
+    "derivatives/fmriprep/sub-009/ses-302/func/sub-009_ses-302_task-s4_space-T1w_desc-preproc_bold.nii.gz",
+    "derivatives/fmriprep/sub-009/ses-303/func/sub-009_ses-303_task-s5_hemi-R_space-fsLR_den-32k_bold.func.gii",
+    "derivatives/fmriprep/sub-009/ses-303/func/sub-009_ses-303_task-s5_space-fsLR_den-91k_bold.dtseries.nii",
+    "derivatives/fmriprep/sub-009/ses-303/func/sub-009_ses-303_task-s6_hemi-R_space-fsLR_den-32k_bold.func.gii"
+  ],
   "context": []
 }

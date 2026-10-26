@@ -1,19 +1,23 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds007354",
-  "snapshotTag": "2.0.5",
-  "s3Version": "2.0.5",
+  "snapshotTag": "2.0.6",
+  "s3Version": "2.0.6",
   "status": "error",
-  "totalS3Files": 2074,
-  "totalGitFiles": 2070,
+  "totalS3Files": 12854,
+  "totalGitFiles": 12855,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
-  "removed": [
-    "derivatives/fmriprep/sub-009/ses-302/func/sub-009_ses-302_task-s4_space-T1w_desc-preproc_bold.nii.gz",
-    "derivatives/fmriprep/sub-009/ses-303/func/sub-009_ses-303_task-s5_hemi-R_space-fsLR_den-32k_bold.func.gii",
-    "derivatives/fmriprep/sub-009/ses-303/func/sub-009_ses-303_task-s5_space-fsLR_den-91k_bold.dtseries.nii",
-    "derivatives/fmriprep/sub-009/ses-303/func/sub-009_ses-303_task-s6_hemi-R_space-fsLR_den-32k_bold.func.gii"
+  "added": [
+    "derivatives/fmriprep/sub-002/ses-201/func/sub-002_ses-201_task-s1_space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz"
   ],
-  "context": []
+  "removed": [],
+  "context": [
+    "derivatives/fmriprep/sub-002/ses-201/func/sub-002_ses-201_task-s1_hemi-R_space-fsLR_den-32k_bold.func.gii",
+    "derivatives/fmriprep/sub-002/ses-201/func/sub-002_ses-201_task-s1_hemi-R_space-fsLR_den-32k_bold.json",
+    "derivatives/fmriprep/sub-002/ses-201/func/sub-002_ses-201_task-s1_space-MNI152NLin2009cAsym_desc-preproc_bold.json",
+    "derivatives/fmriprep/sub-002/ses-201/func/sub-002_ses-201_task-s1_space-T1w_desc-preproc_bold.json",
+    "derivatives/fmriprep/sub-002/ses-201/func/sub-002_ses-201_task-s1_space-T1w_desc-preproc_bold.nii.gz",
+    "derivatives/fmriprep/sub-002/ses-201/func/sub-002_ses-201_task-s1_space-fsLR_den-91k_bold.dtseries.nii"
+  ]
 }

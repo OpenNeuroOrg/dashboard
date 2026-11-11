@@ -1,14 +1,24 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds006979",
-  "snapshotTag": "1.1.4",
-  "s3Version": "1.1.4",
-  "status": "ok",
-  "totalS3Files": 1786,
-  "totalGitFiles": 1786,
+  "snapshotTag": "1.1.5",
+  "s3Version": "1.1.5",
+  "status": "error",
+  "totalS3Files": 1805,
+  "totalGitFiles": 1807,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "ds006979_derivatives/derivatives/ReplicationPeterson2015/code/EEG_ERP_Processing/ERP_Measurements/Measurement_ERP_List_N2_FN400.txt",
+    "ds006979_derivatives/derivatives/ReplicationPeterson2015/code/EEG_ERP_Processing/ERP_Measurements/Measurement_ERP_List_lpfilt_N2_FN400.txt"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "ds006979_derivatives/derivatives/ReplicationPeterson2015/code/EEG_ERP_Processing/ERP_Measurements/ERP_Measurements_N2pc_CDA_StimulusERPs/Mean_Amplitude_Diff_Waves_N2pc_Stimulus_correct.txt",
+    "ds006979_derivatives/derivatives/ReplicationPeterson2015/code/EEG_ERP_Processing/ERP_Measurements/Measurement_ERP_List_CDA_N2pc_Stimulus_correct.txt",
+    "ds006979_derivatives/derivatives/ReplicationPeterson2015/code/EEG_ERP_Processing/ERP_Measurements/Measurement_ERP_List_EarlyCDA_Stimulus_correct.txt",
+    "ds006979_derivatives/derivatives/ReplicationPeterson2015/code/EEG_ERP_Processing/ERP_Measurements/Measurement_ERP_List_lpfilt_N2pc_CDA_Stimulus_correct.txt",
+    "ds006979_derivatives/derivatives/ReplicationPeterson2015/code/EEG_ERP_Processing/ERP_Measurements/Script11a_Measure_N2pc_CDA_StimulusERPs.m",
+    "ds006979_derivatives/derivatives/ReplicationPeterson2015/code/EEG_ERP_Processing/ERP_Measurements/Script11b_Measure_N2pc_ProbeERPs.m"
+  ]
 }

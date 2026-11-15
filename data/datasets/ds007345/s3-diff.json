@@ -3,12 +3,39 @@
   "datasetId": "ds007345",
   "snapshotTag": "1.0.2",
   "s3Version": "1.0.2",
-  "status": "ok",
-  "totalS3Files": 3598,
+  "status": "error",
+  "totalS3Files": 3594,
   "totalGitFiles": 3598,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "sub-olf13/anat/sub-olf13_T2w.nii.gz",
+    "sub-olf19/anat/sub-olf19_run-02_T1w.nii.gz",
+    "sub-olf20/anat/sub-olf20_T2w.nii.gz",
+    "sub-olf20/anat/sub-olf20_run-02_T1w.nii.gz"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "sub-olf12fu/func/sub-olf12fu_task-rest_bold.json",
+    "sub-olf12fu/func/sub-olf12fu_task-rest_bold.nii.gz",
+    "sub-olf13/anat/sub-olf13_T2w.json",
+    "sub-olf13/anat/sub-olf13_run-01_T1w.json",
+    "sub-olf13/anat/sub-olf13_run-01_T1w.nii.gz",
+    "sub-olf13/anat/sub-olf13_run-02_T1w.json",
+    "sub-olf19/anat/sub-olf19_run-01_T1w.json",
+    "sub-olf19/anat/sub-olf19_run-01_T1w.nii.gz",
+    "sub-olf19/anat/sub-olf19_run-02_T1w.json",
+    "sub-olf19/dwi/sub-olf19_run-01_dwi.bval",
+    "sub-olf19/dwi/sub-olf19_run-01_dwi.bvec",
+    "sub-olf19/dwi/sub-olf19_run-01_dwi.json",
+    "sub-olf19/func/sub-olf19_task-rest_bold.json",
+    "sub-olf19/func/sub-olf19_task-rest_bold.nii.gz",
+    "sub-olf20/anat/sub-olf20_T2w.json",
+    "sub-olf20/anat/sub-olf20_run-01_T1w.json",
+    "sub-olf20/anat/sub-olf20_run-01_T1w.nii.gz",
+    "sub-olf20/anat/sub-olf20_run-02_T1w.json",
+    "sub-olf20/dwi/sub-olf20_run-01_dwi.bval",
+    "sub-olf20/dwi/sub-olf20_run-01_dwi.bvec",
+    "sub-olf20/dwi/sub-olf20_run-01_dwi.json"
+  ]
 }

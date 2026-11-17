@@ -3,12 +3,21 @@
   "datasetId": "ds006686",
   "snapshotTag": "1.0.3",
   "s3Version": "1.0.3",
-  "status": "ok",
-  "totalS3Files": 2022,
+  "status": "error",
+  "totalS3Files": 2021,
   "totalGitFiles": 2022,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "sub-118/anat/sub-118_T1w.nii.gz"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "sub-117/func/sub-117_task-cat_run-4_events.tsv",
+    "sub-117/func/sub-117_task-rest_bold.json",
+    "sub-117/func/sub-117_task-rest_bold.nii.gz",
+    "sub-118/anat/sub-118_T2w.nii.gz",
+    "sub-118/func/sub-118_task-cat_run-1_bold.json",
+    "sub-118/func/sub-118_task-cat_run-1_bold.nii.gz"
+  ]
 }

@@ -3,12 +3,21 @@
   "datasetId": "ds007231",
   "snapshotTag": "1.1.1",
   "s3Version": "1.1.1",
-  "status": "ok",
-  "totalS3Files": 387,
+  "status": "error",
+  "totalS3Files": 386,
   "totalGitFiles": 387,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "sub-22/anat/sub-22_T1w.nii"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "sub-21/func/sub-21_task-trifloc_run-4_bold.json",
+    "sub-21/func/sub-21_task-trifloc_run-4_bold.nii",
+    "sub-21/func/sub-21_task-trifloc_run-4_events.tsv",
+    "sub-22/func/sub-22_task-trifloc_run-1_bold.json",
+    "sub-22/func/sub-22_task-trifloc_run-1_bold.nii",
+    "sub-22/func/sub-22_task-trifloc_run-1_events.tsv"
+  ]
 }

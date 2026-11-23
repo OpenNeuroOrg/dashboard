@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "2.2.0",
+  "datasetId": "ds009133",
+  "snapshotTag": "2.0.0",
+  "s3Version": "2.0.0",
+  "status": "error",
+  "totalS3Files": 2593,
+  "totalGitFiles": 2595,
+  "checkedAt": null,
+  "exportMissing": false,
+  "added": [
+    "sourcedata/tmsdata/sub-10/ses-01/sub-10_ses-01_task-mep_acq-03post35.txt",
+    "sourcedata/tmsdata/sub-22/ses-03/sub-22_ses-03_task-mep_acq-02post5.txt"
+  ],
+  "removed": [],
+  "context": [
+    "sourcedata/tmsdata/sub-09/ses-03/sub-09_ses-03_task-mep_acq-03post35.txt",
+    "sourcedata/tmsdata/sub-10/ses-01/sub-10_ses-01_task-mep_acq-01pre.txt",
+    "sourcedata/tmsdata/sub-10/ses-01/sub-10_ses-01_task-mep_acq-02post5.txt",
+    "sourcedata/tmsdata/sub-10/ses-02/sub-10_ses-02_task-mep_acq-01pre.txt",
+    "sourcedata/tmsdata/sub-10/ses-02/sub-10_ses-02_task-mep_acq-02post5.txt",
+    "sourcedata/tmsdata/sub-10/ses-02/sub-10_ses-02_task-mep_acq-03post35.txt",
+    "sourcedata/tmsdata/sub-22/ses-02/sub-22_ses-02_task-mep_acq-02post5.txt",
+    "sourcedata/tmsdata/sub-22/ses-02/sub-22_ses-02_task-mep_acq-03post35.txt",
+    "sourcedata/tmsdata/sub-22/ses-03/sub-22_ses-03_task-mep_acq-01pre.txt",
+    "sourcedata/tmsdata/sub-22/ses-03/sub-22_ses-03_task-mep_acq-03post35.txt",
+    "sourcedata/tmsdata/sub-23/ses-01/sub-23_ses-01_task-mep_acq-01pre.txt",
+    "sourcedata/tmsdata/sub-23/ses-01/sub-23_ses-01_task-mep_acq-02post5.txt"
+  ]
+}

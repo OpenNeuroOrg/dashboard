@@ -1,14 +1,23 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds006677",
-  "snapshotTag": "1.0.0",
-  "s3Version": "1.0.0",
-  "status": "ok",
-  "totalS3Files": 1221,
-  "totalGitFiles": 1221,
+  "snapshotTag": "1.1.0",
+  "s3Version": "1.1.0",
+  "status": "error",
+  "totalS3Files": 2173,
+  "totalGitFiles": 2174,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "derivatives/sub-60/func/sub-60_task-sherlock_run-2_space-MNI152NLin2009cAsym_res-2_desc-preproc_bold.nii.gz"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "derivatives/sub-60/func/sub-60_task-sherlock_run-2_desc-confounds_timeseries.json",
+    "derivatives/sub-60/func/sub-60_task-sherlock_run-2_desc-confounds_timeseries.tsv",
+    "derivatives/sub-60/func/sub-60_task-sherlock_run-2_space-MNI152NLin2009cAsym_res-2_desc-preproc_bold.json",
+    "derivatives/sub-61/func/sub-61_task-SIpointlights_run-1_desc-confounds_timeseries.json",
+    "derivatives/sub-61/func/sub-61_task-SIpointlights_run-1_desc-confounds_timeseries.tsv",
+    "derivatives/sub-61/func/sub-61_task-SIpointlights_run-1_space-MNI152NLin2009cAsym_res-2_desc-preproc_bold.json"
+  ]
 }

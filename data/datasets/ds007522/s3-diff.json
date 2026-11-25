@@ -1,14 +1,39 @@
 {
   "schemaVersion": "2.2.0",
   "datasetId": "ds007522",
-  "snapshotTag": "3.0.0",
-  "s3Version": "3.0.0",
-  "status": "ok",
-  "totalS3Files": 64223,
-  "totalGitFiles": 64223,
+  "snapshotTag": "3.0.1",
+  "s3Version": "3.0.1",
+  "status": "error",
+  "totalS3Files": 64435,
+  "totalGitFiles": 64440,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-1_part-mag_T2starw.nii.gz",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-2_part-mag_T2starw.nii.gz",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-3_part-mag_T2starw.nii.gz",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-4_part-mag_T2starw.nii.gz",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-5_part-mag_T2starw.nii.gz"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_T1w.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_T1w.nii.gz",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-1_part-mag_T2starw.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-1_part-phase_T2starw.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-1_part-phase_T2starw.nii.gz",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-2_part-mag_T2starw.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-2_part-phase_T2starw.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-2_part-phase_T2starw.nii.gz",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-3_part-mag_T2starw.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-3_part-phase_T2starw.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-3_part-phase_T2starw.nii.gz",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-4_part-mag_T2starw.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-4_part-phase_T2starw.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-4_part-phase_T2starw.nii.gz",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-5_part-mag_T2starw.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-5_part-phase_T2starw.json",
+    "sub-HML0728/ses-01/anat/sub-HML0728_ses-01_rec-defaced_echo-5_part-phase_T2starw.nii.gz",
+    "sub-HML0728/ses-01/dwi/sub-HML0728_ses-01_dwi.bval"
+  ]
 }

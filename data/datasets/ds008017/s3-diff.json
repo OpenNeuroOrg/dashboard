@@ -3,12 +3,28 @@
   "datasetId": "ds008017",
   "snapshotTag": "1.0.0",
   "s3Version": "1.0.0",
-  "status": "ok",
-  "totalS3Files": 778,
+  "status": "error",
+  "totalS3Files": 776,
   "totalGitFiles": 778,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "sub-09/anat/sub-09_T1w.nii.gz",
+    "sub-15/anat/sub-15_T1w.nii.gz"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "sub-08/meg/sub-08_task-practice_meg.fif",
+    "sub-08/meg/sub-08_task-practice_meg.json",
+    "sub-08/sub-08_scans.tsv",
+    "sub-09/beh/sub-09_task-asrt_run-01_beh.json",
+    "sub-09/beh/sub-09_task-asrt_run-01_beh.tsv",
+    "sub-09/beh/sub-09_task-asrt_run-02_beh.json",
+    "sub-14/meg/sub-14_task-practice_split-01_meg.fif",
+    "sub-14/meg/sub-14_task-practice_split-02_meg.fif",
+    "sub-14/sub-14_scans.tsv",
+    "sub-15/beh/sub-15_task-asrt_run-01_beh.json",
+    "sub-15/beh/sub-15_task-asrt_run-01_beh.tsv",
+    "sub-15/beh/sub-15_task-asrt_run-02_beh.json"
+  ]
 }

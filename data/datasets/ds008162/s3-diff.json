@@ -3,12 +3,23 @@
   "datasetId": "ds008162",
   "snapshotTag": "1.0.3",
   "s3Version": "1.0.3",
-  "status": "ok",
-  "totalS3Files": 5546,
+  "status": "error",
+  "totalS3Files": 5544,
   "totalGitFiles": 5546,
   "checkedAt": null,
   "exportMissing": false,
-  "added": [],
+  "added": [
+    "sub-2037/anat/sub-2037_acq-1_T1w.nii.gz",
+    "sub-2037/anat/sub-2037_acq-2_T1w.nii.gz"
+  ],
   "removed": [],
-  "context": []
+  "context": [
+    "sub-2037/anat/sub-2037_T2w.json",
+    "sub-2037/anat/sub-2037_T2w.nii.gz",
+    "sub-2037/anat/sub-2037_acq-1_T1w.json",
+    "sub-2037/anat/sub-2037_acq-2_T1w.json",
+    "sub-2037/beh/sub-2037_task-BBT_run-1_beh.tsv",
+    "sub-2037/beh/sub-2037_task-BBT_run-2_beh.tsv",
+    "sub-2037/beh/sub-2037_task-drawLH_run-1_beh.tsv"
+  ]
 }
